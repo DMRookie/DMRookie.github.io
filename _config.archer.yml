@@ -10,7 +10,7 @@ social:
   email: sifaxie@tencent.com
   github: //github.com/DMRookie
   # wechat should be a path of qr-code image path
-  wechat: /assets/wechart.png
+  wechat: /assets/wechat.png
   # qq should be a path of qr-code image path
   qq: 
   telegram: 
@@ -118,14 +118,14 @@ algolia_search:
 
 # ========== Donate ========== #
 donate:
-  enable: false
+  enable: true
   title: Buy Me A Coffee
   description: If this post helped you, please consider buying the author a cup of sugar-free coffee ☕️.
   qr_code:
     - url: /assets/donate-wechat.png
       alt: Wechat
-    - url: /assets/donate-alipay.png
-      alt: Alipay
+ #   - url: /assets/donate-alipay.png
+ #     alt: Alipay
 
 # ========== Comment ========== #
 # Fill in the field to enable the corresponding comment plugin
