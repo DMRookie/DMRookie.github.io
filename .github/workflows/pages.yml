@@ -55,7 +55,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
-          deploy_key: ${{ secrets.GITHUB_TOKEN  }}
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY  }}
           user_name: DMRookie
           user_email: 807761439@qq.com
           # 获取提交文章源码时的commit message，作为发布gh-pages分支的信息
