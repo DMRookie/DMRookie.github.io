@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <!-- title -->
+<!-- keywords -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="荷月归">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="荷月归">
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog,荷月归,游戏推荐">
+    <meta name="description" content="">
+    <meta name="description" content="本文以 QwenVL 和 InternVL 系列模型为研究对象，探讨多模态大模型的演进路径，重点关注模型架构与训练流程两个维度。通过梳理这两个系列的迭代过程，可以总结出以下关键趋势： 在模型架构方面，主流设计逐渐收敛于“VIT-MLP-LLM”的三级架构范式，即视觉编码器（VIT）、轻量级适配层（MLP）与大语言模型（LLM）依次连接，结构趋于统一。 在训练流程上，多阶段训练策略成为共识，通常遵循">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从QwenVL与InternVL的演进看多模态大模型的范式收敛">
+<meta property="og:url" content="https://dmrookie.github.io/2025/10/16/%E4%BB%8EQwenVL%E4%B8%8EInternVL%E7%9A%84%E6%BC%94%E8%BF%9B%E7%9C%8B%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%8C%83%E5%BC%8F%E6%94%B6%E6%95%9B/">
+<meta property="og:site_name" content="荷月归">
+<meta property="og:description" content="本文以 QwenVL 和 InternVL 系列模型为研究对象，探讨多模态大模型的演进路径，重点关注模型架构与训练流程两个维度。通过梳理这两个系列的迭代过程，可以总结出以下关键趋势： 在模型架构方面，主流设计逐渐收敛于“VIT-MLP-LLM”的三级架构范式，即视觉编码器（VIT）、轻量级适配层（MLP）与大语言模型（LLM）依次连接，结构趋于统一。 在训练流程上，多阶段训练策略成为共识，通常遵循">
+<meta property="og:locale">
+<meta property="og:image" content="https://km.woa.com/asset/000100022510000f2eae16301d4e9501?height=1878&width=3344">
+<meta property="og:image" content="https://km.woa.com/asset/000100022510006abae23dd363402e01?height=1880&width=3346">
+<meta property="og:image" content="https://km.woa.com/asset/00010002251000b5404d62ae92438401?height=1882&width=3344">
+<meta property="og:image" content="https://km.woa.com/asset/0001000225100019b422d0876643b201?height=1880&width=3346">
+<meta property="og:image" content="https://km.woa.com/asset/00010002251000570ebf0339cd4d9c01?height=1880&width=3348">
+<meta property="og:image" content="https://km.woa.com/asset/000100022510000cae64d80e9c457701?height=1886&width=3346">
+<meta property="og:image" content="https://km.woa.com/asset/0001000225100068b0074d29a842a101?height=1880&width=3346">
+<meta property="og:image" content="https://km.woa.com/asset/00010002251000e96dea67e01847b701?height=1880&width=3344">
+<meta property="article:published_time" content="2025-10-16T09:23:53.000Z">
+<meta property="article:modified_time" content="2025-10-16T02:31:15.724Z">
+<meta property="article:author" content="荷月归">
+<meta property="article:tag" content="大模型 多模态">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://km.woa.com/asset/000100022510000f2eae16301d4e9501?height=1878&width=3344">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    <title>从QwenVL与InternVL的演进看多模态大模型的范式收敛 · 荷月归</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .footer-fixed-btn,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(
+            -45deg,
+            #444 0,
+            #444 80px,
+            #333 80px,
+            #333 160px
+        );
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link id="stylesheet-fancybox" rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="stylesheet-base" rel="preload" href="/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="stylesheet-mobile" rel="preload" href="/css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet';this.media='screen and (max-width: 960px)'">
+    <link id="stylesheet-theme-dark" rel="preload" href="/css/dark.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    <!-- 百度统计  -->
+    <!-- 谷歌统计  -->
+    <!-- Google tag (gtag.js) -->
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+        <body class="post-body">
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        <div class="header-sidebar-menu">
+            <div style="padding-left: 1px;">&#xe775;</div>
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href="/">dmrookie's Studio.</a>
+        </span>
+    </div>
+    <!-- toggle banner -->
+    <div class="banner">
+        <div class="blog-title header-element">
+            <a href="/">dmrookie&#39;s Studio.</a>
+        </div>
+        <div class="post-title header-element">
+            <a href="#" class="post-name">从QwenVL与InternVL的演进看多模态大模型的范式收敛</a>
+        </div>
+    </div>
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- donate button -->
+    <div class="donate-popup donate-popup--hidden">
+    <div class="donate-popup__title">Buy Me A Coffee</div>
+    <div class="donate-popup__content">
+        <div class="donate-popup__content-description">If this post helped you, please consider buying the author a cup of sugar-free coffee ☕️.</div>
+        <img
+            class="donate-popup__content-qrCode"
+            title="Wechat"
+            alt="Wechat"
+            src="/assets/donate-wechat.png"
+        ></img>
+        <img
+            class="donate-popup__content-qrCode"
+            title="Alipay"
+            alt="Alipay"
+            src="/assets/donate-alipay.png"
+        ></img>
+    </div>
+</div>
+
+    <div
+        title="Donate to the author"
+        class="footer-fixed-btn footer-fixed-btn--hidden donate-btn"
+    >
+        <i class="fas fa-donate"></i>
+    </div>
+
+    <!-- back to top button -->
+    <div class="footer-fixed-btn footer-fixed-btn--hidden back-top">
+        <div>&#xe639;</div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="    height:50vh;
+">
+    <!-- 主页  -->
+    <!-- 404页  -->
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+                从QwenVL与InternVL的演进看多模态大模型的范式收敛
+            <!-- 404 -->
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            <!-- 404 -->
+        </p>
+        <!-- 文章页 meta -->
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                    <div class="post-intro-tags" >
+        <a class="post-tag" href="javascript:void(0);" data-tags="大模型 多模态">大模型 多模态</a>
+</div>
+
+                <!-- 文章字数统计 -->
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">4.3k</span>阅读时长: <span class="post-count reading-time">14 min</span></span>
+                    </div>
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2025/10/16</span>
+                    <!-- busuanzi -->
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" alt="loading">
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <p>本文以 QwenVL 和 InternVL 系列模型为研究对象，探讨多模态大模型的演进路径，重点关注模型架构与训练流程两个维度。通过梳理这两个系列的迭代过程，可以总结出以下关键趋势：</p>
+<p>在模型架构方面，主流设计逐渐收敛于“VIT-MLP-LLM”的三级架构范式，即视觉编码器（VIT）、轻量级适配层（MLP）与大语言模型（LLM）依次连接，结构趋于统一。</p>
+<p>在训练流程上，多阶段训练策略成为共识，通常遵循“预训练—指令微调—强化学习”的递进流程。其中，预训练阶段的策略有明显演进：早期方法通常冻结语言模型，仅训练视觉编码器与适配层，随后再解冻语言模型进行整体微调；而近期方法则倾向于直接进行全局参数联合训练，以提升数据利用效率和模型性能。</p>
+<p>此外，两个系列均广泛采用动态分辨率机制，在输入阶段尽可能保持图像原始比例，减少形变，从而提升视觉特征的提取质量。在数据层面，大规模、高质量的数据构建也成为关键方向，包括严格的真实数据清洗与高效的合成数据生成，共同推动模型性能的提升。</p>
+<h2 id="QwenVL系列"><a href="#QwenVL系列" class="headerlink" title="QwenVL系列"></a>QwenVL系列</h2><h3 id="QwenVL-1"><a href="#QwenVL-1" class="headerlink" title="QwenVL 1"></a>QwenVL 1</h3><p>QwenVL1 较为简单，语言解码层只用了一个7.7B规格的Qwen1做初始化，视觉编码层用了一个1.9B的VIT，用VIT-bigG做初始化。中间适配层用的CrossAtten。QwenVL1只处理单图像数据。预处理时，会把图像统一缩放到固定大小（224&#x2F;448）。经过适配层后，将图片特征压缩到一个固定长度，如256。</p>
+<p>训练流程分三步：预训练时使用大规模，弱标注的图像文本对数据。冻结语言层，训练视觉编码层和适配层。多任务预训练时，使用高质量，细粒度标注的数据。涵盖7个任务，以提升模型的多任务能力。这一步会训练整个模型。最后一步有监督微调，使用对话数据，提升模型指令遵循和对话能力。在这步会冻结视觉编码层，训练语言层和适配层。</p>
+<p><img src="https://km.woa.com/asset/000100022510000f2eae16301d4e9501?height=1878&width=3344" alt="image.png"></p>
+<h3 id="QwenVL-2"><a href="#QwenVL-2" class="headerlink" title="QwenVL 2"></a>QwenVL 2</h3><p>QwenVL2的视觉编码层是用一个675M大小的VIT，使用DFN模型做初始化。适配层改为简单的两层MLP层，语言层用了1.5&#x2F;7&#x2F;72B三个规格的Qwen2做初始化。预处理时，预定义一组长宽比，将图片缩放到最匹配的长宽比。改进点包括：</p>
+<ol>
+<li><strong>朴素动态分辨率</strong>: 引入了朴素动态分辨率机制，使模型能够动态地将不同分辨率的图像转换为不同数量的视觉令牌。为了支持这一特性，修改了VIT，去除了原始的绝对位置嵌入，并引入了2D旋转位置嵌入（2D-RoPE）来捕捉图像的二维位置信息。在推理阶段，不同分辨率的图像被打包成一个序列，并通过一个简单的MLP层压缩相邻的2×2令牌为一个令牌。</li>
+<li>** 多模态旋转位置嵌入**: 引入了多模态旋转位置嵌入，以有效建模多模态输入的位置信息。M-RoPE将原始的旋转嵌入解构为三个组件：时间、高度和宽度。对于文本输入，这三个组件使用相同的ID，使其在功能上等同于1D-RoPE。对于图像，每个视觉令牌的时间ID保持不变，而高度和宽度组件根据令牌在图像中的位置分配不同的ID。对于视频，每个帧的时间ID递增，高度和宽度组件遵循与图像相同的ID分配模式。</li>
+<li><strong>统一的图像和视频理解</strong>: Qwen2-VL在训练阶段增加了多图和视频数据，以确保模型在图像理解和视频理解方面的全面能力。为了尽可能保留视频信息，每个视频以每秒两帧的速度采样。其次，集成了深度为2的三维卷积来处理视频输入，估计是把同一秒的两帧合并处理。然后再动态调整视频帧的分辨率，使每个视频的token数不超过16384。最后为保持一致，将每张图片当成两个完全一样的帧进行处理。</li>
+</ol>
+<p>训练流程与QwenVL1一致，分为3个步骤。视觉层预训练、多任务预训练以及有监督微调。不同点是使用更多类型的数据，包括视频数据，Agent相关数据。同时也支持更多国家的语言，包括大多数欧洲语言、日语、韩语、阿拉伯语、越南语等。</p>
+<p><img src="https://km.woa.com/asset/000100022510006abae23dd363402e01?height=1880&width=3346" alt="image.png"></p>
+<h3 id="QwenVL-2-5"><a href="#QwenVL-2-5" class="headerlink" title="QwenVL 2.5"></a>QwenVL 2.5</h3><p>QwenVL2.5的语言层使用3&#x2F;7&#x2F;72B三个规格的Qwen2.5做初始化。视觉编码层使用一个676M大小的VIT，并从头预训练。适配层还是使用MLP层。处理过程中，会将相连两帧的视频图像做合并，图像中相连4块patch做合并。改进点包括:</p>
+<ol>
+<li><strong>窗口注意力</strong>：在视觉编码器的大部分层中，实现窗口注意力，以优化推理效率。窗口注意力确保计算成本与块的数量线性相关，而不是二次相关。</li>
+<li><strong>动态帧率采样</strong>：将动态分辨率扩展到时间维度，即不同视频可以有不同的fps采样率。通过适应可变帧率，模型能更好地捕捉视频内容的时间动态。</li>
+<li><strong>时间域MRoPE对齐</strong>：通过对齐MRoPE ID与绝对时间，促进更复杂的时间序列学习。这种方法允许模型通过时间ID之间的间隔学习一致的时间对齐。对于8秒的视频，当fps为0.5，则相邻帧的时间ID间隔为15。fps为1，时间ID间隔则为5。</li>
+<li><strong>高质量数据预训练</strong>：在预训练阶段，显著扩展了数据集规模，从1.2万亿标记增加到约4.1万亿标记。数据集包括图像字幕、交错图像文本数据、光学字符识别（OCR）数据、视觉知识、多模态学术问题、定位数据、文档解析数据、视频描述、视频定位和基于代理的交互数据。</li>
+</ol>
+<p>训练流程分为4个步骤，前两个步骤与之前一致。第三步是专门针对长上下文进行预训练，将序列拉长至32k，整个模型都打开进行训练。最后一步增加了DPO强化训练，利用偏好数据来使模型与人类偏好保持一致。<br><img src="https://km.woa.com/asset/00010002251000b5404d62ae92438401?height=1882&width=3344" alt="image.png"></p>
+<h3 id="QwenVL-3"><a href="#QwenVL-3" class="headerlink" title="QwenVL 3"></a>QwenVL 3</h3><p>QwenVL 3详细论文还没出，从博客上列出的改进点包括:</p>
+<ol>
+<li><strong>文本视觉协同预训练</strong>：Qwen3-VL 在预训练早期即混合文本与视觉模态协同训练，文本能力持续强化，最终在纯文本任务上表现与 Qwen3-235B-A22B-2507 纯文本旗舰模型不相上下 。</li>
+<li><strong>MRoPE-Interleave</strong>：在 Qwen3-VL 中采取了 t,h,w 交错分布的形式，实现对时间，高度和宽度的全频率覆盖，提升对长视频的理解能力。</li>
+<li><strong>DeepStack</strong> ： 融合 ViT 多层次特征，提升视觉细节捕捉能力和图文对齐精度。</li>
+<li><strong>文本时间戳对齐机制</strong>： 采用“时间戳-视频帧”交错的输入形式，实现帧级别的时间信息与视觉内容的细粒度对齐。同时，模型原生支持“秒数”与“时:分:秒”（HMS）两种时间输出格式。</li>
+</ol>
+<h2 id="InternVL系列"><a href="#InternVL系列" class="headerlink" title="InternVL系列"></a>InternVL系列</h2><h3 id="InternVL-1"><a href="#InternVL-1" class="headerlink" title="InternVL 1"></a>InternVL 1</h3><p>InternVL1的架构稍微复杂，预训练阶段的语言层用7B的LLaMA进行初始化，SFT阶段改为13B的Vicuna进行初始化。视觉编码层用6B的InternVIT，并从头预训练。同样只处理单图，并将图片统一缩放到固定大小。中间适配层用的CrossAtten和MLP。</p>
+<p>训练流程分三步，第一步参考CLIP，同时打开语言层和视觉编码层，进行对比学习。第二步，冻住语言层和视觉层，训练中间的CrossAttn适配层。第三步进行有监督微调，有两种实现方案：一种是直接用MLP层连接语言层和视觉层，对MLP层进行预训练。另外一种是将第二步的QLLaMA接进去，增加一个MLP层进行预训练。其中视觉层冻住，语言层打开或冻住都可以。</p>
+<p><img src="https://km.woa.com/asset/0001000225100019b422d0876643b201?height=1880&width=3346" alt="image.png"></p>
+<h3 id="InternVL-1-5"><a href="#InternVL-1-5" class="headerlink" title="InternVL 1.5"></a>InternVL 1.5</h3><p>InternVL 1.5在结构上进行了简化，语言层用20B的InternLM2进行初始化。视觉层还是6B的InternVIT，适配层用的MLP层。仍然只处理单图片数据。预处理时，将图片缩放到最匹配的预定义长宽比，并切成448*448大小的patch。同时将全图缩放到448*448的缩略图，一起做为视觉层的输入。经过VIT后，用pixel unshuffle进行采样，减少视觉token的个数。 改进点包括:</p>
+<ol>
+<li><strong>动态高分辨率</strong>：根据输入图像的宽高比和分辨率，将图像分割成从1到40个448x448像素的瓦片，支持高达4K分辨率的输入。</li>
+<li><strong>强大的视觉编码器</strong>：探索了一种针对大规模视觉基础模型InternViT-6B的连续学习策略，提升其视觉理解能力，并使其能够在不同大型语言模型之间转移和复用。</li>
+<li><strong>高质量双语数据集</strong>：精心收集了一个高质量的双语数据集，涵盖了常见场景、文档图像，并用中英文问答对进行了注释，显著提升了OCR和与中文相关的任务性能。</li>
+</ol>
+<p>训练流程主要包含两步，第一步预训练，会冻结语言层，对视觉层和适配层进行训练。这其中又分两小步。1）去掉InternVIT6B后三层，并且与ous-Hermes-2-Yi-34B语言模型做整合，然后用固定的448*448 图像进行训练。2）改用动态的448*448 patch进行训练，并增大训练数据量级、质量和多样性。第二步有监督微调，语言层改回InternLM2，并打开整个模型进行微调。</p>
+<p><img src="https://km.woa.com/asset/00010002251000570ebf0339cd4d9c01?height=1880&width=3348" alt="image.png"></p>
+<h3 id="InternVL-2-5"><a href="#InternVL-2-5" class="headerlink" title="InternVL 2.5"></a>InternVL 2.5</h3><p>InternVL 2.5的语言层分别用了InternLM2.5和Qwen2.5，并训了0.5B到72B多种大小的规格。适配层用的MLP层。视觉层用了300M和6B两种规格的InternVIT。训练数据引入了多图和视频。改进点包括:</p>
+<ol>
+<li><strong>渐进式扩展</strong>：一种渐进式扩展策略，以有效地使视觉编码器与大型语言模型对齐(InternVL 1.5和2.0也有采用)。即先用一个小规格的语言层（如20B）和视觉层一起做大量预训练，然后将训练好的视觉层迁移到更大的语言模型（如72B），而无需重新训练，以此避免大语言模型训练时的高计算成本。这做法是源于他们的观察：使用NTP损失联合训练VIT和大型语言模型，得到的视觉特征是可泛化的，其他大型语言模型也能轻松理解。</li>
+<li><strong>训练增强</strong>：引入了随机JPEG压缩和损失重加权技术，以提高模型的鲁棒性和性能。随机JPEG压缩用于避免过拟合并增强模型对现实世界图像的鲁棒性，而损失重加权则通过平衡不同长度响应的贡献来提高模型性能。</li>
+<li><strong>多模态数据打包</strong>：通过将多个样本连接成更长的序列来减少填充，从而最大化利用模型的输入序列容量，以提高GPU的利用率并提升训练效率。</li>
+</ol>
+<p>训练流程分三步，第一步是MLP层的热身(warmup)训练，这阶段冻住语言层和视觉层，只训练MLP层。数据采用结构化的ChatML格式，并用NTP损失进行优化。此外，应用更高的学习率以加速收敛。第二步是VIT增量训练，这一步会打开视觉层和MLP层一起训练，并使用和第一阶段相同的数据进行训练。同时采用较低学习率以防止灾难性遗忘。这第二步是可选的，即只在小规格的语言模型上训练，训完后直接将视觉层迁移到更大规格的语言模型上。第三步是全模型的指令调优，这一步打开整个模型，用高质量的数据进行微调。在一开始就使用对话形式进行预训练比较少见。</p>
+<p><img src="https://km.woa.com/asset/000100022510000cae64d80e9c457701?height=1886&width=3346" alt="image.png"></p>
+<h3 id="InternVL-3"><a href="#InternVL-3" class="headerlink" title="InternVL 3"></a>InternVL 3</h3><p>InternVL 3的语言层采用多种规格的Qwen2.5和InternLM3做初始化。适配层和视觉层和INternVL2.5一致。改进点包括:</p>
+<ol>
+<li><strong>原生多模态预训练</strong>: InternVL3采用了一种统一的多模态预训练方法，通过在预训练阶段同时暴露于文本数据和多样化的多模态数据集，使模型能够同时获得语言和多模态能力。</li>
+<li><strong>变量视觉位置编码（V2PE）</strong>: 为了支持更长的多模态上下文，InternVL3采用了变量视觉位置编码（V2PE），使用较小的、更灵活的位置增量来处理视觉标记。</li>
+<li><strong>后训练策略</strong>: 采用了监督微调（SFT）和混合偏好优化（MPO）等先进的后训练技术，以及测试时间缩放策略和优化的训练基础设施。</li>
+</ol>
+<p>训练流程分三步，第一步直接对整个模型进行预训练，这种统一的训练方案使预训练模型能够同时学习语言能力和多模态能力，最终增强其处理视觉-语言任务的能力，而无需引入额外的桥梁模块或后续的模型间对齐程序。数据上增加了与图形用户界面（GUI）、工具使用、3D场景理解以及视频理解任务相关的额外数据。损失函数使用NTP Loss，但只计算文本token的loss。第二步是有监督微调，相比上一版引入了更高质量和更多样化的训练数据。第三步是混合偏好优化（MPO）。通过引入来自正面和负面样本的额外监督，使模型响应分布与真实分布对齐，从而提高推理性能。MPO的训练目标是偏好损失、质量损失和生成损失三者的组合。<br>另外在预测时，做了测试时缩放（TTS）。通过预测N个结果，并使用VisualPRM-8B作为评估器模型来选择最佳的回应进行推理和数学评估。</p>
+<p><img src="https://km.woa.com/asset/0001000225100068b0074d29a842a101?height=1880&width=3346" alt="image.png"></p>
+<h3 id="InternVL-3-5"><a href="#InternVL-3-5" class="headerlink" title="InternVL 3.5"></a>InternVL 3.5</h3><p>InternVL 3.5的语言层选用多种规格的Qwen3和GPT-OSS，适配层和视觉层维持不变。新增了一个视觉分辨率路由器，将高&#x2F;低分辨率的图片送往不同的Pixel Unshuffle进行压缩。改动点包括:</p>
+<ol>
+<li><strong>级联强化学习（Cascade RL）</strong>: 通过离线RL阶段实现稳定收敛，在线RL阶段精细调整输出分布，从而提高推理能力。离线RL阶段作为有效的热身，确保高质量的rollouts用于后续在线阶段。</li>
+<li><strong>视觉分辨率路由器（ViR）</strong>: 动态选择视觉token的最佳分辨率，减少推理成本，同时保持性能。大体是同一样本，分别用1&#x2F;4压缩率和1&#x2F;16压缩率分别计算损失。然后将1&#x2F;16压缩率的损失除以1&#x2F;4压缩率的损失得到一个比率r。滑动保存历史r，并计算k 百分位数得到一个阈值。将小于阈值的样本采用1&#x2F;16压缩率，否则用1&#x2F;4，得到训练集后进行二分类训练。</li>
+<li><strong>解耦视觉-语言部署（DvD）</strong>: 将视觉编码器和语言模型部署在不同的GPU上，平衡计算负载，最大化并行性和硬件利用率。</li>
+</ol>
+<p>训练阶段分为四步，第一步打开整个模型做预训练，没有提到将损失计算仅限于文本token。第二步是有监督微调，相比InternVL3，增加了“思考”模式下的多模态推理数据和新技能数据，包括基于GUI的交互、具身交互以及可伸缩矢量图形（SVG）的理解和生成。第三步是级联的强化学习，首先使用离线RL算法对模型进行微调，作为高效的热身阶段以达到满意的结果，这可以保证为后续阶段提供高质量的回放。随后，采用在线RL算法来进一步根据模型自身生成的回放细化输出分布。最后一步是视觉一致性训练，冻住主体模型，只微调视觉分辨率路由器。</p>
+<p><img src="https://km.woa.com/asset/00010002251000e96dea67e01847b701?height=1880&width=3344" alt="image.png"></p>
+
+    </article>
+    <!-- license -->
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+        </li>
+        <li class="previous">
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2025/03/26/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%AE%9E%E8%B7%B5/" title="大模型工程化实践">
+                    <div class="prevTitle">大模型工程化实践</div>
+                </a>
+        </li>
+    </ul>
+    <!-- comment -->
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+            
+            
+            
+            <!-- utteranc评论 -->
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+            
+            
+            
+        </div>
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    <!-- Mathjax -->
+</main>
+
+                <!-- profile -->
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+        <div class="social">
+                            <a href="mailto:sifaxie@tencent.com" class="iconfont-archer email" title="email" ></a>
+                <a href="//github.com/DMRookie" class="iconfont-archer github" target="_blank" title="github"></a>
+                <span class="iconfont-archer wechat" title="wechat">
+                    <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+                <a href="//www.zhihu.com/people/xie-si-fa" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+
+        </div>
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    <!-- 不蒜子  -->
+        <div class="busuanzi-container">
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+        </div>
+</footer>
+
+        </div>
+        <!-- toc -->
+            <div class="toc-wrapper toc-wrapper-loding" style=    top:50vh;
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#QwenVL%E7%B3%BB%E5%88%97"><span class="toc-number">1.</span> <span class="toc-text">QwenVL系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-1"><span class="toc-number">1.1.</span> <span class="toc-text">QwenVL 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-2"><span class="toc-number">1.2.</span> <span class="toc-text">QwenVL 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-2-5"><span class="toc-number">1.3.</span> <span class="toc-text">QwenVL 2.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-3"><span class="toc-number">1.4.</span> <span class="toc-text">QwenVL 3</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InternVL%E7%B3%BB%E5%88%97"><span class="toc-number">2.</span> <span class="toc-text">InternVL系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-1"><span class="toc-number">2.1.</span> <span class="toc-text">InternVL 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-1-5"><span class="toc-number">2.2.</span> <span class="toc-text">InternVL 1.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-2-5"><span class="toc-number">2.3.</span> <span class="toc-text">InternVL 2.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-3"><span class="toc-number">2.4.</span> <span class="toc-text">InternVL 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-3-5"><span class="toc-number">2.5.</span> <span class="toc-text">InternVL 3.5</span></a></li></ol></li></ol>
+            </div>
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+        
+        
+        
+        
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 4
+        </div>
+        <!-- search  -->
+    </div>
+    <div class="post-archive">
+            <div class="archive-year"> 2025 </div>
+            <ul class="year-list">
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2025/10/16/%E4%BB%8EQwenVL%E4%B8%8EInternVL%E7%9A%84%E6%BC%94%E8%BF%9B%E7%9C%8B%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%8C%83%E5%BC%8F%E6%94%B6%E6%95%9B/">从QwenVL与InternVL的演进看多模态大模型的范式收敛</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/26</span>
+            <a class="archive-post-title" href="/2025/03/26/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%AE%9E%E8%B7%B5/">大模型工程化实践</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/24</span>
+            <a class="archive-post-title" href="/2025/03/24/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/">大模型的应用实践</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span>
+            <a class="archive-post-title" href="/2025/03/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86/">大模型的概念原理</a>
+        </li>
+            </ul>
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+            <span class="sidebar-tag-name" data-tags="大模型 多模态">
+                <span class="iconfont-archer">&#xe606;</span>
+                大模型 多模态
+            </span>
+            <span class="sidebar-tag-name" data-tags="大模型">
+                <span class="iconfont-archer">&#xe606;</span>
+                大模型
+            </span>
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://dmrookie.github.io",
+        root: siteMetaRoot,
+        author: "荷月归"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+        <!-- main func -->
+        <script src="/scripts/main.js"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js" onload="window.Fancybox.bind('[data-fancybox]')" defer></script>
+        <!-- algolia -->
+        <!-- busuanzi -->
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        <!-- async load share.js -->
+            <script src="/scripts/share.js" async></script>
+        <!-- mermaid -->
+    </body>
+</html>
