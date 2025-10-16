@@ -13,24 +13,30 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-        # with:
-        #   submodules: true
-        #   fetch-depth: 0
+        with:
+           submodules: true
+           fetch-depth: 0
       # 每个name表示一个步骤:step
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '23.x' # 自己正在使用的node版本即可
+          cache: 'npm'  # 添加 npm 缓存
       # 缓存依赖项: https://docs.github.com/cn/actions/using-workflows/caching-dependencies-to-speed-up-workflows
       - name: Cache NPM dependencies
         uses: actions/cache@v3
+        id: npm-cache
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
+          path: |
+                ~/.npm
+                node_modules
+                public  # 缓存构建结果
           # path: node_modules
-          key: ${{ runner.OS }}-npm-cache
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.OS }}-npm-cache
+            ${{ runner.OS }}-node-
+             ${{ runner.OS }}-
       # 查看路径 : /home/runner/work/blog/blog
       # - name: Look Path
       #   run: pwd
@@ -39,7 +45,9 @@ jobs:
         run: tree -L 3 -a
       # 第一次或者依赖发生变化的时候执行 Install Dependencies，其它构建的时候不需要这一步
       - name: Install Dependencies
-        run: npm install
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci  # 使用 npm ci 替代 npm install，更快速可靠
+
       - name: Look Dir List
         run: tree -L 3 -a
       # - name: clean theme cache
@@ -49,6 +57,7 @@ jobs:
 #      - name: Install Theme
 #        run: git submodule add https://github.com/all-smile/tenacity.git themes/tenacity
       - name: Clean
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm run clean
       - name: Build
         run: npm run build
