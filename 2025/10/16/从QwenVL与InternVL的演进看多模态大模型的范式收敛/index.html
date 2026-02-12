@@ -20,13 +20,15 @@
 <meta property="og:image" content="https://km.woa.com/asset/000100022510000f2eae16301d4e9501?height=1878&width=3344">
 <meta property="og:image" content="https://km.woa.com/asset/000100022510006abae23dd363402e01?height=1880&width=3346">
 <meta property="og:image" content="https://km.woa.com/asset/00010002251000b5404d62ae92438401?height=1882&width=3344">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226020028709dad0973497701?height=1338&width=2630">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260200b543c0664ba04a0a01?height=1328&width=2400">
 <meta property="og:image" content="https://km.woa.com/asset/0001000225100019b422d0876643b201?height=1880&width=3346">
 <meta property="og:image" content="https://km.woa.com/asset/00010002251000570ebf0339cd4d9c01?height=1880&width=3348">
 <meta property="og:image" content="https://km.woa.com/asset/000100022510000cae64d80e9c457701?height=1886&width=3346">
 <meta property="og:image" content="https://km.woa.com/asset/0001000225100068b0074d29a842a101?height=1880&width=3346">
 <meta property="og:image" content="https://km.woa.com/asset/00010002251000e96dea67e01847b701?height=1880&width=3344">
 <meta property="article:published_time" content="2025-10-16T09:23:53.000Z">
-<meta property="article:modified_time" content="2026-02-11T06:26:53.951Z">
+<meta property="article:modified_time" content="2026-02-12T04:05:59.411Z">
 <meta property="article:author" content="荷月归">
 <meta property="article:tag" content="大模型 多模态">
 <meta name="twitter:card" content="summary">
@@ -321,7 +323,7 @@
 
                 <!-- 文章字数统计 -->
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">4.3k</span>阅读时长: <span class="post-count reading-time">14 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">4.4k</span>阅读时长: <span class="post-count reading-time">15 min</span></span>
                     </div>
                 <div class="post-intro-meta">
                     <!-- 撰写日期 -->
@@ -501,13 +503,16 @@
 <li><strong>高质量数据预训练</strong>：在预训练阶段，显著扩展了数据集规模，从1.2万亿标记增加到约4.1万亿标记。数据集包括图像字幕、交错图像文本数据、光学字符识别（OCR）数据、视觉知识、多模态学术问题、定位数据、文档解析数据、视频描述、视频定位和基于代理的交互数据。</li>
 </ol>
 <p>训练流程分为4个步骤，前两个步骤与之前一致。第三步是专门针对长上下文进行预训练，将序列拉长至32k，整个模型都打开进行训练。最后一步增加了DPO强化训练，利用偏好数据来使模型与人类偏好保持一致。<br><img src="https://km.woa.com/asset/00010002251000b5404d62ae92438401?height=1882&width=3344" alt="image.png"></p>
-<h3 id="QwenVL-3"><a href="#QwenVL-3" class="headerlink" title="QwenVL 3"></a>QwenVL 3</h3><p>QwenVL 3详细论文还没出，从博客上列出的改进点包括:</p>
+<h3 id="QwenVL-3"><a href="#QwenVL-3" class="headerlink" title="QwenVL 3"></a>QwenVL 3</h3><p>Qwen 3VL的整体架构未做太多改变，还是三段式，但是将视觉编码器换成SigLIP。改进点如下：</p>
 <ol>
-<li><strong>文本视觉协同预训练</strong>：Qwen3-VL 在预训练早期即混合文本与视觉模态协同训练，文本能力持续强化，最终在纯文本任务上表现与 Qwen3-235B-A22B-2507 纯文本旗舰模型不相上下 。</li>
-<li><strong>MRoPE-Interleave</strong>：在 Qwen3-VL 中采取了 t,h,w 交错分布的形式，实现对时间，高度和宽度的全频率覆盖，提升对长视频的理解能力。</li>
-<li><strong>DeepStack</strong> ： 融合 ViT 多层次特征，提升视觉细节捕捉能力和图文对齐精度。</li>
+<li><strong>文本视觉协同预训练</strong>：Qwen3-VL 在预训练早期即混合文本与视觉模态协同训练，文本能力持续强化，最终在纯文本任务上表现与Qwen3-235B-A22B-2507纯文本旗舰模型不相上下 。</li>
+<li><strong>MRoPE-Interleave</strong>：在Qwen3-VL中采取了 t、h、w交错分布的形式，实现对时间，高度和宽度的全频率覆盖，提升对长视频的理解能力。</li>
+<li><strong>DeepStack</strong> ： 融合ViT多层次特征，提升视觉细节捕捉能力和图文对齐精度。(不过在新版本中去掉了)</li>
 <li><strong>文本时间戳对齐机制</strong>： 采用“时间戳-视频帧”交错的输入形式，实现帧级别的时间信息与视觉内容的细粒度对齐。同时，模型原生支持“秒数”与“时:分:秒”（HMS）两种时间输出格式。</li>
 </ol>
+<p>训练流程，相比2.5在预训练阶段将上下文窗口进一步扩展到256K。后训练阶段一个是将SFT窗口扩大，多了一步将大规格模型的能力蒸馏到小规格模型的过程。	</p>
+<p><img src="https://km.woa.com/asset/0001000226020028709dad0973497701?height=1338&width=2630" alt="image.png"></p>
+<p><img src="https://km.woa.com/asset/00010002260200b543c0664ba04a0a01?height=1328&width=2400" alt="image.png"></p>
 <h2 id="InternVL系列"><a href="#InternVL系列" class="headerlink" title="InternVL系列"></a>InternVL系列</h2><h3 id="InternVL-1"><a href="#InternVL-1" class="headerlink" title="InternVL 1"></a>InternVL 1</h3><p>InternVL1的架构稍微复杂，预训练阶段的语言层用7B的LLaMA进行初始化，SFT阶段改为13B的Vicuna进行初始化。视觉编码层用6B的InternVIT，并从头预训练。同样只处理单图，并将图片统一缩放到固定大小。中间适配层用的CrossAtten和MLP。</p>
 <p>训练流程分三步，第一步参考CLIP，同时打开语言层和视觉编码层，进行对比学习。第二步，冻住语言层和视觉层，训练中间的CrossAttn适配层。第三步进行有监督微调，有两种实现方案：一种是直接用MLP层连接语言层和视觉层，对MLP层进行预训练。另外一种是将第二步的QLLaMA接进去，增加一个MLP层进行预训练。其中视觉层冻住，语言层打开或冻住都可以。</p>
 <p><img src="https://km.woa.com/asset/0001000225100019b422d0876643b201?height=1880&width=3346" alt="image.png"></p>
