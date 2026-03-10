@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <!-- title -->
+<!-- keywords -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="荷月归">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="荷月归">
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog,荷月归,游戏推荐">
+    <meta name="description" content="">
+    <meta name="description" content="1. 摘要多模态大语言模型（Multimodal Large Language Models, MLLM）近年来取得了突破性进展，然而其在精细视觉理解任务上的表现仍存在显著瓶颈。本文系统性地梳理了2024-2025年，arXiv上关于MLLM视觉Token监督不足问题的最新研究。研究表明，当前主流MLLM采用的”仅文本监督”训练范式导致视觉路径处于欠监督状态，进而引发视觉注意力退化、表征学习不充分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="视觉Token&quot;失声&quot;：揭秘多模态大模型为何&quot;睁眼说瞎话&quot;">
+<meta property="og:url" content="https://dmrookie.github.io/2026/03/10/%E8%A7%86%E8%A7%89Token%22%E5%A4%B1%E5%A3%B0%22%EF%BC%9A%E6%8F%AD%E7%A7%98%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BD%95%22%E7%9D%81%E7%9C%BC%E8%AF%B4%E7%9E%8E%E8%AF%9D%22/">
+<meta property="og:site_name" content="荷月归">
+<meta property="og:description" content="1. 摘要多模态大语言模型（Multimodal Large Language Models, MLLM）近年来取得了突破性进展，然而其在精细视觉理解任务上的表现仍存在显著瓶颈。本文系统性地梳理了2024-2025年，arXiv上关于MLLM视觉Token监督不足问题的最新研究。研究表明，当前主流MLLM采用的”仅文本监督”训练范式导致视觉路径处于欠监督状态，进而引发视觉注意力退化、表征学习不充分">
+<meta property="og:locale">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260200cd3b7a97cdaa4f5b01?height=800&width=800">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226020029d92d557c124d4301?height=800&width=800">
+<meta property="og:image" content="https://km.woa.com/asset/000100022602004e734d28f476456301?height=742&width=812">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260200cdc6b7e368e54c7001?height=400&width=802">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226030099bee2fe4d0d4fc201?height=576&width=1554">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226030095fcae3531d3414801?height=338&width=802">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260300e9c6853a8bd84d9e01?height=506&width=808">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226030047fea5af3ca5466f01?height=254&width=868">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260300484b3bb861e846ac01?height=504&width=1000">
+<meta property="og:image" content="https://km.woa.com/asset/000100022603008da3930bb8b440e301?height=450&width=1000">
+<meta property="article:published_time" content="2026-03-10T19:19:00.000Z">
+<meta property="article:modified_time" content="2026-03-10T11:44:58.986Z">
+<meta property="article:author" content="荷月归">
+<meta property="article:tag" content="大模型 多模态">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://km.woa.com/asset/00010002260200cd3b7a97cdaa4f5b01?height=800&width=800">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    <title>视觉Token&#34;失声&#34;：揭秘多模态大模型为何&#34;睁眼说瞎话&#34; · 荷月归</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .footer-fixed-btn,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(
+            -45deg,
+            #444 0,
+            #444 80px,
+            #333 80px,
+            #333 160px
+        );
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link id="stylesheet-fancybox" rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="stylesheet-base" rel="preload" href="/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="stylesheet-mobile" rel="preload" href="/css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet';this.media='screen and (max-width: 960px)'">
+    <link id="stylesheet-theme-dark" rel="preload" href="/css/dark.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    <!-- 百度统计  -->
+    <!-- 谷歌统计  -->
+    <!-- Google tag (gtag.js) -->
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+        <body class="post-body">
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        <div class="header-sidebar-menu">
+            <div style="padding-left: 1px;">&#xe775;</div>
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href="/">dmrookie's Studio.</a>
+        </span>
+    </div>
+    <!-- toggle banner -->
+    <div class="banner">
+        <div class="blog-title header-element">
+            <a href="/">dmrookie&#39;s Studio.</a>
+        </div>
+        <div class="post-title header-element">
+            <a href="#" class="post-name">视觉Token"失声"：揭秘多模态大模型为何"睁眼说瞎话"</a>
+        </div>
+    </div>
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- donate button -->
+    <div class="donate-popup donate-popup--hidden">
+    <div class="donate-popup__title">Buy Me A Coffee</div>
+    <div class="donate-popup__content">
+        <div class="donate-popup__content-description">If this post helped you, please consider buying the author a cup of sugar-free coffee ☕️.</div>
+        <img
+            class="donate-popup__content-qrCode"
+            title="Wechat"
+            alt="Wechat"
+            src="/assets/donate-wechat.png"
+        ></img>
+        <img
+            class="donate-popup__content-qrCode"
+            title="Alipay"
+            alt="Alipay"
+            src="/assets/donate-alipay.png"
+        ></img>
+    </div>
+</div>
+
+    <div
+        title="Donate to the author"
+        class="footer-fixed-btn footer-fixed-btn--hidden donate-btn"
+    >
+        <i class="fas fa-donate"></i>
+    </div>
+
+    <!-- back to top button -->
+    <div class="footer-fixed-btn footer-fixed-btn--hidden back-top">
+        <div>&#xe639;</div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="    height:50vh;
+">
+    <!-- 主页  -->
+    <!-- 404页  -->
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+                视觉Token"失声"：揭秘多模态大模型为何"睁眼说瞎话"
+            <!-- 404 -->
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            <!-- 404 -->
+        </p>
+        <!-- 文章页 meta -->
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                    <div class="post-intro-tags" >
+        <a class="post-tag" href="javascript:void(0);" data-tags="大模型 多模态">大模型 多模态</a>
+</div>
+
+                <!-- 文章字数统计 -->
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">5.8k</span>阅读时长: <span class="post-count reading-time">21 min</span></span>
+                    </div>
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2026/03/10</span>
+                    <!-- busuanzi -->
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" alt="loading">
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="1-摘要"><a href="#1-摘要" class="headerlink" title="1. 摘要"></a>1. 摘要</h2><p>多模态大语言模型（Multimodal Large Language Models, MLLM）近年来取得了突破性进展，然而其在精细视觉理解任务上的表现仍存在显著瓶颈。本文系统性地梳理了2024-2025年，arXiv上关于MLLM视觉Token监督不足问题的最新研究。研究表明，当前主流MLLM采用的”仅文本监督”训练范式导致视觉路径处于欠监督状态，进而引发视觉注意力退化、表征学习不充分及视觉遗忘等一系列问题[1][2]。本文将现有解决方案归纳为三大类别：训练时方法（辅助损失函数、强化学习）、推理时方法（动态干预、注意力调制）及架构改进方法（特征重采样、模块化设计），并对20余篇代表性论文进行了详细分析。</p>
+<h2 id="2-研究背景"><a href="#2-研究背景" class="headerlink" title="2. 研究背景"></a>2. 研究背景</h2><h3 id="2-1-多模态大模型的发展现状"><a href="#2-1-多模态大模型的发展现状" class="headerlink" title="2.1 多模态大模型的发展现状"></a>2.1 多模态大模型的发展现状</h3><p>随着大语言模型（LLM）技术的成熟，研究者们致力于将其强大的语言理解与生成能力扩展至多模态领域。以LLaVA、GPT-4V、Gemini为代表的多模态大语言模型通过引入视觉编码器（如CLIP、SigLIP）将图像信息转化为Token序列，再与文本Token拼接后输入语言模型进行联合处理。这种架构设计在视觉问答、图像描述等任务上取得了令人瞩目的成果（架构演化可参考《<a href="https://dmrookie.github.io/2025/10/16/%E4%BB%8EQwenVL%E4%B8%8EInternVL%E7%9A%84%E6%BC%94%E8%BF%9B%E7%9C%8B%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%8C%83%E5%BC%8F%E6%94%B6%E6%95%9B/">从QwenVL与InternVL的演进看多模态大模型的范式收敛</a> 》）。</p>
+<p>然而，深入的实证研究揭示了一个关键问题：尽管MLLM在通用视觉对话场景中表现优异，但在需要精细视觉感知的任务（如物体计数、空间关系推理、OCR文字识别、图表理解等）上仍存在明显不足[1][5]。这一现象的根源在于当前主流训练范式对视觉路径的监督不足。</p>
+<h3 id="2-2-“仅文本监督”范式的局限性"><a href="#2-2-“仅文本监督”范式的局限性" class="headerlink" title="2.2 “仅文本监督”范式的局限性"></a>2.2 “仅文本监督”范式的局限性</h3><p>当前绝大多数MLLM采用”仅文本监督”（Text-only Supervision）的训练策略。在这种范式下，模型的训练目标仅为预测下一个文本Token，视觉信息的学习完全依赖于文本生成任务的间接反馈。具体而言，给定图像-文本对，模型的损失函数通常定义为：</p>
+<p>$$\mathcal{L} &#x3D; -\sum_{t&#x3D;1}^{T} \log P(y_t | y_{&lt;t}, I)$$</p>
+<p>其中$I$为输入图像，$y_t$为第$t$个文本Token。这种设计导致视觉编码器和投影层仅能获得来自语言模型的稀疏梯度信号，难以学习到丰富的视觉表征[3][5]。</p>
+<h2 id="3-问题分析"><a href="#3-问题分析" class="headerlink" title="3. 问题分析"></a>3. 问题分析</h2><p>针对MLLM视觉感知能力不足的问题，研究者们从多个维度进行了深入剖析。本节将这些问题归纳为四个核心类别，并阐述其产生机制与具体表现。</p>
+<h3 id="3-1-视觉Token监督不足"><a href="#3-1-视觉Token监督不足" class="headerlink" title="3.1 视觉Token监督不足"></a>3.1 视觉Token监督不足</h3><p>视觉Token监督不足是导致MLLM视觉能力受限的根本原因。在标准的仅文本监督训练范式中，视觉编码器生成的Token序列需要经过投影层转换后才能进入语言模型，而训练损失仅作用于输出端的文本预测。这意味着视觉路径的优化完全依赖于从语言模型反向传播的梯度，其监督强度和信息密度远低于直接监督[1][5]。</p>
+<p>研究表明，这种间接监督机制导致模型倾向于丢弃与当前文本生成任务不直接相关的视觉细节。例如，当回答”图中有几只猫？”时，模型可能只关注猫的存在性而忽略其精确数量；当描述一张复杂场景图像时，模型往往只捕获最显著的视觉元素而遗漏背景细节[1]。</p>
+<h3 id="3-2-视觉注意力不足与退化"><a href="#3-2-视觉注意力不足与退化" class="headerlink" title="3.2 视觉注意力不足与退化"></a>3.2 视觉注意力不足与退化</h3><p>视觉忽视（Visual Neglect）现象是指MLLM在推理过程中过度依赖语言先验（Language Priors）而忽略输入图像信息的倾向。研究发现，模型在面对视觉信息与语言先验产生冲突的场景时，往往选择”相信”其语言知识而非”看到”的内容[2][8]。</p>
+<p>更值得关注的是视觉注意力退化（Attention Degradation）问题。实验证据表明，随着生成序列长度的增加，模型对视觉Token的注意力权重呈现显著下降趋势。这种现象在长文本生成任务中尤为突出，是导致物体幻觉（Object Hallucination）的核心原因之一[8][19]。</p>
+<h3 id="3-3-视觉表征学习不充分"><a href="#3-3-视觉表征学习不充分" class="headerlink" title="3.3 视觉表征学习不充分"></a>3.3 视觉表征学习不充分</h3><p>视觉编码器（如CLIP）与语言解码器之间存在显著的模态鸿沟（Modality Gap）。尽管投影层（如线性映射或MLP）的引入旨在桥接这一差距，但简单的投影操作难以充分捕捉高维视觉空间中的复杂语义结构[4][15]。</p>
+<p>现有研究指出，经过投影后的视觉Token往往只能表达全局语义信息，而缺乏对局部物体、细粒度属性及空间关系的精确表征能力。这导致模型在处理需要精细视觉理解的任务时表现欠佳[15]。</p>
+<h3 id="3-4-视觉遗忘"><a href="#3-4-视觉遗忘" class="headerlink" title="3.4 视觉遗忘"></a>3.4 视觉遗忘</h3><p>视觉遗忘（Visual Forgetting）是指在指令微调（Instruction Tuning）阶段，预训练视觉编码器中积累的丰富特征表达能力被逐渐削弱甚至破坏的现象[3][14]。</p>
+<p>这一问题的产生源于微调阶段的梯度更新对视觉表征空间的过度改造。为了更好地对齐下游任务分布，模型倾向于”遗忘”预训练阶段学习到的通用视觉知识，导致其在分布外（Out-of-Distribution, OOD）场景下的泛化能力显著下降[3]。</p>
+<h2 id="4-解决方案分类"><a href="#4-解决方案分类" class="headerlink" title="4. 解决方案分类"></a>4. 解决方案分类</h2><p>针对上述问题，研究者们提出了多种技术方案。本节首先以表格形式呈现解决方案的分类概览，随后分别详细介绍各类方法的核心思想与代表性工作。</p>
+<h3 id="4-1-方案分类概览"><a href="#4-1-方案分类概览" class="headerlink" title="4.1 方案分类概览"></a>4.1 方案分类概览</h3><table>
+<thead>
+<tr>
+<th align="left">类别</th>
+<th align="left">核心思想</th>
+<th align="left">技术手段</th>
+<th align="left">代表性研究</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">训练时方法</td>
+<td align="left">在训练阶段引入额外监督信号强化视觉路径</td>
+<td align="left">辅助损失函数、对比学习、互信息最大化、强化学习</td>
+<td align="left">VIRAL[1]、JARVIS[4]、VisualLoss[5]、VISTA[13]、SAYO[7]</td>
+</tr>
+<tr>
+<td align="left">推理时方法</td>
+<td align="left">在推理阶段动态调整模型行为以增强视觉感知</td>
+<td align="left">注意力干预、动态解码</td>
+<td align="left">V-ITI[2]、IKOD[8]</td>
+</tr>
+<tr>
+<td align="left">架构改进方法</td>
+<td align="left">重新设计模型架构以优化视觉信息流</td>
+<td align="left">特征重采样、双工注意力、感知Token、梯度解耦</td>
+<td align="left">Vision Remember[6]、MODA[10]、Visual Perception Token[11]、MDGD[3]</td>
+</tr>
+</tbody></table>
+<h3 id="4-2-训练时方法"><a href="#4-2-训练时方法" class="headerlink" title="4.2 训练时方法"></a>4.2 训练时方法</h3><p>训练时方法的核心理念是在标准文本损失之外引入辅助监督信号，直接或间接地强化视觉路径的学习。这类方法的优势在于能够从根本上改善模型的视觉表征能力，但通常需要额外的计算开销和训练数据。</p>
+<p>辅助损失函数设计是该类方法的主流技术路线。研究者们提出了多种损失函数形式，包括视觉表征对齐损失（将MLLM内部视觉表征与外部视觉基础模型对齐）[1]、重建损失（要求模型能够从视觉Token重建原始图像信息）[4]、以及互信息最大化损失（增强文本Token与视觉隐藏状态之间的信息关联）[13]。</p>
+<p>强化学习框架的引入为视觉监督提供了新的技术路径。通过设计基于视觉定位准确性的奖励函数，可以显式地将视觉注意力纳入优化目标，引导模型在复杂推理过程中保持对视觉信息的关注[7]。</p>
+<h3 id="4-3-推理时方法"><a href="#4-3-推理时方法" class="headerlink" title="4.3 推理时方法"></a>4.3 推理时方法</h3><p>推理时方法的特点是无需修改模型权重，而是通过在推理阶段动态调整模型的内部状态或解码策略来增强视觉感知。这类方法的优势在于即插即用、部署灵活，但其效果受限于预训练模型的固有能力。</p>
+<p>视觉忽视检测与干预是该类方法的典型代表。通过设计专门的检测器识别模型何时出现视觉忽视行为，并在检测到异常时通过预存的视觉信息调制激活状态，可以有效缓解视觉忽视问题[2]。</p>
+<p>协同解码策略则从解码层面入手。通过将原始输出逻辑值与来自高视觉注意力短序列的逻辑值进行融合，可以在长序列生成过程中维持模型对视觉Token的关注度[8]。</p>
+<h3 id="4-4-架构改进方法"><a href="#4-4-架构改进方法" class="headerlink" title="4.4 架构改进方法"></a>4.4 架构改进方法</h3><p>架构改进方法从模型设计层面重新思考视觉信息的处理流程，旨在构建更适合多模态感知的网络结构。这类方法的改进通常较为根本，但也面临与现有训练范式兼容性的挑战。</p>
+<p>特征重采样技术允许视觉Token在模型推理过程中多次重新获取原始编码器的高分辨率特征，有效缓解了Token压缩带来的信息损失问题[6]。模块化双工注意力机制则通过解耦模态对齐与Token混合过程，防止细粒度视觉信息被语言权重淹没[10]。</p>
+<p>视觉感知Token的引入使模型具备了自主感知能力，能够像生成文本一样自主触发对特定图像区域的进一步编码，实现了从被动感知到主动感知的转变[11]。</p>
+<h2 id="5-代表性论文详解"><a href="#5-代表性论文详解" class="headerlink" title="5. 代表性论文详解"></a>5. 代表性论文详解</h2><h3 id="5-1-训练增强与损失函数优化"><a href="#5-1-训练增强与损失函数优化" class="headerlink" title="5.1 训练增强与损失函数优化"></a>5.1 训练增强与损失函数优化</h3><h4 id="5-1-1-VIRAL：视觉表征对齐"><a href="#5-1-1-VIRAL：视觉表征对齐" class="headerlink" title="5.1.1 VIRAL：视觉表征对齐"></a>5.1.1 VIRAL：视觉表征对齐</h4><p><img src="https://km.woa.com/asset/00010002260200cd3b7a97cdaa4f5b01?height=800&width=800" alt="image.png"></p>
+<p>VIRAL（Visual Representation Alignment）是针对视觉路径监督不足问题提出的解决方案[1]。</p>
+<p><strong>问题诊断</strong>：研究者发现，仅文本监督导致MLLM的视觉路径丢弃了大量精细视觉细节，尤其是与当前文本生成任务不直接相关的属性信息（如纹理、颜色细节等）。</p>
+<p><strong>技术方案</strong>：VIRAL提出将MLLM内部的视觉表征与DINOv2等视觉基础模型（Vision Foundation Model, VFM）的输出进行对齐。通过引入对齐损失，强制MLLM的视觉路径保留VFM所捕获的细粒度属性信息。</p>
+<p><strong>创新点</strong>：该方法充分利用了预训练VFM的优质视觉表征作为监督信号，无需额外标注数据即可显著提升MLLM的精细视觉感知能力。</p>
+<h4 id="5-1-2-JARVIS：JEPA启发的视觉增强"><a href="#5-1-2-JARVIS：JEPA启发的视觉增强" class="headerlink" title="5.1.2 JARVIS：JEPA启发的视觉增强"></a>5.1.2 JARVIS：JEPA启发的视觉增强</h4><p><img src="https://km.woa.com/asset/0001000226020029d92d557c124d4301?height=800&width=800" alt="image.png"></p>
+<p>JARVIS借鉴了I-JEPA（Image Joint-Embedding Predictive Architecture）的学习范式，为MLLM引入自监督视觉学习机制[4]。</p>
+<p><strong>问题诊断</strong>：模型过度依赖语言先验进行视觉推理，忽视了图像本身的结构和语义规律。</p>
+<p><strong>技术方案</strong>：引入掩码预测损失，要求模型基于部分可见的图像区域预测被遮挡区域的表征。这种预训练任务迫使模型学习图像的内在结构规律，而非简单依赖语言模式。</p>
+<p><strong>创新点</strong>：将JEPA范式成功迁移至MLLM训练框架，实现了视觉自监督学习与多模态对齐的有效结合。</p>
+<h4 id="5-1-3-VisualLoss-PerceptLLM：独立视觉表征学习"><a href="#5-1-3-VisualLoss-PerceptLLM：独立视觉表征学习" class="headerlink" title="5.1.3 VisualLoss&#x2F;PerceptLLM：独立视觉表征学习"></a>5.1.3 VisualLoss&#x2F;PerceptLLM：独立视觉表征学习</h4><p><img src="https://km.woa.com/asset/000100022602004e734d28f476456301?height=742&width=812" alt="image.png"></p>
+<p>VisualLoss（又称PerceptLLM）针对MLLM默认使用语言相关性而非视觉输入进行推理的问题提出了创新解决方案[5]。</p>
+<p><strong>问题诊断</strong>：标准训练下，MLLM的视觉表征与语言表征高度耦合，导致模型难以建立独立的视觉理解能力。</p>
+<p><strong>技术方案</strong>：引入辅助VisualLoss，确保语言模型主干能够构建，独立于文本的丰富图像表征。此外，提出BlankTokens技术，在训练时随机将部分文本Token替换为空白，强制模型更多依赖视觉输入。</p>
+<p><strong>创新点</strong>：首次明确提出视觉-语言表征解耦的训练目标，并设计了简洁有效的实现方案。</p>
+<h4 id="5-1-4-VISTA：跨模态互信息最大化"><a href="#5-1-4-VISTA：跨模态互信息最大化" class="headerlink" title="5.1.4 VISTA：跨模态互信息最大化"></a>5.1.4 VISTA：跨模态互信息最大化</h4><p><img src="https://km.woa.com/asset/00010002260200cdc6b7e368e54c7001?height=400&width=802" alt="image.png"></p>
+<p>VISTA（Vision-Text Alignment）通过最大化跨模态互信息来强化视觉-文本对齐[13]。</p>
+<p><strong>问题诊断</strong>：标准交叉熵损失仅关注文本预测准确性，未能显式建模视觉信息与文本生成之间的关联。</p>
+<p><strong>技术方案</strong>：在不增加额外模块的前提下，通过最大化文本Token与视觉隐藏状态之间的互信息来强化对齐。具体而言，引入对比学习目标，拉近语义相关的视觉-文本表征对，推远不相关的对。</p>
+<p><strong>创新点</strong>：提出了一种轻量级的视觉监督增强方案，计算开销小且易于与现有训练流程集成。</p>
+<h4 id="5-1-5-SAYO：强化学习驱动的视觉注意力优化"><a href="#5-1-5-SAYO：强化学习驱动的视觉注意力优化" class="headerlink" title="5.1.5 SAYO：强化学习驱动的视觉注意力优化"></a>5.1.5 SAYO：强化学习驱动的视觉注意力优化</h4><p><img src="https://km.woa.com/asset/0001000226030099bee2fe4d0d4fc201?height=576&width=1554" alt="image.png"></p>
+<p>SAYO将强化学习框架应用到了MLLM视觉注意力的优化过程中[7]。</p>
+<p><strong>问题诊断</strong>：在复杂推理任务中，模型的视觉焦点往往微弱且不稳定，难以持续关注与问题相关的图像区域。</p>
+<p><strong>技术方案</strong>：采用强化学习框架，引入基于区域级视觉注意力的奖励机制。当模型在推理过程中正确关注任务相关的图像区域时给予正向奖励，否则给予惩罚。通过策略梯度方法优化模型的注意力分配策略。</p>
+<p><strong>创新点</strong>：首次将视觉注意力纳入强化学习的奖励设计，实现了优化信号与视觉定位步骤的显式对齐。</p>
+<h3 id="5-2-推理时干预与动态调整"><a href="#5-2-推理时干预与动态调整" class="headerlink" title="5.2 推理时干预与动态调整"></a>5.2 推理时干预与动态调整</h3><h4 id="5-2-1-V-ITI：视觉推理时干预"><a href="#5-2-1-V-ITI：视觉推理时干预" class="headerlink" title="5.2.1 V-ITI：视觉推理时干预"></a>5.2.1 V-ITI：视觉推理时干预</h4><p><img src="https://km.woa.com/asset/0001000226030095fcae3531d3414801?height=338&width=802" alt="image.png"></p>
+<p>V-ITI（Visual Inference-Time Intervention）提出了一种轻量级的推理时干预策略[2]。</p>
+<p><strong>问题诊断</strong>：模型在生成过程中频繁出现视觉忽视现象，未能优先处理输入图像信息，导致输出与图像内容不符。</p>
+<p><strong>技术方案</strong>：开发视觉忽视检测器，通过监控模型内部状态识别何时出现视觉忽视模式。仅在检测到异常时，通过预存的视觉信息调制模型激活状态，引导其重新关注视觉输入。</p>
+<p><strong>创新点</strong>：提出”按需干预”的策略，避免了持续干预可能带来的副作用，在效果与效率之间取得良好平衡。</p>
+<h4 id="5-2-2-IKOD：图像注意力引导解码"><a href="#5-2-2-IKOD：图像注意力引导解码" class="headerlink" title="5.2.2 IKOD：图像注意力引导解码"></a>5.2.2 IKOD：图像注意力引导解码</h4><p><img src="https://km.woa.com/asset/00010002260300e9c6853a8bd84d9e01?height=506&width=808" alt="image.png"></p>
+<p>IKOD（Image Attention-guided Decoding）针对长序列生成中的视觉注意力退化问题提出了协同解码策略[8]。</p>
+<p><strong>问题诊断</strong>：随着生成序列变长，模型对视觉Token的注意力权重急剧下降，导致后续生成内容与图像的关联性减弱。</p>
+<p><strong>技术方案</strong>：在解码阶段，同时运行原始长序列生成和受限短序列生成。将两者的输出逻辑值进行融合，其中短序列由于长度限制通常保持较高的视觉注意力，其信息可以”传染”给长序列输出。</p>
+<p><strong>创新点</strong>：无需任何训练或模型修改，仅通过改变解码策略即可有效抑制视觉幻觉。</p>
+<h3 id="5-3-架构改进与特征保持"><a href="#5-3-架构改进与特征保持" class="headerlink" title="5.3 架构改进与特征保持"></a>5.3 架构改进与特征保持</h3><h4 id="5-3-1-MDGD：模态解耦梯度下降"><a href="#5-3-1-MDGD：模态解耦梯度下降" class="headerlink" title="5.3.1 MDGD：模态解耦梯度下降"></a>5.3.1 MDGD：模态解耦梯度下降</h4><p>MDGD（Modality-Decoupled Gradient Descent）针对指令微调过程中的视觉知识遗忘问题提出了梯度层面的解决方案[3]。</p>
+<p><strong>问题诊断</strong>：微调阶段的梯度更新对视觉表征空间造成过度改造，导致预训练阶段学习到的视觉知识被覆盖。</p>
+<p><strong>技术方案</strong>：将任务损失的梯度分解为两个正交分量：一个沿着”视觉漂移方向”（会损害视觉表示），另一个与该方向垂直（不影响视觉表示）。通过移除梯度中损害视觉表示的分量，只保留与视觉漂移正交的部分进行参数更新，确保了模型在学习新任务时不会”侵入”视觉知识的参数空间。</p>
+<p><strong>创新点</strong>：提出了有效秩概念，从优化动力学角度理解并解决视觉遗忘问题，提出了通用的梯度调节框架。</p>
+<h4 id="5-3-2-Vision-Remember：视觉特征重采样"><a href="#5-3-2-Vision-Remember：视觉特征重采样" class="headerlink" title="5.3.2 Vision Remember：视觉特征重采样"></a>5.3.2 Vision Remember：视觉特征重采样</h4><p><img src="https://km.woa.com/asset/0001000226030047fea5af3ca5466f01?height=254&width=868" alt="image.png"></p>
+<p>Vision Remember提出在解码器层间插入特征重采样模块，允许视觉Token动态重新获取编码器特征[6]。</p>
+<p><strong>问题诊断</strong>：现有架构中，视觉信息仅在输入端一次性注入，经过多层处理后信息逐渐衰减，导致OCR和图表理解等任务中的细粒度信息丢失。</p>
+<p><strong>技术方案</strong>：在解码器特定层（如中间层）插入特征重采样模块。该模块允许视觉Token重新从视觉编码器获取高分辨率特征，实现视觉信息的”刷新”。</p>
+<p><strong>创新点</strong>：打破了视觉信息单向流动的限制，实现了编码器-解码器之间的双向信息交互。</p>
+<h4 id="5-3-3-MODA：模块化双工注意力"><a href="#5-3-3-MODA：模块化双工注意力" class="headerlink" title="5.3.3 MODA：模块化双工注意力"></a>5.3.3 MODA：模块化双工注意力</h4><p><img src="https://km.woa.com/asset/00010002260300484b3bb861e846ac01?height=504&width=1000" alt="image.png"></p>
+<p>MODA（Modular Duplex Attention）重新设计了多模态注意力机制[10]。</p>
+<p><strong>问题诊断</strong>：标准的跨模态注意力机制中，模态对齐与Token混合同时进行，导致细粒度视觉信息容易被语言权重淹没。</p>
+<p><strong>技术方案</strong>：提出模块化双工注意力，将模态对齐和Token混合解耦为两个独立的子过程。首先在各模态内部进行自注意力处理，然后通过专门的对齐模块进行跨模态信息交换。</p>
+<p><strong>创新点</strong>：通过解耦设计，确保视觉信息在跨模态融合过程中不被稀释，保留更多细粒度细节。</p>
+<h4 id="5-3-4-Visual-Perception-Token：主动视觉感知"><a href="#5-3-4-Visual-Perception-Token：主动视觉感知" class="headerlink" title="5.3.4 Visual Perception Token：主动视觉感知"></a>5.3.4 Visual Perception Token：主动视觉感知</h4><p><img src="https://km.woa.com/asset/000100022603008da3930bb8b440e301?height=450&width=1000" alt="image.png"></p>
+<p>Visual Perception Token引入了一种全新的主动感知机制[11]。</p>
+<p><strong>问题诊断</strong>：传统MLLM的视觉输入是静态的，模型只能被动接受预处理后的视觉Token，缺乏根据任务需求主动获取更多视觉信息的能力。</p>
+<p><strong>技术方案</strong>：引入特殊的感知Token（Perception Token），包括区域选择Token和重编码Token。当模型在推理过程中生成这些特殊Token时，系统会自动对指定图像区域进行进一步的高分辨率编码并注入序列。</p>
+<p><strong>创新点</strong>：使模型具备了类似人类”注视”的主动感知能力，实现了从被动感知到主动感知的范式转变。</p>
+<h3 id="5-4-其他重要研究"><a href="#5-4-其他重要研究" class="headerlink" title="5.4 其他重要研究"></a>5.4 其他重要研究</h3><table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">arXiv ID</th>
+<th align="left">核心贡献</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">MR-MLLM[12]</td>
+<td align="left">2406.15768</td>
+<td align="left">通过共享查询融合机制实现感知与理解的相互强化</td>
+</tr>
+<tr>
+<td align="left">LynX[14]</td>
+<td align="left">2410.10491</td>
+<td align="left">使用双混合专家（MoE）架构，学习视觉定位的同时防止理解能力退化</td>
+</tr>
+<tr>
+<td align="left">Slot-MLLM[15]</td>
+<td align="left">2505.17726</td>
+<td align="left">采用对象中心化Token化，通过扩散解码器重建图像确保Token捕获局部细节</td>
+</tr>
+<tr>
+<td align="left">UniTok[16]</td>
+<td align="left">2502.20321</td>
+<td align="left">统一分词器，证明重建损失与理解任务可共存增强</td>
+</tr>
+<tr>
+<td align="left">Visual Jigsaw[17]</td>
+<td align="left">2509.25190</td>
+<td align="left">拼图式后训练任务，通过结构化排序增强空间推理</td>
+</tr>
+<tr>
+<td align="left">Latent Visual Reasoning[18]</td>
+<td align="left">2509.24251</td>
+<td align="left">在潜在空间进行自回归推理，重建关键视觉Token</td>
+</tr>
+<tr>
+<td align="left">Devils in Middle Layers[19]</td>
+<td align="left">CVPR 2025</td>
+<td align="left">揭示中间层是视觉信息处理关键，提出VAR分数检测注意力偏移</td>
+</tr>
+<tr>
+<td align="left">Hallucination Survey[20]</td>
+<td align="left">2404.18930</td>
+<td align="left">详尽分类视觉注意力失效导致的各类幻觉及缓解方案</td>
+</tr>
+</tbody></table>
+<h2 id="6-研究趋势与展望"><a href="#6-研究趋势与展望" class="headerlink" title="6. 研究趋势与展望"></a>6. 研究趋势与展望</h2><h3 id="6-1-当前研究趋势"><a href="#6-1-当前研究趋势" class="headerlink" title="6.1 当前研究趋势"></a>6.1 当前研究趋势</h3><p>通过对上述研究的系统梳理，可以识别出以下几个重要的研究趋势：</p>
+<p><strong>趋势一：从间接监督走向直接监督</strong>。早期工作主要通过改进训练策略间接增强视觉路径，而近期研究（如VIRAL、VisualLoss）开始探索对视觉表征的直接监督方式，取得了更为显著的效果。</p>
+<p><strong>趋势二：从静态架构走向动态架构</strong>。Vision Remember、Visual Perception Token等工作表明，允许视觉信息在推理过程中动态流动的架构设计能够有效缓解信息衰减问题。</p>
+<p><strong>趋势三：训练时与推理时方法的融合</strong>。单一类型的方法各有局限，而融合多种技术的混合方案正展现出更强的竞争力。</p>
+<h3 id="6-2-未来展望"><a href="#6-2-未来展望" class="headerlink" title="6.2 未来展望"></a>6.2 未来展望</h3><p>展望未来，以下几个方向值得重点关注：</p>
+<p><strong>视觉-语言联合预训练</strong>：当前大多数研究聚焦于微调阶段，而从预训练阶段即引入视觉直接监督的方案仍有待探索。</p>
+<p><strong>效率与效果的平衡</strong>：许多增强方法带来了额外的计算开销，如何在保持性能的同时实现高效部署是重要的工程挑战。</p>
+<p><strong>评估体系的完善</strong>：现有评估基准对视觉感知能力的细粒度测试仍不够全面，构建更具针对性的评估体系将有助于推动该领域的发展。</p>
+<h2 id="7-参考文献"><a href="#7-参考文献" class="headerlink" title="7. 参考文献"></a>7. 参考文献</h2><p>[1] arXiv, 2025-10-10. Visual Representation Alignment for Multimodal Large Language Models. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2509.07979">https://arxiv.org/abs/2509.07979</a></p>
+<p>[2] arXiv, 2025-12-03. V-ITI: Mitigating Hallucinations in Multimodal Large Language Models. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2512.03542">https://arxiv.org/abs/2512.03542</a></p>
+<p>[3] arXiv, 2025-01-23. Mitigating Visual Knowledge Forgetting in MLLM Instruction-tuning via Modality-decoupled Gradient Descent. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2502.11740">https://arxiv.org/abs/2502.11740</a></p>
+<p>[4] arXiv, 2025-12-17. Self-Supervised Visual Learning for Multimodal Large Language Models (JARVIS). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2512.15885">https://arxiv.org/abs/2512.15885</a></p>
+<p>[5] arXiv, 2025-07-02. Perceiving Beyond Language Priors: Enhancing Visual Comprehension and Attention in Multimodal Models (VisualLoss&#x2F;PerceptLLM). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2505.05626">https://arxiv.org/abs/2505.05626</a></p>
+<p>[6] arXiv, 2025-06-04. Vision Remember: Recovering Visual Information in Efficient LVLM with Vision Feature Resampling. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2506.03928">https://arxiv.org/abs/2506.03928</a></p>
+<p>[7] arXiv, 2026-02-09. Do MLLMs Really See It: Reinforcing Visual Attention in Multimodal LLMs (SAYO). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2602.08241">https://arxiv.org/abs/2602.08241</a></p>
+<p>[8] arXiv, 2025-08-05. IKOD: Mitigating Visual Attention Degradation in Large Vision-Language Models. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2508.03469">https://arxiv.org/abs/2508.03469</a></p>
+<p>[9] arXiv, 2024-05-09. Boosting Multimodal Large Language Models with Visual Tokens Withdrawal for Rapid Inference (VTW). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2405.05803">https://arxiv.org/abs/2405.05803</a></p>
+<p>[10] arXiv, 2025-07-07. MODA: MOdular Duplex Attention for Multimodal Perception. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2507.04635">https://arxiv.org/abs/2507.04635</a></p>
+<p>[11] arXiv, 2025-02-24. Introducing Visual Perception Token into Multimodal Large Language Model. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2502.17425">https://arxiv.org/abs/2502.17425</a></p>
+<p>[12] arXiv, 2024-06-22. MR-MLLM: Mutual Reinforcement of Multimodal Comprehension and Vision Perception. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2406.15768">https://arxiv.org/abs/2406.15768</a></p>
+<p>[13] arXiv, 2025-05-19. VISTA: Enhancing Vision-Text Alignment in MLLMs via Cross-Modal Mutual Information Maximization. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2505.10917">https://arxiv.org/abs/2505.10917</a></p>
+<p>[14] arXiv, 2024-10-14. Learning to Ground VLMs without Forgetting (LynX). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2410.10491">https://arxiv.org/abs/2410.10491</a></p>
+<p>[15] arXiv, 2025-05-26. Slot-MLLM: Object-Centric Visual Tokenization for Multimodal LLM. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2505.17726">https://arxiv.org/abs/2505.17726</a></p>
+<p>[16] arXiv, 2025-02-27. UniTok: A Unified Tokenizer for Visual Generation and Understanding. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2502.20321">https://arxiv.org/abs/2502.20321</a></p>
+<p>[17] arXiv, 2025-09-29. Visual Jigsaw Post-Training Improves MLLMs. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2509.25190">https://arxiv.org/abs/2509.25190</a></p>
+<p>[18] arXiv, 2025-09-24. Latent Visual Reasoning. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2509.24251">https://arxiv.org/abs/2509.24251</a></p>
+<p>[19] CVPR, 2025. Devils in Middle Layers of Large Vision-Language Models: Interpreting, Detecting and Mitigating Object Hallucinations via Attention Lens. <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2025/html/Jiang_Devils_in_Middle_Layers_of_Large_Vision-Language_Models_Interpreting_Detecting_CVPR_2025_paper.html">https://openaccess.thecvf.com/content/CVPR2025/html/Jiang_Devils_in_Middle_Layers_of_Large_Vision-Language_Models_Interpreting_Detecting_CVPR_2025_paper.html</a></p>
+<p>[20] arXiv, 2024-04-29. Hallucination of Multimodal Large Language Models: A Survey. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2404.18930">https://arxiv.org/abs/2404.18930</a></p>
+
+    </article>
+    <!-- license -->
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+        </li>
+        <li class="previous">
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2025/10/16/%E4%BB%8EQwenVL%E4%B8%8EInternVL%E7%9A%84%E6%BC%94%E8%BF%9B%E7%9C%8B%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%8C%83%E5%BC%8F%E6%94%B6%E6%95%9B/" title="从QwenVL与InternVL的演进看多模态大模型的范式收敛">
+                    <div class="prevTitle">从QwenVL与InternVL的演进看多模态大模型的范式收敛</div>
+                </a>
+        </li>
+    </ul>
+    <!-- comment -->
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+            
+            
+            
+            <!-- utteranc评论 -->
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+            
+            
+            
+        </div>
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    <!-- Mathjax -->
+</main>
+
+                <!-- profile -->
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+        <div class="social">
+                            <a href="mailto:sifaxie@tencent.com" class="iconfont-archer email" title="email" ></a>
+                <a href="//github.com/DMRookie" class="iconfont-archer github" target="_blank" title="github"></a>
+                <span class="iconfont-archer wechat" title="wechat">
+                    <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+                <a href="//www.zhihu.com/people/xie-si-fa" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+
+        </div>
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    <!-- 不蒜子  -->
+        <div class="busuanzi-container">
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+        </div>
+</footer>
+
+        </div>
+        <!-- toc -->
+            <div class="toc-wrapper toc-wrapper-loding" style=    top:50vh;
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%91%98%E8%A6%81"><span class="toc-number">1.</span> <span class="toc-text">1. 摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">2. 研究背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%91%E5%B1%95%E7%8E%B0%E7%8A%B6"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 多模态大模型的发展现状</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E2%80%9C%E4%BB%85%E6%96%87%E6%9C%AC%E7%9B%91%E7%9D%A3%E2%80%9D%E8%8C%83%E5%BC%8F%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 “仅文本监督”范式的局限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">3. 问题分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E8%A7%86%E8%A7%89Token%E7%9B%91%E7%9D%A3%E4%B8%8D%E8%B6%B3"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 视觉Token监督不足</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%A7%86%E8%A7%89%E6%B3%A8%E6%84%8F%E5%8A%9B%E4%B8%8D%E8%B6%B3%E4%B8%8E%E9%80%80%E5%8C%96"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 视觉注意力不足与退化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%A7%86%E8%A7%89%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0%E4%B8%8D%E5%85%85%E5%88%86"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 视觉表征学习不充分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E8%A7%86%E8%A7%89%E9%81%97%E5%BF%98"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 视觉遗忘</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%88%86%E7%B1%BB"><span class="toc-number">4.</span> <span class="toc-text">4. 解决方案分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%96%B9%E6%A1%88%E5%88%86%E7%B1%BB%E6%A6%82%E8%A7%88"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 方案分类概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E8%AE%AD%E7%BB%83%E6%97%B6%E6%96%B9%E6%B3%95"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 训练时方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%8E%A8%E7%90%86%E6%97%B6%E6%96%B9%E6%B3%95"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 推理时方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E6%9E%B6%E6%9E%84%E6%94%B9%E8%BF%9B%E6%96%B9%E6%B3%95"><span class="toc-number">4.4.</span> <span class="toc-text">4.4 架构改进方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%BB%A3%E8%A1%A8%E6%80%A7%E8%AE%BA%E6%96%87%E8%AF%A6%E8%A7%A3"><span class="toc-number">5.</span> <span class="toc-text">5. 代表性论文详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E8%AE%AD%E7%BB%83%E5%A2%9E%E5%BC%BA%E4%B8%8E%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%BC%98%E5%8C%96"><span class="toc-number">5.1.</span> <span class="toc-text">5.1 训练增强与损失函数优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-1-VIRAL%EF%BC%9A%E8%A7%86%E8%A7%89%E8%A1%A8%E5%BE%81%E5%AF%B9%E9%BD%90"><span class="toc-number">5.1.1.</span> <span class="toc-text">5.1.1 VIRAL：视觉表征对齐</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-2-JARVIS%EF%BC%9AJEPA%E5%90%AF%E5%8F%91%E7%9A%84%E8%A7%86%E8%A7%89%E5%A2%9E%E5%BC%BA"><span class="toc-number">5.1.2.</span> <span class="toc-text">5.1.2 JARVIS：JEPA启发的视觉增强</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-3-VisualLoss-PerceptLLM%EF%BC%9A%E7%8B%AC%E7%AB%8B%E8%A7%86%E8%A7%89%E8%A1%A8%E5%BE%81%E5%AD%A6%E4%B9%A0"><span class="toc-number">5.1.3.</span> <span class="toc-text">5.1.3 VisualLoss&#x2F;PerceptLLM：独立视觉表征学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-4-VISTA%EF%BC%9A%E8%B7%A8%E6%A8%A1%E6%80%81%E4%BA%92%E4%BF%A1%E6%81%AF%E6%9C%80%E5%A4%A7%E5%8C%96"><span class="toc-number">5.1.4.</span> <span class="toc-text">5.1.4 VISTA：跨模态互信息最大化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-5-SAYO%EF%BC%9A%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E9%A9%B1%E5%8A%A8%E7%9A%84%E8%A7%86%E8%A7%89%E6%B3%A8%E6%84%8F%E5%8A%9B%E4%BC%98%E5%8C%96"><span class="toc-number">5.1.5.</span> <span class="toc-text">5.1.5 SAYO：强化学习驱动的视觉注意力优化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%8E%A8%E7%90%86%E6%97%B6%E5%B9%B2%E9%A2%84%E4%B8%8E%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4"><span class="toc-number">5.2.</span> <span class="toc-text">5.2 推理时干预与动态调整</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-1-V-ITI%EF%BC%9A%E8%A7%86%E8%A7%89%E6%8E%A8%E7%90%86%E6%97%B6%E5%B9%B2%E9%A2%84"><span class="toc-number">5.2.1.</span> <span class="toc-text">5.2.1 V-ITI：视觉推理时干预</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-2-IKOD%EF%BC%9A%E5%9B%BE%E5%83%8F%E6%B3%A8%E6%84%8F%E5%8A%9B%E5%BC%95%E5%AF%BC%E8%A7%A3%E7%A0%81"><span class="toc-number">5.2.2.</span> <span class="toc-text">5.2.2 IKOD：图像注意力引导解码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E6%9E%B6%E6%9E%84%E6%94%B9%E8%BF%9B%E4%B8%8E%E7%89%B9%E5%BE%81%E4%BF%9D%E6%8C%81"><span class="toc-number">5.3.</span> <span class="toc-text">5.3 架构改进与特征保持</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-1-MDGD%EF%BC%9A%E6%A8%A1%E6%80%81%E8%A7%A3%E8%80%A6%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="toc-number">5.3.1.</span> <span class="toc-text">5.3.1 MDGD：模态解耦梯度下降</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-2-Vision-Remember%EF%BC%9A%E8%A7%86%E8%A7%89%E7%89%B9%E5%BE%81%E9%87%8D%E9%87%87%E6%A0%B7"><span class="toc-number">5.3.2.</span> <span class="toc-text">5.3.2 Vision Remember：视觉特征重采样</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-3-MODA%EF%BC%9A%E6%A8%A1%E5%9D%97%E5%8C%96%E5%8F%8C%E5%B7%A5%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="toc-number">5.3.3.</span> <span class="toc-text">5.3.3 MODA：模块化双工注意力</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-4-Visual-Perception-Token%EF%BC%9A%E4%B8%BB%E5%8A%A8%E8%A7%86%E8%A7%89%E6%84%9F%E7%9F%A5"><span class="toc-number">5.3.4.</span> <span class="toc-text">5.3.4 Visual Perception Token：主动视觉感知</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%85%B6%E4%BB%96%E9%87%8D%E8%A6%81%E7%A0%94%E7%A9%B6"><span class="toc-number">5.4.</span> <span class="toc-text">5.4 其他重要研究</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%A0%94%E7%A9%B6%E8%B6%8B%E5%8A%BF%E4%B8%8E%E5%B1%95%E6%9C%9B"><span class="toc-number">6.</span> <span class="toc-text">6. 研究趋势与展望</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%BD%93%E5%89%8D%E7%A0%94%E7%A9%B6%E8%B6%8B%E5%8A%BF"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 当前研究趋势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 未来展望</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">7.</span> <span class="toc-text">7. 参考文献</span></a></li></ol>
+            </div>
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+        
+        
+        
+        
+        
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 5
+        </div>
+        <!-- search  -->
+    </div>
+    <div class="post-archive">
+            <div class="archive-year"> 2026 </div>
+            <ul class="year-list">
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/10</span>
+            <a class="archive-post-title" href="/2026/03/10/%E8%A7%86%E8%A7%89Token%22%E5%A4%B1%E5%A3%B0%22%EF%BC%9A%E6%8F%AD%E7%A7%98%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BD%95%22%E7%9D%81%E7%9C%BC%E8%AF%B4%E7%9E%8E%E8%AF%9D%22/">视觉Token"失声"：揭秘多模态大模型为何"睁眼说瞎话"</a>
+        </li>
+                </ul>
+            <div class="archive-year"> 2025 </div>
+            <ul class="year-list">
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2025/10/16/%E4%BB%8EQwenVL%E4%B8%8EInternVL%E7%9A%84%E6%BC%94%E8%BF%9B%E7%9C%8B%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%8C%83%E5%BC%8F%E6%94%B6%E6%95%9B/">从QwenVL与InternVL的演进看多模态大模型的范式收敛</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/26</span>
+            <a class="archive-post-title" href="/2025/03/26/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%AE%9E%E8%B7%B5/">大模型工程化实践</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/24</span>
+            <a class="archive-post-title" href="/2025/03/24/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/">大模型的应用实践</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span>
+            <a class="archive-post-title" href="/2025/03/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86/">大模型的概念原理</a>
+        </li>
+            </ul>
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+            <span class="sidebar-tag-name" data-tags="大模型 多模态">
+                <span class="iconfont-archer">&#xe606;</span>
+                大模型 多模态
+            </span>
+            <span class="sidebar-tag-name" data-tags="大模型">
+                <span class="iconfont-archer">&#xe606;</span>
+                大模型
+            </span>
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+        <span class="sidebar-category-name" data-categories="视觉大模型">
+            <span class="iconfont-archer">&#xe60a;</span>
+            视觉大模型
+        </span>
+        <span class="sidebar-category-name" data-categories="语言大模型">
+            <span class="iconfont-archer">&#xe60a;</span>
+            语言大模型
+        </span>
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://dmrookie.github.io",
+        root: siteMetaRoot,
+        author: "荷月归"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+        <!-- main func -->
+        <script src="/scripts/main.js"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js" onload="window.Fancybox.bind('[data-fancybox]')" defer></script>
+        <!-- algolia -->
+        <!-- busuanzi -->
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        <!-- async load share.js -->
+            <script src="/scripts/share.js" async></script>
+        <!-- mermaid -->
+    </body>
+</html>
