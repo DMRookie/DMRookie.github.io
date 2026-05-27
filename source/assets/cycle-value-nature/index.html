@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- ===== HEAD ===== -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周期、估值与人性 · A股20年交互时间轴</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- ===== HTML ===== -->
+<!-- FILE:index.html -->
+<div class="bg-grid"></div>
+
+<!-- 顶栏 -->
+<header class="max-w-7xl mx-auto px-5 md:px-8 pt-6 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#d4af37,#8a6a14);box-shadow:0 0 18px rgba(212,175,55,.4)">
+      <i class="fa-solid fa-chart-line text-slate-900"></i>
+    </div>
+    <div>
+      <div class="font-mono text-xs tracking-[0.25em]" style="color:var(--gold-soft)">CYCLE · VALUATION · HUMANITY</div>
+      <div class="text-xs" style="color:var(--text-2)">凌鹏 · 中信出版集团 · 2023</div>
+    </div>
+  </div>
+  <div class="hidden md:flex items-center gap-5 font-mono text-xs" style="color:var(--text-1)">
+    <a href="#theory" class="hover:text-white">理论框架</a>
+    <a href="#timeline" class="hover:text-white">时间轴</a>
+    <a href="#invariants" class="hover:text-white">三大定律</a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="max-w-7xl mx-auto px-5 md:px-8 pt-14 md:pt-24 pb-16 md:pb-24 reveal">
+  <div class="tag-pill mb-6"><i class="fa-solid fa-book"></i> A股市场 20 年深度复盘</div>
+  <h1 class="hero-title text-5xl md:text-7xl leading-[1.05]">周期 · 估值 · 人性</h1>
+  <p class="font-serif-cn text-lg md:text-2xl mt-4 mb-8" style="color:var(--text-1)">穿越 <span class="font-mono" style="color:var(--gold-soft)">2005 — 2022</span> 的牛熊轮回，凝练投研体系的三个不变定律</p>
+  <p class="max-w-2xl text-base leading-relaxed" style="color:var(--text-1)">本页交互梳理书中提及的 14 个关键事件、五阶段周期模型、估值方法论与人性钟摆。点击时间轴节点即可展开多维分析。</p>
+
+  <!-- 指标条 -->
+  <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="glass p-5">
+      <div class="font-mono text-[10px] tracking-[.25em]" style="color:var(--cyan)">EVENTS</div>
+      <div class="font-mono text-3xl mt-1" data-count="14" style="color:var(--gold)">0</div>
+      <div class="text-xs mt-1" style="color:var(--text-2)">关键历史事件</div>
+    </div>
+    <div class="glass p-5">
+      <div class="font-mono text-[10px] tracking-[.25em]" style="color:var(--cyan)">SPAN · YEARS</div>
+      <div class="font-mono text-3xl mt-1" data-count="18" style="color:var(--gold)">0</div>
+      <div class="text-xs mt-1" style="color:var(--text-2)">2005 → 2022 跨度</div>
+    </div>
+    <div class="glass p-5">
+      <div class="font-mono text-[10px] tracking-[.25em]" style="color:var(--cyan)">PHASES</div>
+      <div class="font-mono text-3xl mt-1" data-count="5" style="color:var(--gold)">0</div>
+      <div class="text-xs mt-1" style="color:var(--text-2)">周期五阶段</div>
+    </div>
+    <div class="glass p-5">
+      <div class="font-mono text-[10px] tracking-[.25em]" style="color:var(--cyan)">INVARIANTS</div>
+      <div class="font-mono text-3xl mt-1" data-count="3" style="color:var(--gold)">0</div>
+      <div class="text-xs mt-1" style="color:var(--text-2)">三大不变定律</div>
+    </div>
+  </div>
+</section>
+
+<!-- 核心理论 -->
+<section id="theory" class="max-w-7xl mx-auto px-5 md:px-8 py-14 reveal">
+  <div class="mb-2"><span class="sec-label"><span class="sec-bar"></span>CORE THEORY · 01</span></div>
+  <h2 class="sec-title mb-10">周期五阶段 — 资产兴衰的内在节律</h2>
+
+  <div id="stages-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4"></div>
+
+  <!-- 估值 + 钟摆 -->
+  <div class="grid md:grid-cols-2 gap-6 mt-12">
+    <div class="glass glass-gold glow-gold p-7">
+      <div class="font-mono text-[10px] tracking-[.25em] mb-2" style="color:var(--gold)">02 · VALUATION</div>
+      <h3 class="font-serif-cn text-2xl text-white mb-4">估值方法论</h3>
+      <div class="mb-4">
+        <div class="text-xs mb-1" style="color:var(--text-2)">核心理念</div>
+        <div class="font-serif-cn text-lg" style="color:var(--gold-soft)" id="val-core"></div>
+      </div>
+      <div class="mb-4">
+        <div class="text-xs mb-1" style="color:var(--text-2)">安全边际</div>
+        <div class="text-sm leading-relaxed" id="val-safety" style="color:var(--text-0)"></div>
+      </div>
+      <div>
+        <div class="text-xs mb-1" style="color:var(--text-2)">PE 警示</div>
+        <div class="text-sm leading-relaxed" id="val-warn" style="color:var(--text-0)"></div>
+      </div>
+    </div>
+
+    <div class="glass p-7" style="border-color:rgba(167,139,250,.3)">
+      <div class="font-mono text-[10px] tracking-[.25em] mb-2" style="color:#a78bfa">03 · HUMAN BEHAVIOR</div>
+      <h3 class="font-serif-cn text-2xl text-white mb-3">人性钟摆效应</h3>
+      <div class="pendulum-wrap">
+        <svg class="pendulum" width="240" height="240" viewBox="0 0 240 240">
+          <line x1="120" y1="0" x2="120" y2="170" stroke="#d4af37" stroke-width="1.5" opacity=".7"/>
+          <circle cx="120" cy="180" r="32" fill="url(#pg)" stroke="#d4af37" stroke-width="1.5"/>
+          <text x="120" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#0a1428" font-weight="700">情绪</text>
+          <defs>
+            <radialGradient id="pg" cx="35%" cy="35%">
+              <stop offset="0%" stop-color="#f4d97a"/><stop offset="100%" stop-color="#a07a1c"/>
+            </radialGradient>
+          </defs>
+        </svg>
+        <div class="pendulum-label left"><i class="fa-solid fa-arrow-left mr-1"></i>极度恐惧</div>
+        <div class="pendulum-label right">极度贪婪<i class="fa-solid fa-arrow-right ml-1"></i></div>
+        <div class="pendulum-label mid">理性平衡 · 极少停留</div>
+      </div>
+      <p class="text-sm leading-relaxed mt-3" id="hb-pend" style="color:var(--text-0)"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 时间轴 -->
+<section id="timeline" class="max-w-7xl mx-auto px-5 md:px-8 py-14 reveal">
+  <div class="mb-2"><span class="sec-label"><span class="sec-bar"></span>INTERACTIVE TIMELINE · 04</span></div>
+  <div class="flex items-end justify-between flex-wrap gap-3 mb-8">
+    <h2 class="sec-title">A股 14 个关键时刻</h2>
+    <div class="text-xs font-mono" style="color:var(--text-2)"><i class="fa-solid fa-hand-pointer mr-1"></i> 点击节点查看多维分析 · 横向滚动浏览</div>
+  </div>
+
+  <!-- 筛选 -->
+  <div class="glass p-5 mb-6">
+    <div class="flex items-center gap-3 flex-wrap mb-3">
+      <span class="font-mono text-[10px] tracking-[.25em] mr-2" style="color:var(--cyan)">EVENT TYPE</span>
+      <div id="type-chips" class="flex gap-2 flex-wrap"></div>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class="font-mono text-[10px] tracking-[.25em] mr-2" style="color:var(--cyan)">TAGS</span>
+      <div id="tag-chips" class="flex gap-2 flex-wrap"></div>
+    </div>
+  </div>
+
+  <!-- 时间轴主体 -->
+  <div class="glass p-5 md:p-6">
+    <div class="timeline-scroll">
+      <div id="period-bands" class="period-bands"></div>
+      <div class="timeline">
+        <div class="timeline-track"></div>
+        <div id="timeline-nodes" class="timeline-nodes"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 详情面板 -->
+  <div id="detail-panel" class="glass p-6 md:p-8 mt-6 detail-panel">
+    <div class="flex items-start justify-between flex-wrap gap-3 mb-6">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <span id="d-year" class="font-mono text-4xl md:text-5xl" style="color:var(--gold)">2005</span>
+          <span id="d-type" class="tag-pill"></span>
+        </div>
+        <h3 id="d-title" class="font-serif-cn text-2xl md:text-3xl text-white"></h3>
+        <div id="d-period" class="font-mono text-xs mt-2" style="color:var(--text-2)"></div>
+      </div>
+      <div id="d-tags" class="flex gap-2 flex-wrap"></div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-cell" style="color:var(--cyan)">
+        <div class="label"><i class="fa-solid fa-newspaper"></i>经济事件</div>
+        <div id="d-econ" class="content"></div>
+      </div>
+      <div class="detail-cell" style="color:var(--green)">
+        <div class="label"><i class="fa-solid fa-arrows-rotate"></i>市场周期阶段</div>
+        <div id="d-cycle" class="content"></div>
+      </div>
+      <div class="detail-cell" style="color:var(--purple)">
+        <div class="label"><i class="fa-solid fa-scale-balanced"></i>估值变化</div>
+        <div id="d-val" class="content"></div>
+      </div>
+      <div class="detail-cell" style="color:var(--amber)">
+        <div class="label"><i class="fa-solid fa-brain"></i>人性行为</div>
+        <div id="d-hb" class="content"></div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="quote-mark">"</div>
+      <div class="label">KEY INSIGHT · 作者洞察</div>
+      <div id="d-insight" class="content"></div>
+    </div>
+
+    <div class="flex items-center justify-between mt-6 pt-5 border-t" style="border-color:var(--line)">
+      <button id="prev-btn" class="chip"><i class="fa-solid fa-chevron-left"></i> 上一事件</button>
+      <span id="d-counter" class="font-mono text-xs" style="color:var(--text-2)">01 / 14</span>
+      <button id="next-btn" class="chip">下一事件 <i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- 三大不变 -->
+<section id="invariants" class="max-w-7xl mx-auto px-5 md:px-8 py-14 reveal">
+  <div class="mb-2 text-center"><span class="sec-label">THREE INVARIANTS · 05</span></div>
+  <h2 class="sec-title text-center mb-3">三大不变定律</h2>
+  <p class="text-center mb-10" style="color:var(--text-1)">穿越所有周期、所有牛熊、所有故事的底层真理</p>
+  <div id="invariants-grid" class="grid md:grid-cols-3 gap-5"></div>
+</section>
+
+<!-- 案例 + 当前观点 -->
+<section class="max-w-7xl mx-auto px-5 md:px-8 py-14 reveal">
+  <div class="grid md:grid-cols-2 gap-5">
+    <div class="glass case-card">
+      <div class="ttl"><i class="fa-solid fa-book-open mr-1"></i> CLASSIC CASE · 经典案例</div>
+      <div id="case-name" class="name"></div>
+      <div id="case-desc" class="text-sm leading-relaxed mb-3" style="color:var(--text-0)"></div>
+      <div class="text-xs mb-1" style="color:var(--text-2)">教训</div>
+      <div id="case-lesson" class="text-sm" style="color:var(--gold-soft)"></div>
+    </div>
+    <div class="glass case-card" style="border-left-color:var(--cyan)">
+      <div class="ttl" style="color:var(--cyan)"><i class="fa-solid fa-bullseye mr-1"></i> CURRENT VIEW · 当前观点</div>
+      <div id="cv-target" class="name"></div>
+      <div class="text-xs mb-1" style="color:var(--text-2)">理由</div>
+      <div id="cv-reason" class="text-sm leading-relaxed mb-3" style="color:var(--text-0)"></div>
+      <div class="text-xs mb-1" style="color:var(--text-2)">策略</div>
+      <div id="cv-strategy" class="text-sm" style="color:var(--gold-soft)"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="max-w-7xl mx-auto px-5 md:px-8 py-10 mt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+  <div>© 《周期、估值与人性》交互式时间轴 · 基于凌鹏著作整理</div>
+  <div class="font-mono">CYCLE · VALUATION · HUMANITY</div>
+</footer>
+<!-- /FILE:index.html -->
+
+<style>
+/* ===== STYLE ===== */
+/* FILE:style.css */
+:root{
+  --bg-0:#070d1c; --bg-1:#0a1428; --bg-2:#13294b;
+  --line:#1e3a5f; --line-2:#2c4a78;
+  --gold:#d4af37; --gold-soft:#e6c763;
+  --cyan:#4fd1c5; --green:#10b981; --red:#ef4444; --amber:#f59e0b; --purple:#a78bfa; --blue:#3b82f6;
+  --text-0:#e8eefc; --text-1:#a9b6d1; --text-2:#6b7894;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg-0);color:var(--text-0);font-family:'Inter','Noto Serif SC',-apple-system,system-ui,'PingFang SC','Microsoft YaHei',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.font-mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.font-serif-cn{font-family:'Noto Serif SC',serif}
+
+/* 背景层 */
+.bg-grid{
+  position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,.18), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(212,175,55,.08), transparent 60%),
+    linear-gradient(180deg,#070d1c 0%, #0a1428 40%, #070d1c 100%);
+}
+.bg-grid::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(79,209,197,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,209,197,.05) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, #000 30%, transparent 80%);
+}
+.bg-grid::after{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle, rgba(255,255,255,.4) 1px, transparent 1px);
+  background-size:3px 3px;opacity:.02;
+}
+
+/* 玻璃卡片 */
+.glass{
+  background:linear-gradient(180deg, rgba(19,41,75,.55), rgba(10,20,40,.55));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(79,209,197,.15);
+  border-radius:14px;
+}
+.glass-gold{border-color:rgba(212,175,55,.3)}
+.glow-gold{box-shadow:0 0 30px rgba(212,175,55,.18), inset 0 1px 0 rgba(255,255,255,.06)}
+.glow-cyan{box-shadow:0 0 30px rgba(79,209,197,.18), inset 0 1px 0 rgba(255,255,255,.06)}
+
+/* Hero */
+.hero-title{
+  font-family:'Noto Serif SC',serif;font-weight:900;
+  background:linear-gradient(180deg,#fff 0%,#d4af37 60%,#a07a1c 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:.08em;
+}
+.tag-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:11px;border:1px solid rgba(212,175,55,.4);color:var(--gold-soft);background:rgba(212,175,55,.06);font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+
+/* Section 标题 */
+.sec-label{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:12px;letter-spacing:.3em}
+.sec-title{font-family:'Noto Serif SC',serif;font-weight:700;font-size:clamp(24px,3.5vw,40px);color:#fff;letter-spacing:.04em}
+.sec-bar{display:inline-block;width:40px;height:2px;background:var(--gold);vertical-align:middle;margin-right:12px}
+
+/* 五阶段 */
+.stage-card{position:relative;overflow:hidden;transition:transform .4s, border-color .4s}
+.stage-card:hover{transform:translateY(-4px);border-color:rgba(212,175,55,.5)}
+.stage-num{font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:700;color:rgba(212,175,55,.18);position:absolute;top:6px;right:12px}
+.stage-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(212,175,55,.04));border:1px solid rgba(212,175,55,.3);color:var(--gold)}
+
+/* 钟摆 */
+.pendulum-wrap{position:relative;height:260px;display:flex;justify-content:center;align-items:flex-start}
+.pendulum{transform-origin:50% 0;animation:swing 4.5s ease-in-out infinite}
+@keyframes swing{0%,100%{transform:rotate(-32deg)}50%{transform:rotate(32deg)}}
+.pendulum-label{position:absolute;bottom:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em}
+.pendulum-label.left{left:6%;color:var(--red)}
+.pendulum-label.right{right:6%;color:var(--green)}
+.pendulum-label.mid{bottom:0;left:50%;transform:translateX(-50%);color:var(--text-2)}
+
+/* 筛选 chips */
+.chip{padding:6px 14px;border-radius:999px;font-size:12px;border:1px solid var(--line-2);background:rgba(19,41,75,.4);color:var(--text-1);cursor:pointer;transition:all .25s;font-family:'JetBrains Mono',monospace;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--cyan);color:#fff}
+.chip.active{background:rgba(79,209,197,.12);border-color:var(--cyan);color:#fff;box-shadow:0 0 12px rgba(79,209,197,.25)}
+.chip .dot{width:8px;height:8px;border-radius:50%}
+
+/* 时间轴 */
+.timeline{position:relative;padding:30px 0 50px}
+.timeline-track{position:absolute;left:0;right:0;top:80px;height:2px;background:linear-gradient(90deg,transparent,var(--line-2) 8%,var(--line-2) 92%,transparent)}
+.timeline-track::before{content:"";position:absolute;top:-3px;left:8%;right:8%;height:8px;background:linear-gradient(90deg,transparent,rgba(79,209,197,.3),transparent);filter:blur(4px)}
+.timeline-scroll{overflow-x:auto;overflow-y:visible;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.timeline-scroll::-webkit-scrollbar{height:6px}
+.timeline-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+.timeline-nodes{display:flex;gap:0;padding:0 30px;min-width:max-content;position:relative}
+.tl-node{flex:0 0 110px;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative;transition:opacity .3s, filter .3s}
+.tl-node.dim{opacity:.25;filter:grayscale(.8)}
+.tl-year{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-2);margin-bottom:8px;letter-spacing:.05em}
+.tl-dot{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:var(--bg-0);position:relative;z-index:2;transition:transform .25s, box-shadow .25s}
+.tl-dot::before{content:"";position:absolute;inset:3px;border-radius:50%;background:currentColor;opacity:.85}
+.tl-node:hover .tl-dot{transform:scale(1.25);box-shadow:0 0 18px currentColor}
+.tl-node.active .tl-dot{transform:scale(1.45);box-shadow:0 0 22px currentColor, 0 0 40px currentColor}
+.tl-node.active .tl-dot::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid currentColor;animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.8);opacity:0}}
+.tl-title{margin-top:14px;font-size:11px;color:var(--text-1);text-align:center;max-width:100px;line-height:1.4;font-family:'Noto Serif SC',serif}
+.tl-node.active .tl-title{color:#fff;font-weight:600}
+.tl-type{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;margin-top:6px;color:currentColor;opacity:.85}
+
+/* 期段标 */
+.period-bands{display:flex;gap:0;padding:0 30px;margin-bottom:14px;min-width:max-content}
+.period-band{flex:0 0 auto;text-align:center;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--gold-soft);border-top:1px solid rgba(212,175,55,.3);border-left:1px solid rgba(212,175,55,.2);border-right:1px solid rgba(212,175,55,.2);border-radius:6px 6px 0 0;background:rgba(212,175,55,.04)}
+
+/* 详情面板 */
+.detail-panel{transition:all .4s ease}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.detail-cell{padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(19,41,75,.55),rgba(10,20,40,.6));border:1px solid var(--line);position:relative;overflow:hidden}
+.detail-cell::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:currentColor;opacity:.6}
+.detail-cell .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:currentColor;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.detail-cell .label i{font-size:12px}
+.detail-cell .content{color:var(--text-0);font-size:14px;line-height:1.7}
+.insight-box{margin-top:18px;padding:20px 22px;border-radius:12px;background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.03));border:1px solid rgba(212,175,55,.35);position:relative}
+.insight-box .quote-mark{position:absolute;top:-8px;left:14px;font-size:48px;color:var(--gold);font-family:'Noto Serif SC',serif;line-height:1;opacity:.6}
+.insight-box .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--gold);margin-bottom:6px;padding-left:30px}
+.insight-box .content{padding-left:30px;color:#fff;font-size:16px;font-family:'Noto Serif SC',serif;line-height:1.6}
+
+/* 三大不变 */
+.invariant-card{padding:28px;text-align:center;position:relative;overflow:hidden;transition:transform .4s}
+.invariant-card:hover{transform:translateY(-6px)}
+.invariant-card .num{position:absolute;top:8px;right:18px;font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:rgba(212,175,55,.12)}
+.invariant-card .ic{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,rgba(212,175,55,.25),rgba(212,175,55,.05));border:1px solid rgba(212,175,55,.4);display:inline-flex;align-items:center;justify-content:center;color:var(--gold);font-size:26px;margin-bottom:16px}
+.invariant-card h4{font-family:'Noto Serif SC',serif;font-size:22px;color:#fff;margin:0 0 12px;letter-spacing:.08em}
+.invariant-card p{color:var(--text-1);font-size:14px;line-height:1.7;margin:0}
+
+/* 现状 / 案例 */
+.case-card{padding:24px;border-left:3px solid var(--gold)}
+.case-card .ttl{font-family:'JetBrains Mono',monospace;color:var(--gold);font-size:11px;letter-spacing:.2em;margin-bottom:8px}
+.case-card .name{font-family:'Noto Serif SC',serif;font-size:20px;color:#fff;margin-bottom:10px}
+
+/* footer */
+footer{border-top:1px solid var(--line);color:var(--text-2);font-size:12px}
+
+/* 移动端 */
+@media (max-width:640px){
+  .tl-node{flex:0 0 90px}
+  .tl-title{font-size:10px;max-width:80px}
+  .invariant-card{padding:20px}
+  .stage-num{font-size:32px}
+  .hero-title{font-size:36px !important}
+}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease, transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+/* /FILE:style.css */
+</style>
+
+<script>
+/* ===== DATA ===== */
+// FILE:data.js
+window.appData = {
+  "book_info": {"title":"周期、估值与人性","author":"凌鹏","publisher":"中信出版集团","publish_date":"2023-11","description":"深度复盘中国A股市场20年演进历程，构建切实可行的投研体系。"},
+  "core_theories": {
+    "cycle_five_stages": [
+      {"stage":"酝酿","icon":"fa-seedling","description":"资产处于底部，基本面开始改善但市场尚未察觉，估值极低。"},
+      {"stage":"崛起","icon":"fa-arrow-trend-up","description":"逻辑得到初步验证，股价脱离底部，主流资金开始介入。"},
+      {"stage":"调整","icon":"fa-wave-square","description":"上涨过程中的阶段性回踩，是「上车」的最后机会。"},
+      {"stage":"泡沫","icon":"fa-fire","description":"资产进入全民狂欢，估值脱离基本面，逻辑被无限放大。"},
+      {"stage":"陨落","icon":"fa-arrow-trend-down","description":"泡沫破裂，估值回落与基本面恶化形成戴维斯双杀。"}
+    ],
+    "valuation_methodology": {
+      "core_concept":"估值是投资的锚",
+      "safety_margin":"真正的安全边际来自于极度的估值压缩和主流机构的长期不认同。",
+      "pe_analysis_warning":"不能仅以行业空间作为唯一依据，需警惕超出成长性支撑范围的高PE（如2021年初的100倍PE）。"
+    },
+    "human_behavior_analysis": {
+      "pendulum_effect":"投资者心理在极度乐观与极度悲观之间摆动，极少停留在平衡点。",
+      "emotional_traits":"牛市顶部表现为对泡沫的狂热追求；熊市底部表现为避险情绪导致的无人问津。"
+    }
+  },
+  "timeline_events": [
+    {"id":"ev_2005","year":2005,"period":"2005年A股重生","title":"股权分置改革与A股重生","event_type":"政策改革","economic_event":"股权分置改革解决了制度顽疾，为市场长牛奠定基础。","market_cycle":"周期起点，市场从极度低迷中复苏。","valuation_change":"估值处于历史底部，极具吸引力。","human_behavior":"市场经历长期熊市后极度悲观，对改革红利反应滞后。","key_insight":"制度红利是市场重生的核心驱动力。","tags":["政策","重生","底部"]},
+    {"id":"ev_2006","year":2006,"period":"2005-2009周期为王","title":"牛市启动与周期股崛起","event_type":"牛市","economic_event":"城镇化与WTO红利持续释放，重工业高速增长。","market_cycle":"进入崛起阶段，重工业与资源股统领市场。","valuation_change":"估值随盈利改善开始回升，逻辑得到初步验证。","human_behavior":"主流资金开始大规模介入，市场信心恢复。","key_insight":"顺应时代红利的行业是周期的主角。","tags":["周期股","城镇化","崛起"]},
+    {"id":"ev_2007","year":2007,"period":"2005-2009周期为王","title":"6124点牛市顶点","event_type":"泡沫","economic_event":"经济过热，通胀压力加大。","market_cycle":"泡沫阶段，投资时钟盛行，周期股达到巅峰。","valuation_change":"周期股估值极高，脱离基本面支撑。","human_behavior":"全民狂欢，人性贪婪达到极致，忽视潜在风险。","key_insight":"当逻辑被无限放大时，往往是泡沫破裂的前兆。","tags":["顶点","泡沫","狂热"]},
+    {"id":"ev_2008","year":2008,"period":"2005-2009周期为王","title":"全球次贷危机爆发","event_type":"危机","economic_event":"美国次贷危机引发全球金融海啸。","market_cycle":"陨落阶段，沪深300在10个月内下跌近70%。","valuation_change":"估值发生剧烈回落，出现戴维斯双杀。","human_behavior":"极度恐惧，避险情绪导致踩踏式抛售。","key_insight":"外部冲击会加速泡沫的破灭过程。","tags":["危机","暴跌","恐惧"]},
+    {"id":"ev_2009","year":2009,"period":"2005-2009周期为王","title":"四万亿救市计划","event_type":"救市","economic_event":"中国政府出台「四万亿」大规模经济刺激政策。","market_cycle":"V型反弹，周期股迎来最后的辉煌。","valuation_change":"政策驱动估值快速修复。","human_behavior":"情绪迅速从悲观转向乐观，博弈政策红利。","key_insight":"强力政策干预可以改变短期周期路径。","tags":["救市","反弹","政策"]},
+    {"id":"ev_2010","year":2010,"period":"2010-2015成长致胜","title":"风格转换与成长股酝酿","event_type":"行业变革","economic_event":"传统周期行业增速放缓，经济结构转型开启。","market_cycle":"周期股进入长期调整，成长股开始在底部酝酿。","valuation_change":"周期股估值压缩，新兴行业估值溢价初现。","human_behavior":"市场对传统逻辑产生怀疑，开始寻找新方向。","key_insight":"主线切换往往发生在旧逻辑失效之时。","tags":["转型","酝酿","风格切换"]},
+    {"id":"ev_2013","year":2013,"period":"2010-2015成长致胜","title":"移动互联网爆发","event_type":"行业变革","economic_event":"移动互联网渗透率快速提升，4G牌照发放。","market_cycle":"成长股爆发，传媒、计算机赛道成为核心主线。","valuation_change":"赛道估值快速扩张，市场愿意为高增长支付溢价。","human_behavior":"投资者追逐新赛道，对传统行业不屑一顾。","key_insight":"技术变革是成长周期的核心驱动力。","tags":["互联网","成长股","赛道"]},
+    {"id":"ev_2015_up","year":2015,"period":"2010-2015成长致胜","title":"杠杆牛市巅峰","event_type":"牛市","economic_event":"场内融资与场外配资规模空前，融资余额达2.27万亿。","market_cycle":"典型的杠杆驱动泡沫阶段。","valuation_change":"估值极度泡沫化，脱离业绩支撑。","human_behavior":"贪婪驱使下的杠杆博弈，市场进入非理性亢奋。","key_insight":"杠杆会放大上涨，也会加速下跌。","tags":["杠杆","泡沫","融资"]},
+    {"id":"ev_2015_down","year":2015,"period":"2010-2015成长致胜","title":"股灾与流动性危机","event_type":"崩盘","economic_event":"监管层清理场外配资，触发流动性枯竭。","market_cycle":"陨落阶段，发生踩踏式下跌。","valuation_change":"估值体系崩塌，流动性溢价消失。","human_behavior":"恐慌性抛售，人性在极端压力下表现出集体非理性。","key_insight":"清理杠杆引发的流动性危机是毁灭性的。","tags":["股灾","踩踏","流动性"]},
+    {"id":"ev_2016","year":2016,"period":"2016-2022茅宁共舞","title":"熔断危机与确定性追求","event_type":"危机","economic_event":"年初实施熔断机制引发市场巨震。","market_cycle":"市场转向追求确定性，龙头至上逻辑开启。","valuation_change":"低估值蓝筹股开始受到青睐。","human_behavior":"风险偏好大幅下降，投资者开始抱团核心资产。","key_insight":"危机后市场往往会回归基本面和确定性。","tags":["熔断","确定性","核心资产"]},
+    {"id":"ev_2019","year":2019,"period":"2016-2022茅宁共舞","title":"茅指数封神","event_type":"牛市","economic_event":"外资持续流入，消费升级逻辑强化。","market_cycle":"以贵州茅台为代表的核心资产进入加速上升期。","valuation_change":"核心资产估值持续扩张，出现「估值永不回落」的幻觉。","human_behavior":"机构抱团达到顶峰，认为好公司可以不计价格。","key_insight":"再好的公司，如果价格太贵也是风险。","tags":["茅指数","抱团","消费"]},
+    {"id":"ev_2020","year":2020,"period":"2016-2022茅宁共舞","title":"宁组合独立行情","event_type":"行业变革","economic_event":"全球碳中和共识，新能源产业爆发。","market_cycle":"新能源赛道脱颖而出，宁组合成为市场新宠。","valuation_change":"赛道估值极致化，渗透率逻辑被推向高潮。","human_behavior":"投资者对新能源行业产生极强的信仰。","key_insight":"赛道投资必须考虑性价比，不能只看空间。","tags":["宁组合","新能源","赛道"]},
+    {"id":"ev_2021","year":2021,"period":"2016-2022茅宁共舞","title":"核心资产估值极致化","event_type":"泡沫","economic_event":"部分核心资产PE达到100倍。","market_cycle":"泡沫阶段，估值远超成长性支撑范围。","valuation_change":"估值达到历史极值，系统变得极其脆弱。","human_behavior":"对「这次不同了」的幻觉达到顶点。","key_insight":"估值终有效，泡沫破灭是必然。","tags":["极致估值","脆弱性","泡沫"]},
+    {"id":"ev_2022","year":2022,"period":"2016-2022茅宁共舞","title":"核心资产陨落","event_type":"崩盘","economic_event":"全球加息周期开启，流动性收紧。","market_cycle":"陨落阶段，核心资产进入估值回归的下跌周期。","valuation_change":"估值大幅回落，神坛陨落。","human_behavior":"信仰崩塌，资金从高位赛道撤出。","key_insight":"没有永远领先的行业，只有不断轮动的周期。","tags":["陨落","回归","周期轮动"]}
+  ],
+  "investment_insights": {
+    "three_invariants": [
+      {"title":"一切皆周期","icon":"fa-arrows-rotate","content":"任何资产的兴衰都遵循周期规律，要警惕「这次不同了」的幻觉。"},
+      {"title":"估值终有效","icon":"fa-scale-balanced","content":"估值是投资的灵魂，决定了胜率与赔率。便宜是硬道理。"},
+      {"title":"人性永不变","icon":"fa-brain","content":"投资的本在于控制人性的贪婪与恐惧，投研技术只是末。"}
+    ],
+    "classic_case": {"name":"四川长虹案例","description":"90年代的「高科技」成长股，曾拥有极高地位，但因技术普及和价格战最终衰落。","lesson":"极高的市占率不能作为高估值的唯一理由，行业周期不可违抗。"},
+    "current_view": {"target":"红利资产（煤炭、电力、银行）","reason":"经历了十年的供给侧改革和估值压缩，正处于新一轮周期的起点。","strategy":"在不好的时候用好价格买入好东西。"}
+  },
+  "event_type_meta": {
+    "政策改革":{"color":"#d4af37","icon":"fa-landmark"},
+    "牛市":    {"color":"#10b981","icon":"fa-bull"},
+    "危机":    {"color":"#f59e0b","icon":"fa-triangle-exclamation"},
+    "泡沫":    {"color":"#a78bfa","icon":"fa-fire"},
+    "崩盘":    {"color":"#ef4444","icon":"fa-bolt"},
+    "行业变革":{"color":"#4fd1c5","icon":"fa-microchip"},
+    "救市":    {"color":"#3b82f6","icon":"fa-hand-holding-dollar"}
+  }
+};
+// /FILE:data.js
+</script>
+
+<script>
+/* ===== SCRIPT ===== */
+// FILE:timeline.js
+const TL = {
+  current: 0,
+  filteredIds: null, // null = 全部
+
+  renderNodes(){
+    const wrap = document.getElementById('timeline-nodes');
+    const meta = appData.event_type_meta;
+    wrap.innerHTML = appData.timeline_events.map((e,i)=>{
+      const m = meta[e.event_type] || {color:'#4fd1c5'};
+      return `<div class="tl-node" data-i="${i}" data-id="${e.id}" data-type="${e.event_type}" data-tags="${e.tags.join('|')}" style="color:${m.color}">
+        <div class="tl-year">${e.year}</div>
+        <div class="tl-dot"></div>
+        <div class="tl-type">${e.event_type.toUpperCase?e.event_type:e.event_type}</div>
+        <div class="tl-title">${e.title}</div>
+      </div>`;
+    }).join('');
+    // period bands
+    const bandsEl = document.getElementById('period-bands');
+    const groups = [];
+    appData.timeline_events.forEach((e,i)=>{
+      const last = groups[groups.length-1];
+      if(last && last.period===e.period){ last.count++; } else { groups.push({period:e.period, count:1}); }
+    });
+    // 每节点 110px（移动 90px），近似估算
+    const w = window.innerWidth < 640 ? 90 : 110;
+    bandsEl.innerHTML = groups.map(g=>`<div class="period-band" style="width:${g.count*w}px">${g.period}</div>`).join('');
+
+    wrap.querySelectorAll('.tl-node').forEach(n=>{
+      n.addEventListener('click', ()=>{
+        const i = +n.dataset.i;
+        TL.select(i, true);
+      });
+    });
+  },
+
+  select(i, scroll){
+    TL.current = i;
+    const e = appData.timeline_events[i];
+    const meta = appData.event_type_meta[e.event_type] || {color:'#4fd1c5',icon:'fa-circle'};
+    document.querySelectorAll('.tl-node').forEach(n=>n.classList.toggle('active', +n.dataset.i===i));
+
+    // 填充详情
+    const $ = id => document.getElementById(id);
+    $('d-year').textContent = e.year;
+    $('d-year').style.color = meta.color;
+    $('d-title').textContent = e.title;
+    $('d-period').textContent = '阶段： ' + e.period;
+    const typeEl = $('d-type');
+    typeEl.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${e.event_type}`;
+    typeEl.style.color = meta.color;
+    typeEl.style.borderColor = meta.color + '66';
+    typeEl.style.background = meta.color + '14';
+    $('d-tags').innerHTML = e.tags.map(t=>`<span class="tag-pill" style="color:${meta.color};border-color:${meta.color}55;background:${meta.color}10">#${t}</span>`).join('');
+    $('d-econ').textContent = e.economic_event;
+    $('d-cycle').textContent = e.market_cycle;
+    $('d-val').textContent = e.valuation_change;
+    $('d-hb').textContent = e.human_behavior;
+    $('d-insight').textContent = e.key_insight;
+    $('d-counter').textContent = String(i+1).padStart(2,'0') + ' / ' + String(appData.timeline_events.length).padStart(2,'0');
+
+    // 滚动到节点
+    if(scroll){
+      const node = document.querySelector(`.tl-node[data-i="${i}"]`);
+      if(node) node.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+    }
+    // 详情卡入场
+    if(window.gsap){ gsap.fromTo('#detail-panel', {opacity:.4, y:8}, {opacity:1, y:0, duration:.5, ease:'power2.out'}); }
+  },
+
+  init(){
+    TL.renderNodes();
+    TL.select(0, false);
+    document.getElementById('prev-btn').addEventListener('click', ()=>{
+      const n = appData.timeline_events.length;
+      TL.select((TL.current - 1 + n) % n, true);
+    });
+    document.getElementById('next-btn').addEventListener('click', ()=>{
+      const n = appData.timeline_events.length;
+      TL.select((TL.current + 1) % n, true);
+    });
+  }
+};
+// /FILE:timeline.js
+
+// FILE:filter.js
+const FILTER = {
+  activeTypes: new Set(),
+  activeTags: new Set(),
+
+  renderChips(){
+    const meta = appData.event_type_meta;
+    const typesEl = document.getElementById('type-chips');
+    typesEl.innerHTML = `<span class="chip active" data-type="__all"><i class="fa-solid fa-asterisk"></i> 全部</span>` +
+      Object.keys(meta).map(k=>`<span class="chip" data-type="${k}"><span class="dot" style="background:${meta[k].color}"></span>${k}</span>`).join('');
+
+    // 收集所有标签
+    const tagSet = new Set();
+    appData.timeline_events.forEach(e=>e.tags.forEach(t=>tagSet.add(t)));
+    const tagsEl = document.getElementById('tag-chips');
+    tagsEl.innerHTML = `<span class="chip active" data-tag="__all"><i class="fa-solid fa-asterisk"></i> 全部</span>` +
+      [...tagSet].map(t=>`<span class="chip" data-tag="${t}">#${t}</span>`).join('');
+
+    typesEl.querySelectorAll('.chip').forEach(c=>{
+      c.addEventListener('click', ()=>{
+        const t = c.dataset.type;
+        if(t==='__all'){
+          FILTER.activeTypes.clear();
+          typesEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active', x.dataset.type==='__all'));
+        } else {
+          typesEl.querySelector('[data-type="__all"]').classList.remove('active');
+          c.classList.toggle('active');
+          if(c.classList.contains('active')) FILTER.activeTypes.add(t); else FILTER.activeTypes.delete(t);
+          if(FILTER.activeTypes.size===0) typesEl.querySelector('[data-type="__all"]').classList.add('active');
+        }
+        FILTER.apply();
+      });
+    });
+    tagsEl.querySelectorAll('.chip').forEach(c=>{
+      c.addEventListener('click', ()=>{
+        const t = c.dataset.tag;
+        if(t==='__all'){
+          FILTER.activeTags.clear();
+          tagsEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active', x.dataset.tag==='__all'));
+        } else {
+          tagsEl.querySelector('[data-tag="__all"]').classList.remove('active');
+          c.classList.toggle('active');
+          if(c.classList.contains('active')) FILTER.activeTags.add(t); else FILTER.activeTags.delete(t);
+          if(FILTER.activeTags.size===0) tagsEl.querySelector('[data-tag="__all"]').classList.add('active');
+        }
+        FILTER.apply();
+      });
+    });
+  },
+
+  apply(){
+    const nodes = document.querySelectorAll('.tl-node');
+    nodes.forEach(n=>{
+      const type = n.dataset.type;
+      const tags = n.dataset.tags.split('|');
+      const typeOK = FILTER.activeTypes.size===0 || FILTER.activeTypes.has(type);
+      const tagOK  = FILTER.activeTags.size===0 || tags.some(t=>FILTER.activeTags.has(t));
+      n.classList.toggle('dim', !(typeOK && tagOK));
+    });
+  },
+
+  init(){ FILTER.renderChips(); }
+};
+// /FILE:filter.js
+
+// FILE:animation.js
+const ANIM = {
+  countUp(el){
+    const target = +el.dataset.count;
+    const dur = 1400; const t0 = performance.now();
+    const tick = (t)=>{
+      const p = Math.min(1,(t-t0)/dur);
+      const v = Math.floor(target * (1 - Math.pow(1-p,3)));
+      el.textContent = v;
+      if(p<1) requestAnimationFrame(tick);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(tick);
+  },
+  reveal(){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          en.target.classList.add('in');
+          // 触发计数
+          en.target.querySelectorAll('[data-count]').forEach(el=>{
+            if(!el.dataset.done){ el.dataset.done='1'; ANIM.countUp(el); }
+          });
+          io.unobserve(en.target);
+        }
+      });
+    },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  },
+  init(){
+    ANIM.reveal();
+    // 兜底：3s 后仍未显示的强制可见（防截图/低性能设备 IO 不触发）
+    setTimeout(()=>{
+      document.querySelectorAll('.reveal:not(.in)').forEach(el=>{
+        el.classList.add('in');
+        el.querySelectorAll('[data-count]').forEach(c=>{ if(!c.dataset.done){c.dataset.done='1';ANIM.countUp(c);} });
+      });
+    }, 2500);
+  }
+};
+// /FILE:animation.js
+
+// FILE:main.js
+function renderStatic(){
+  // 五阶段
+  const sg = document.getElementById('stages-grid');
+  sg.innerHTML = appData.core_theories.cycle_five_stages.map((s,i)=>`
+    <div class="glass stage-card p-5">
+      <div class="stage-num">0${i+1}</div>
+      <div class="stage-icon mb-4"><i class="fa-solid ${s.icon}"></i></div>
+      <div class="font-serif-cn text-xl text-white mb-2">${s.stage}</div>
+      <div class="text-sm leading-relaxed" style="color:var(--text-1)">${s.description}</div>
+    </div>
+  `).join('');
+
+  const v = appData.core_theories.valuation_methodology;
+  document.getElementById('val-core').textContent = v.core_concept;
+  document.getElementById('val-safety').textContent = v.safety_margin;
+  document.getElementById('val-warn').textContent = v.pe_analysis_warning;
+
+  const h = appData.core_theories.human_behavior_analysis;
+  document.getElementById('hb-pend').textContent = h.pendulum_effect + ' ' + h.emotional_traits;
+
+  // 三不变
+  const inv = appData.investment_insights.three_invariants;
+  document.getElementById('invariants-grid').innerHTML = inv.map((it,i)=>`
+    <div class="glass glass-gold glow-gold invariant-card">
+      <div class="num">0${i+1}</div>
+      <div class="ic"><i class="fa-solid ${it.icon}"></i></div>
+      <h4>${it.title}</h4>
+      <p>${it.content}</p>
+    </div>
+  `).join('');
+
+  // 案例 + 现状
+  const c = appData.investment_insights.classic_case;
+  document.getElementById('case-name').textContent = c.name;
+  document.getElementById('case-desc').textContent = c.description;
+  document.getElementById('case-lesson').textContent = c.lesson;
+  const cv = appData.investment_insights.current_view;
+  document.getElementById('cv-target').textContent = cv.target;
+  document.getElementById('cv-reason').textContent = cv.reason;
+  document.getElementById('cv-strategy').textContent = cv.strategy;
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderStatic();
+  TL.init();
+  FILTER.init();
+  ANIM.init();
+});
+// /FILE:main.js
+</script>
+</body>
+</html>
