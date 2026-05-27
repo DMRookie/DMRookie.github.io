@@ -404,7 +404,7 @@ window.appData = {
   },
   "timeline_events": [
     {"id":"ev_2005","year":2005,"period":"2005年A股重生","title":"股权分置改革与A股重生","event_type":"政策改革","economic_event":"股权分置改革解决了制度顽疾，为市场长牛奠定基础。","market_cycle":"周期起点，市场从极度低迷中复苏。","valuation_change":"估值处于历史底部，极具吸引力。","human_behavior":"市场经历长期熊市后极度悲观，对改革红利反应滞后。","key_insight":"制度红利是市场重生的核心驱动力。","tags":["政策","重生","底部"]},
-    {"id":"ev_2006","year":2006,"period":"2005-2009周期为王","title":"牛市启动与周期股崛起","event_type":"牛市","economic_event":"城镇化与WTO红利持续释放，重工业高速增长。","market_cycle":"进入崛起阶段，重工业与资源股统领市场。","valuation_change":"估值随盈利改善开始回升，逻辑得到初步验证。","human_behavior":"主流资金开始大规模介入，市场信心恢复。","key_insight":"顺应时代红利的行业是周期的主角。","tags":["周期股","城镇化","崛起"]},
+    {"id":"ev_2006","year":2006,"period":"2005-2009周期为王","title":"牛市启动与周期股崛起","event_type":"牛市","economic_event":"城镇化与WTO红利持续释放，重工业高速增长。","market_cycle":"进入崛起阶段，重工业与资源股统领市场。","valuation_change":"估值随盈利改善开始回升，逻辑得到初步验证。","human_behavior":"主流资金开始大规模介入，市场信心恢复。","key_insight":["顺应时代红利的行业是周期的主角。","春季躁动：年初特有的天气、假期、政策机制和统计公布时段，使 A 股年初容易躁动。"],"tags":["周期股","城镇化","崛起"]},
     {"id":"ev_2007","year":2007,"period":"2005-2009周期为王","title":"6124点牛市顶点","event_type":"泡沫","economic_event":"经济过热，通胀压力加大。","market_cycle":"泡沫阶段，投资时钟盛行，周期股达到巅峰。","valuation_change":"周期股估值极高，脱离基本面支撑。","human_behavior":"全民狂欢，人性贪婪达到极致，忽视潜在风险。","key_insight":"当逻辑被无限放大时，往往是泡沫破裂的前兆。","tags":["顶点","泡沫","狂热"]},
     {"id":"ev_2008","year":2008,"period":"2005-2009周期为王","title":"全球次贷危机爆发","event_type":"危机","economic_event":"美国次贷危机引发全球金融海啸。","market_cycle":"陨落阶段，沪深300在10个月内下跌近70%。","valuation_change":"估值发生剧烈回落，出现戴维斯双杀。","human_behavior":"极度恐惧，避险情绪导致踩踏式抛售。","key_insight":"外部冲击会加速泡沫的破灭过程。","tags":["危机","暴跌","恐惧"]},
     {"id":"ev_2009","year":2009,"period":"2005-2009周期为王","title":"四万亿救市计划","event_type":"救市","economic_event":"中国政府出台「四万亿」大规模经济刺激政策。","market_cycle":"V型反弹，周期股迎来最后的辉煌。","valuation_change":"政策驱动估值快速修复。","human_behavior":"情绪迅速从悲观转向乐观，博弈政策红利。","key_insight":"强力政策干预可以改变短期周期路径。","tags":["救市","反弹","政策"]},
@@ -500,7 +500,15 @@ const TL = {
     $('d-cycle').textContent = e.market_cycle;
     $('d-val').textContent = e.valuation_change;
     $('d-hb').textContent = e.human_behavior;
-    $('d-insight').textContent = e.key_insight;
+    const insightEl = $('d-insight');
+    const insights = Array.isArray(e.key_insight) ? e.key_insight : [e.key_insight];
+    if(insights.length <= 1){
+      insightEl.textContent = insights[0] || '';
+    } else {
+      insightEl.innerHTML = '<ul style="margin:0;padding-left:1.2em;list-style:disc">'
+        + insights.map(t => `<li style="margin:.25em 0">${t}</li>`).join('')
+        + '</ul>';
+    }
     $('d-counter').textContent = String(i+1).padStart(2,'0') + ' / ' + String(appData.timeline_events.length).padStart(2,'0');
 
     // 滚动到节点
