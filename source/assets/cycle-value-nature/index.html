@@ -178,6 +178,11 @@
       </div>
     </div>
 
+    <div id="d-monthly-box" class="monthly-box" style="display:none">
+      <div class="label"><i class="fa-solid fa-calendar-days"></i>MONTHLY REVIEW · 月度行情</div>
+      <div id="d-monthly" class="content"></div>
+    </div>
+
     <div class="insight-box">
       <div class="quote-mark">"</div>
       <div class="label">KEY INSIGHT · 作者洞察</div>
@@ -347,6 +352,14 @@ html,body{margin:0;padding:0;background:var(--bg-0);color:var(--text-0);font-fam
 .insight-box .quote-mark{position:absolute;top:-8px;left:14px;font-size:48px;color:var(--gold);font-family:'Noto Serif SC',serif;line-height:1;opacity:.6}
 .insight-box .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--gold);margin-bottom:6px;padding-left:30px}
 .insight-box .content{padding-left:30px;color:#fff;font-size:16px;font-family:'Noto Serif SC',serif;line-height:1.6}
+.monthly-box{margin-top:18px;padding:18px 22px;border-radius:12px;background:linear-gradient(135deg,rgba(56,189,248,.10),rgba(56,189,248,.02));border:1px solid rgba(56,189,248,.30);position:relative}
+.monthly-box .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--cyan);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.monthly-box .label i{font-size:12px}
+.monthly-box .content{color:var(--text-0);font-size:14px;line-height:1.7}
+.monthly-box ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 18px}
+.monthly-box li{display:flex;align-items:flex-start;gap:10px}
+.monthly-box .m-period{flex:0 0 auto;min-width:64px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);padding:2px 8px;border-radius:6px;background:rgba(56,189,248,.10);border:1px solid rgba(56,189,248,.25);text-align:center}
+.monthly-box .m-desc{flex:1;color:var(--text-0)}
 
 /* 三大不变 */
 .invariant-card{padding:28px;text-align:center;position:relative;overflow:hidden;transition:transform .4s}
@@ -404,7 +417,7 @@ window.appData = {
   },
   "timeline_events": [
     {"id":"ev_2005","year":2005,"period":"2005年A股重生","title":"股权分置改革与A股重生","event_type":"熊市出清","economic_event":"股权分置改革解决了制度顽疾，为市场长牛奠定基础。","market_cycle":"周期起点，市场从极度低迷中复苏。","valuation_change":"估值处于历史底部，极具吸引力。","human_behavior":"市场经历长期熊市后极度悲观，对改革红利反应滞后。","key_insight":"制度红利是市场重生的核心驱动力。","tags":["政策","重生","底部"]},
-    {"id":"ev_2006","year":2006,"period":"2005-2009周期为王","title":"牛市启动与周期股崛起","event_type":"牛市来临","economic_event":"城镇化与WTO红利持续释放，重工业高速增长。","market_cycle":"进入崛起阶段，重工业与资源股统领市场。","valuation_change":"估值随盈利改善开始回升，逻辑得到初步验证。","human_behavior":"主流资金开始大规模介入，市场信心恢复。","key_insight":["春季躁动：年初特有的天气、假期、政策机制和统计公布时段，使A股年初容易躁动。","不良贷款处理周期是银行股投资核心，10年向上10年向下", "货币总量、利率与股指相关性不强"],"tags":["周期股","城镇化","崛起"]},
+    {"id":"ev_2006","year":2006,"period":"2005-2009周期为王","title":"牛市启动与周期股崛起","event_type":"牛市来临","economic_event":"城镇化与WTO红利持续释放，重工业高速增长。","market_cycle":"进入崛起阶段，重工业与资源股统领市场。","valuation_change":"估值随盈利改善开始回升，逻辑得到初步验证。","human_behavior":"主流资金开始大规模介入，市场信心恢复。","monthly_review":[{"period":"1-2月","desc":"春季躁动，年初流动性与情绪共振。"},{"period":"4-5月","desc":"普涨行情，赚钱效应扩散。"},{"period":"6-9月","desc":"指数阶段性修正，分化加剧。"},{"period":"10-12月","desc":"全面爆发，周期股领涨收官。"}],"key_insight":["春季躁动：年初特有的天气、假期、政策机制和统计公布时段，使A股年初容易躁动。","不良贷款处理周期是银行股投资核心，10年向上10年向下", "货币总量、利率与股指相关性不强"],"tags":["周期股","城镇化","崛起"]},
     {"id":"ev_2007","year":2007,"period":"2005-2009周期为王","title":"6124点牛市顶点","event_type":"蓝筹泡沫","economic_event":"经济过热，通胀压力加大。","market_cycle":"泡沫阶段，投资时钟盛行，周期股达到巅峰。","valuation_change":"周期股估值极高，脱离基本面支撑。","human_behavior":"全民狂欢，人性贪婪达到极致，忽视潜在风险。","key_insight":"当逻辑被无限放大时，往往是泡沫破裂的前兆。","tags":["顶点","泡沫","狂热"]},
     {"id":"ev_2008","year":2008,"period":"2005-2009周期为王","title":"全球次贷危机爆发","event_type":"次贷崩盘","economic_event":"美国次贷危机引发全球金融海啸。","market_cycle":"陨落阶段，沪深300在10个月内下跌近70%。","valuation_change":"估值发生剧烈回落，出现戴维斯双杀。","human_behavior":"极度恐惧，避险情绪导致踩踏式抛售。","key_insight":"外部冲击会加速泡沫的破灭过程。","tags":["危机","暴跌","恐惧"]},
     {"id":"ev_2009","year":2009,"period":"2005-2009周期为王","title":"四万亿救市计划","event_type":"肌肉记忆","economic_event":"中国政府出台「四万亿」大规模经济刺激政策。","market_cycle":"V型反弹，周期股迎来最后的辉煌。","valuation_change":"政策驱动估值快速修复。","human_behavior":"情绪迅速从悲观转向乐观，博弈政策红利。","key_insight":"强力政策干预可以改变短期周期路径。","tags":["救市","反弹","政策"]},
@@ -504,6 +517,18 @@ const TL = {
     $('d-cycle').textContent = e.market_cycle;
     $('d-val').textContent = e.valuation_change;
     $('d-hb').textContent = e.human_behavior;
+    const monthlyBox = $('d-monthly-box');
+    const monthlyEl = $('d-monthly');
+    const monthly = Array.isArray(e.monthly_review) ? e.monthly_review : [];
+    if(monthly.length){
+      monthlyBox.style.display = '';
+      monthlyEl.innerHTML = '<ul>'
+        + monthly.map(m => `<li><span class="m-period">${m.period}</span><span class="m-desc">${m.desc}</span></li>`).join('')
+        + '</ul>';
+    } else {
+      monthlyBox.style.display = 'none';
+      monthlyEl.innerHTML = '';
+    }
     const insightEl = $('d-insight');
     const insights = Array.isArray(e.key_insight) ? e.key_insight : [e.key_insight];
     if(insights.length <= 1){
