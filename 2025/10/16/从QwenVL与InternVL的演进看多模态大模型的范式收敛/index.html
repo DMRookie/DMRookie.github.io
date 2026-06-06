@@ -27,8 +27,20 @@
 <meta property="og:image" content="https://km.woa.com/asset/000100022510000cae64d80e9c457701?height=1886&width=3346">
 <meta property="og:image" content="https://km.woa.com/asset/0001000225100068b0074d29a842a101?height=1880&width=3346">
 <meta property="og:image" content="https://km.woa.com/asset/00010002251000e96dea67e01847b701?height=1880&width=3344">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600973580a132174c2101?height=660&width=2792">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606007ccebe34140f4fc301?height=304&width=1448">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600662462bbf78d473001?height=468&width=1554">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606001ee37038b90e440301?height=938&width=1404">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600af13a5869d194f5c01?height=602&width=1340">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226060032ff3b3f4c83438001?height=708&width=1224">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600d27a23d76e81466c01?height=918&width=1832">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606000b49aed31ba043c701?height=832&width=1840">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606003ef3e3be703e4a8901?height=1310&width=2642">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600a062c15bf5b64b0e01?height=636&width=1468">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600756e97a30196475401?height=978&width=1472">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600aaa8ee9aa9d14cd501?height=422&width=962">
 <meta property="article:published_time" content="2025-10-16T09:23:53.000Z">
-<meta property="article:modified_time" content="2026-06-06T13:32:23.287Z">
+<meta property="article:modified_time" content="2026-06-06T13:45:06.654Z">
 <meta property="article:author" content="荷月归">
 <meta property="article:tag" content="大模型">
 <meta property="article:tag" content="多模态">
@@ -325,7 +337,7 @@
 
                 <!-- 文章字数统计 -->
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">4.4k</span>阅读时长: <span class="post-count reading-time">15 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">8.1k</span>阅读时长: <span class="post-count reading-time">28 min</span></span>
                     </div>
                 <div class="post-intro-meta">
                     <!-- 撰写日期 -->
@@ -550,6 +562,70 @@
 </ol>
 <p>训练阶段分为四步，第一步打开整个模型做预训练，没有提到将损失计算仅限于文本token。第二步是有监督微调，相比InternVL3，增加了“思考”模式下的多模态推理数据和新技能数据，包括基于GUI的交互、具身交互以及可伸缩矢量图形（SVG）的理解和生成。第三步是级联的强化学习，首先使用离线RL算法对模型进行微调，作为高效的热身阶段以达到满意的结果，这可以保证为后续阶段提供高质量的回放。随后，采用在线RL算法来进一步根据模型自身生成的回放细化输出分布。最后一步是视觉一致性训练，冻住主体模型，只微调视觉分辨率路由器。</p>
 <p><img src="https://km.woa.com/asset/00010002251000e96dea67e01847b701?height=1880&width=3344" alt="image.png"></p>
+<h2 id="三、其他模型"><a href="#三、其他模型" class="headerlink" title="三、其他模型"></a>三、其他模型</h2><h3 id="3-1-Flamingo"><a href="#3-1-Flamingo" class="headerlink" title="3.1 Flamingo"></a>3.1 Flamingo</h3><p>Flamingo 是 DeepMind 于 2022 年提出的多模态模型研究工作，旨在探索如何将预训练视觉模型与预训练文本模型进行有效融合，是这领域早期的工作。</p>
+<p>视觉编码层采用冻结的NFNet-F6NF，它是一种无归一化层的ResNet变体，参数量约400M。适配层由两个核心组件构成。首先是Perceiver Resampler，它将视觉编码器输出的变长特征图重采样为固定数量的64个视觉Token，通过可学习的潜在查询向量（latent queries）与视觉特征进行交叉注意力交互实现压缩。其次是Gated Cross-Attention（门控跨注意力）模块，在LLM的每一层Transformer块中插入额外的跨注意力层，并通过Tanh门控机制将跨注意力输出与原始自注意力输出进行加权融合。语言层采用冻结的Chinchilla 70B作为语言模型基座。创新点如下：</p>
+<ol>
+<li><strong>Perceiver Resampler压缩机制</strong>：通过固定数量的64个潜在查询Token将任意分辨率和数量的视觉特征统一压缩为固定长度的表示序列，解决了视觉特征变长与Transformer定长输入之间的矛盾 。</li>
+<li><strong>Tanh门控机制</strong>：引入可学习的Tanh门控参数（初始化为0）控制跨注意力输出的融合权重，确保训练初期视觉模块的输出不会破坏LLM已有的文本生成能力，随着训练推进门控值逐渐增大，实现平滑的模态融合。</li>
+<li><strong>交错图文输入支持</strong>：原生支持任意顺序的交错图文输入，无需将图像统一放置在文本前后，极大提升了少样本学习场景下的灵活性。<br><img src="https://km.woa.com/asset/00010002260600973580a132174c2101?height=660&width=2792" alt="image.png"></li>
+</ol>
+<h3 id="3-2-BLIP-2"><a href="#3-2-BLIP-2" class="headerlink" title="3.2 BLIP-2"></a>3.2 BLIP-2</h3><p>BLIP-2也是较早前的多模态融合工作，采用冻结的ViT-L&#x2F;14或ViT-g&#x2F;14作为视觉编码器。使用一个创新性的Q-Former结构作为适配层，最后采用冻结的OPT或FlanT5作为语言模型基座。创新性如下：</p>
+<ol>
+<li><strong>Q-Former信息瓶颈设计</strong>：通过32个可学习查询Token构建了一个显式的信息瓶颈，将视觉编码器的高维特征压缩为紧凑的语义表示。这种设计迫使查询Token提取与文本最相关的视觉信息，天然实现了视觉冗余过滤 。</li>
+<li><strong>三合一训练目标</strong>：Q-Former同时采用图像-文本对比学习（ITC）、图像-文本匹配（ITM）和图像-文本生成（ITG）三种损失函数，从不同粒度优化视觉-语言对齐，使查询Token同时具备语义匹配和生成能力 。</li>
+<li><strong>两阶段渐进式训练</strong>：第一阶段进行视觉-语言表示学习；第二阶段进行视觉到语言的生成式学习（将Q-Former输出接入冻结的LLM），实现了从理解到生成的平滑过渡 。整个训练过程，仅188M可训练参数，训练成本低于同期其他多模态模型。</li>
+</ol>
+<p><img src="https://km.woa.com/asset/000100022606007ccebe34140f4fc301?height=304&width=1448" alt="image.png"></p>
+<p><img src="https://km.woa.com/asset/00010002260600662462bbf78d473001?height=468&width=1554" alt="image.png"></p>
+<h3 id="3-3-MiniGPT-4"><a href="#3-3-MiniGPT-4" class="headerlink" title="3.3 MiniGPT-4"></a>3.3 MiniGPT-4</h3><p>MiniGPT-4 尝试将预训练的视觉编码器与先进的LLM对齐，从而实现类似GPT-4的多模态生成能力。视觉编码层用ViT-G&#x2F;14来提取特征，同时复用了BLIP-2的Qformer，来进一步压缩成语义紧凑的查询Token表示。适配层仅使用一个单一线性投影层。语言层用的Vicuna-7B&#x2F;13B。创新点如下：</p>
+<ol>
+<li><strong>极简适配层设计</strong>：MiniGPT-4以单一线性层作为视觉-语言桥梁，证明了在强大的预训练视觉编码器和语言模型基础上，仅需极轻量的对齐训练即可实现高质量的多模态对话 。</li>
+<li><strong>高质量数据精调策略</strong>：第二阶段使用仅3500条精心筛选的高质量多模态对话数据进行微调，远少于同期其他模型的数据量，证明了数据质量比数据量更为关键 。</li>
+<li><strong>Q-Former复用策略</strong>：直接复用BLIP-2预训练的Q-Former作为视觉特征处理器，避免了从头训练视觉-语言桥梁的巨大成本，体现了模块化架构的组件复用优势 。</li>
+</ol>
+<p><strong>训练流程</strong>：MiniGPT-4的训练分为两个阶段。第一阶段：使用约500万条图文对数据（包括CC3M、SBU等）进行视觉-语言对齐预训练，训练目标为图像描述生成，仅更新单一线性投影层。第二阶段：使用仅3500条人工精心筛选的高质量多模态对话数据进行精调，使模型习得多模态对话能力 。</p>
+<p><img src="https://km.woa.com/asset/000100022606001ee37038b90e440301?height=938&width=1404" alt="image.png"></p>
+<h3 id="3-4-LLaVA系列（1-5-NeXT-OneVision）"><a href="#3-4-LLaVA系列（1-5-NeXT-OneVision）" class="headerlink" title="3.4  LLaVA系列（1.5 &#x2F;&#x2F; NeXT &#x2F; &#x2F;OneVision）"></a>3.4  LLaVA系列（1.5 &#x2F;&#x2F; NeXT &#x2F; &#x2F;OneVision）</h3><p><strong>视觉编码层</strong>：LLaVA-1.5使用CLIP-ViT-L&#x2F;14，参数量约300M。LLaVA-NeXT延续使用CLIP-ViT-L&#x2F;14但引入AnyRes动态分辨率机制。LLaVA-OneVision升级为SigLIP-SO400M，该编码器采用sigmoid损失函数替代softmax归一化，在同等计算量下实现更优的图文对齐效果，参数量400M 。<br><strong>适配层</strong>：LLaVA全系列统一采用两层MLP作为适配层。LLaVA-OneVision增加了可选的Token Pooling层，用于压缩高分辨率图像产生的海量视觉Token 。<br><strong>语言层</strong>：LLaVA-1.5使用Vicuna-7B&#x2F;13B作为语言模型。LLaVA-NeXT扩展支持Mistral-7B和Llama-3-8B。LLaVA-OneVision进一步扩展至Qwen2系列（0.5B到72B），实现了从边缘设备到云端服务器的全规格覆盖 。创新点如下：</p>
+<ol>
+<li><strong>视觉指令微调范式</strong>：LLaVA-1.5首次系统性地确立了“视觉指令微调”（Visual Instruction Tuning）范式——使用GPT-4生成的多模态指令跟随数据对模型进行微调，使模型能够遵循复杂的视觉-语言指令。这一范式深刻影响了后续几乎所有开源MLLM的训练方法 。</li>
+<li><strong>AnyRes动态分辨率技术</strong>：LLaVA-NeXT引入AnyRes策略，将高分辨率图像拆分为多个子图块，同时保留一个全局缩略图。每个子图块独立编码后，其视觉Token与全局缩略图的Token拼接输入LLM，使模型能够处理任意分辨率的图像而无需修改视觉编码器 。</li>
+<li><strong>单图&#x2F;多图&#x2F;视频统一架构</strong>：LLaVA-OneVision实现了任务级别的统一——无论是单张图像、多张图像还是视频帧序列，均使用相同的编码器和处理流程，仅在输入序列的组织方式上有所区别。视频以每秒两帧采样，帧序列与多图处理逻辑完全一致 。</li>
+<li><strong>全规格语言模型覆盖</strong>：LLaVA-OneVision支持从0.5B到72B的完整语言模型规格，使同一架构可部署于从手机端侧到云端集群的各类场景 。</li>
+</ol>
+<p>LLaVA系列遵循标准的两阶段训练流程。第一阶段：视觉-语言对齐预训练，仅训练两层MLP适配层，使视觉Token被映射至LLM的词嵌入空间。第二阶段：多模态指令微调，使模型习得遵循复杂多模态指令的能力。<br><img src="https://km.woa.com/asset/00010002260600af13a5869d194f5c01?height=602&width=1340" alt="image.png"></p>
+<h3 id="3-5-CogVLM-CogVLM2系列"><a href="#3-5-CogVLM-CogVLM2系列" class="headerlink" title="3.5 CogVLM &#x2F; CogVLM2系列"></a>3.5 CogVLM &#x2F; CogVLM2系列</h3><p>CogVLM系列是智谱在研究多模态大模型架构的相关工作。CogVLM系列是使用EVA-CLIP-L&#x2F;E作为视觉编码器，该编码器在LAION-2B上训练，具备强大的细粒度视觉语义提取能力。在适配层，使用两层MLP+SwiGLU激活函数，CogVLM2额外引入2×2卷积下采样层，将高分辨率图像的视觉Token数量压缩为原来的1&#x2F;4 。语言层中CogVLM使用Vicuna-7B作为语言模型基座，CogVLM2升级为LLaMA-3-8B，GLM-4V-9B使用GLM4-9B。此外CogVLM系列还创新地提出了Visual Expert（视觉专家）模块。在LLM的每一层Transformer块中，CogVLM插入一套完整的、与文本处理并行的QKV矩阵和FFN层，专门处理视觉Token。每一层的视觉专家与文本自注意力模块完全独立，视觉Token和文本Token在各自通道中处理后，仅在输出端进行融合。创新点如下：</p>
+<ol>
+<li><strong>Visual Expert深度融合架构</strong>：CogVLM在LLM的每一层插入独立的视觉处理模块，实现了视觉和语言在模型最深层的持续交互。这种设计避免了浅层对齐（如仅在输入端拼接视觉Token）导致的信息损失，使视觉特征能够参与LLM每一层的表示构建 。</li>
+<li><strong>模态并行处理机制</strong>：视觉专家模块与文本自注意力模块完全并行运行，视觉Token和文本Token在各自通道中独立处理，互不干扰。这种设计保证了文本处理能力不受视觉信息注入的影响，避免了纯文本能力的大幅下降 。</li>
+<li><strong>2×2卷积Token压缩</strong>：CogVLM2引入2×2卷积下采样层，将高分辨率图像产生的视觉Token数量压缩为原来的1&#x2F;4，在支持更高分辨率输入的同时控制序列长度和计算开销 。</li>
+</ol>
+<p><img src="https://km.woa.com/asset/0001000226060032ff3b3f4c83438001?height=708&width=1224" alt="image.png"></p>
+<h3 id="3-6-mPLUG-Owl系列（Owl2-Owl3）"><a href="#3-6-mPLUG-Owl系列（Owl2-Owl3）" class="headerlink" title="3.6 mPLUG-Owl系列（Owl2 &#x2F; Owl3）"></a>3.6 mPLUG-Owl系列（Owl2 &#x2F; Owl3）</h3><p>mPLUG-Owl系列是阿里巴巴在研究多模态架构上的相关工作。在视觉编码层中，mPLUG-Owl1&#x2F;2使用ViT-L&#x2F;14作为视觉编码器。mPLUG-Owl3升级为SigLIP-400M。适配层mPLUG-Owl1&#x2F;2使用了一个类似Q-Former的Visual  Abstractor结构来压缩视觉特征，mPLUG-Owl3则是简单使用一个线性投影层。语言层中，mPLUG-Owl 1&#x2F;2使用LLaMA作为语言模型基座，mPLUG-Owl3升级为Qwen2。创新点如下：</p>
+<ol>
+<li><strong>MAM模态自适应模块</strong>：mPLUG-Owl2在做Attention时，将视觉输入和文本输入各自做LN，再各自过不同的KV矩阵，以此来减轻不同模态数据之间的相互干扰。</li>
+<li><strong>Hyper Attention</strong>：mPLUG-Owl3引入超注意力机制，通过稀疏扩展少量Transformer块来执行与自注意力并行的跨注意力，减少了额外的训练参数，促进了模型收敛，同时保持了低内存消耗和高推理效率。</li>
+<li><strong>自适应门控</strong>：自适应门控机制通过文本特征来调节从图像到语言模型的信息传递，平衡了视觉和文本信息的融合，提高了模型在处理复杂图像序列时的性能。</li>
+<li><strong>多模态交错旋转位置嵌入（MI-Rope）</strong>：MI-Rope通过记录图像在交错序列中的占位符位置，确保了图像的位置信息在跨注意力过程中得以保留，从而提高了模型在多图像场景中的性能。</li>
+</ol>
+<p><img src="https://km.woa.com/asset/00010002260600d27a23d76e81466c01?height=918&width=1832" alt="image.png"></p>
+<p><img src="https://km.woa.com/asset/000100022606000b49aed31ba043c701?height=832&width=1840" alt="image.png"></p>
+<p><img src="https://km.woa.com/asset/000100022606003ef3e3be703e4a8901?height=1310&width=2642" alt="image.png"></p>
+<h3 id="3-7-DeepSeek-VL-系列"><a href="#3-7-DeepSeek-VL-系列" class="headerlink" title="3.7 DeepSeek VL 系列"></a>3.7 DeepSeek VL 系列</h3><p>DeepSeek VL系列是深度求索在多模态架构上的研究工作。对于视觉编码层，DeepSeek-VL采用混合视觉编码器策略——SigLIP-L（约400M参数）作为主编码器负责语义理解，SAM-B（约90M参数）作为辅助编码器负责细粒度空间定位。两者输出在特征维度拼接后输入适配层。DeepSeek-VL2转向<strong>动态分块（Dynamic Tiling）</strong>的SigLIP-SO400M（400M参数），将高分辨率图像动态拆分为多个子图块，每个子图块独立编码后拼接。原图做resize后编码，再与子图块拼接，做为图片的最终输入。适配层采样两层MLP层。语言层中，DeepSeek-VL使用DeepSeek-LLM 7B作为语言模型，DeepSeek-VL2升级为DeepSeekMoE架构。创新点如下：</p>
+<ol>
+<li><strong>混合视觉编码器策略</strong>：DeepSeek-VL创新性地结合SigLIP（语义理解）和SAM（空间定位）两个互补的视觉编码器，使模型同时具备强大的语义理解能力和精确的空间定位能力，在OCR和文档理解任务上表现突出。</li>
+<li><strong>多头潜在注意力（MLA）</strong>：DeepSeek-VL2引入MLA机制，通过低秩键值联合压缩将KV缓存大小降至传统MHA的1&#x2F;5-1&#x2F;10，在保持注意力质量的同时大幅降低推理显存占用和计算开销，使长序列多模态推理更加高效。</li>
+<li><strong>MoE稀疏激活</strong>：DeepSeek-VL2采用MoE架构，总参数量巨大但每次推理仅激活部分专家（1B-4.5B），实现了“大模型容量、小模型推理成本”的理想平衡。</li>
+<li><strong>动态分块与Token压缩</strong>：DeepSeek-VL2引入动态分块策略处理高分辨率图像，同时通过2×2卷积下采样压缩视觉Token数量，在支持高分辨率输入的同时控制序列长度。</li>
+</ol>
+<p><img src="https://km.woa.com/asset/00010002260600a062c15bf5b64b0e01?height=636&width=1468" alt="image.png"><br><img src="https://km.woa.com/asset/00010002260600756e97a30196475401?height=978&width=1472" alt="image.png"></p>
+<h3 id="3-8-Cambrian-1"><a href="#3-8-Cambrian-1" class="headerlink" title="3.8  Cambrian-1"></a>3.8  Cambrian-1</h3><p>Cambrian是纽约大学的研究工作，有LeCun和谢赛宁大神参与署名。论文里做了大量实验来探讨评估集，预训练集，视觉编码器和模型架构等问题，可以深入阅读。<br>Cambrian采用<strong>多编码器集成</strong>策略，同时使用四种视觉编码器：SigLIP-SO400M（语义理解）、CLIP-ViT-L&#x2F;14（图文对齐）、DINOv2（空间结构感知）和ConvNeXt（局部纹理特征）。四种编码器并行处理同一图像，各自输出互补的视觉特征表示。在适配层，Cambrian-1引入<strong>Spatial Vision Aggregator（SVA，空间视觉聚合器）</strong>。SVA基于跨注意力机制设计，以一组可学习的查询Token与四种编码器的输出进行交叉注意力交互，动态聚合来自不同编码器的互补视觉信息。SVA通过空间位置编码保留视觉特征的空间结构，使聚合后的表示同时具备语义深度和空间精度。最后使用LLaMA-3-8B作为语言模型基座。创新点如下：</p>
+<ol>
+<li><strong>视觉中心化设计哲学</strong>：Cambrian-1首次明确提出“视觉中心化”（Vision-Centric）的设计理念——将多模态系统的设计重心从语言模型转移到视觉理解，通过多编码器集成和SVA聚合器构建更强大的视觉前端。</li>
+<li><strong>四编码器互补融合</strong>：SigLIP提供语义理解，CLIP提供图文对齐，DINOv2提供空间结构感知，ConvNeXt提供局部纹理特征。四种编码器的互补组合使模型获得了超越任何单一编码器的视觉理解深度。</li>
+<li><strong>SVA动态空间聚合</strong>：SVA通过跨注意力机制动态聚合多编码器输出，而非简单的特征拼接或求和。查询Token可学习关注不同编码器在不同空间位置的最优特征，实现了自适应、空间感知的多源视觉信息融合。</li>
+<li><strong>Cambrian-7M高质量数据集</strong>：Cambrian-1配套发布了700万条高质量多模态指令微调数据（Cambrian-7M），为视觉中心化MLLM的训练提供了数据基础。</li>
+</ol>
+<p><img src="https://km.woa.com/asset/00010002260600aaa8ee9aa9d14cd501?height=422&width=962" alt="image.png"></p>
 
     </article>
     <!-- license -->
@@ -620,7 +696,7 @@
                 <div class="toc-catalog">
                     <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
                 </div>
-                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#QwenVL%E7%B3%BB%E5%88%97"><span class="toc-number">1.</span> <span class="toc-text">QwenVL系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-1"><span class="toc-number">1.1.</span> <span class="toc-text">QwenVL 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-2"><span class="toc-number">1.2.</span> <span class="toc-text">QwenVL 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-2-5"><span class="toc-number">1.3.</span> <span class="toc-text">QwenVL 2.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-3"><span class="toc-number">1.4.</span> <span class="toc-text">QwenVL 3</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InternVL%E7%B3%BB%E5%88%97"><span class="toc-number">2.</span> <span class="toc-text">InternVL系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-1"><span class="toc-number">2.1.</span> <span class="toc-text">InternVL 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-1-5"><span class="toc-number">2.2.</span> <span class="toc-text">InternVL 1.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-2-5"><span class="toc-number">2.3.</span> <span class="toc-text">InternVL 2.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-3"><span class="toc-number">2.4.</span> <span class="toc-text">InternVL 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-3-5"><span class="toc-number">2.5.</span> <span class="toc-text">InternVL 3.5</span></a></li></ol></li></ol>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#QwenVL%E7%B3%BB%E5%88%97"><span class="toc-number">1.</span> <span class="toc-text">QwenVL系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-1"><span class="toc-number">1.1.</span> <span class="toc-text">QwenVL 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-2"><span class="toc-number">1.2.</span> <span class="toc-text">QwenVL 2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-2-5"><span class="toc-number">1.3.</span> <span class="toc-text">QwenVL 2.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QwenVL-3"><span class="toc-number">1.4.</span> <span class="toc-text">QwenVL 3</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InternVL%E7%B3%BB%E5%88%97"><span class="toc-number">2.</span> <span class="toc-text">InternVL系列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-1"><span class="toc-number">2.1.</span> <span class="toc-text">InternVL 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-1-5"><span class="toc-number">2.2.</span> <span class="toc-text">InternVL 1.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-2-5"><span class="toc-number">2.3.</span> <span class="toc-text">InternVL 2.5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-3"><span class="toc-number">2.4.</span> <span class="toc-text">InternVL 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InternVL-3-5"><span class="toc-number">2.5.</span> <span class="toc-text">InternVL 3.5</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%85%B6%E4%BB%96%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">三、其他模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Flamingo"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 Flamingo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-BLIP-2"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 BLIP-2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-MiniGPT-4"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 MiniGPT-4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-LLaVA%E7%B3%BB%E5%88%97%EF%BC%881-5-NeXT-OneVision%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">3.4  LLaVA系列（1.5 &#x2F;&#x2F; NeXT &#x2F; &#x2F;OneVision）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-CogVLM-CogVLM2%E7%B3%BB%E5%88%97"><span class="toc-number">3.5.</span> <span class="toc-text">3.5 CogVLM &#x2F; CogVLM2系列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-mPLUG-Owl%E7%B3%BB%E5%88%97%EF%BC%88Owl2-Owl3%EF%BC%89"><span class="toc-number">3.6.</span> <span class="toc-text">3.6 mPLUG-Owl系列（Owl2 &#x2F; Owl3）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-7-DeepSeek-VL-%E7%B3%BB%E5%88%97"><span class="toc-number">3.7.</span> <span class="toc-text">3.7 DeepSeek VL 系列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-8-Cambrian-1"><span class="toc-number">3.8.</span> <span class="toc-text">3.8  Cambrian-1</span></a></li></ol></li></ol>
             </div>
         <!-- sidebar -->
         <div class="sidebar sidebar-hide">
@@ -714,13 +790,13 @@
             <span class="iconfont-archer">&#xe60a;</span>
             视觉大模型
         </span>
-        <span class="sidebar-category-name" data-categories="投资">
-            <span class="iconfont-archer">&#xe60a;</span>
-            投资
-        </span>
         <span class="sidebar-category-name" data-categories="语言大模型">
             <span class="iconfont-archer">&#xe60a;</span>
             语言大模型
+        </span>
+        <span class="sidebar-category-name" data-categories="投资">
+            <span class="iconfont-archer">&#xe60a;</span>
+            投资
         </span>
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
