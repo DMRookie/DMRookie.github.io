@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- ===== HEAD ===== -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股申万一级行业月度表现分析 2020-2026</title>
+<!-- Copied from /Users/huasixie/work/stock-index/industry_analysis.html -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        background:'#F6F7F9', foreground:'#0F172A', muted:'#64748B',
+        card:'#FFFFFF', border:'#E5E7EB',
+        primary:'#1E3A8A', accent:'#0EA5E9',
+        up:'#D14343', down:'#1F9D55'
+      },
+      fontFamily: {
+        sans:['Inter','PingFang SC','Microsoft YaHei','system-ui','sans-serif'],
+        serif:['"Noto Serif SC"','"Source Han Serif SC"','Georgia','serif'],
+        mono:['"JetBrains Mono"','SF Mono','ui-monospace','monospace']
+      }
+    }
+  }
+};
+</script>
+</head>
+<body class="bg-background text-foreground font-sans overflow-x-hidden">
+
+<!-- ===== HTML ===== -->
+<!-- FILE:index.html -->
+<div class="mx-auto" style="max-width:1440px">
+
+  <!-- NAV -->
+  <nav id="topnav" class="sticky top-0 z-40 bg-background/90 backdrop-blur border-b border-border">
+    <div class="px-5 md:px-10 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-md bg-primary text-white flex items-center justify-center font-serif font-bold">申</div>
+        <div class="leading-tight">
+          <div class="font-serif font-bold text-base md:text-lg">申万一级行业月度表现</div>
+          <div class="text-xs text-muted">2020.01 — 2026.06</div>
+        </div>
+      </div>
+      <div class="hidden lg:flex items-center gap-1 text-sm">
+        <a href="#overview" class="nav-link px-3 py-1.5 rounded hover:bg-card">数据概览</a>
+        <a href="#cumulative" class="nav-link px-3 py-1.5 rounded hover:bg-card">累计排名</a>
+        <a href="#trend" class="nav-link px-3 py-1.5 rounded hover:bg-card">趋势图</a>
+        <a href="#yearly" class="nav-link px-3 py-1.5 rounded hover:bg-card">年度TOP</a>
+        <a href="#winrate" class="nav-link px-3 py-1.5 rounded hover:bg-card">胜率</a>
+        <a href="#volatility" class="nav-link px-3 py-1.5 rounded hover:bg-card">波动率</a>
+        <a href="#recent" class="nav-link px-3 py-1.5 rounded hover:bg-card">近12月</a>
+        <a href="#insight" class="nav-link px-3 py-1.5 rounded hover:bg-card">投资启示</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="px-5 md:px-10 pt-14 md:pt-20 pb-10 md:pb-14">
+    <div class="max-w-5xl">
+      <div class="inline-flex items-center gap-2 text-xs text-primary border border-primary/30 bg-primary/5 px-3 py-1 rounded-full mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        Shenwan Industry Index · Monthly Research
+      </div>
+      <h1 class="font-serif font-black text-4xl md:text-6xl leading-tight tracking-tight">
+        A股申万一级行业指数<br/>月度表现分析报告
+      </h1>
+      <p class="mt-5 text-muted text-base md:text-lg max-w-3xl leading-relaxed">
+        基于申万一级行业指数（2021 版）月度 K 线数据，覆盖 <span class="text-foreground font-medium">31 个</span>一级行业、
+        <span class="text-foreground font-medium">78 个</span>月、累计 <span class="text-foreground font-medium">2,295 条</span>月度记录，
+        系统刻画 2020 — 2026 年间 A 股行业轮动结构与风险收益特征。
+      </p>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+      <div class="bg-card border border-border rounded-lg p-5">
+        <div class="text-xs text-muted">行业覆盖</div>
+        <div class="mt-1 font-mono text-3xl font-semibold">31</div>
+        <div class="text-xs text-muted mt-1">申万一级</div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-5">
+        <div class="text-xs text-muted">月份覆盖</div>
+        <div class="mt-1 font-mono text-3xl font-semibold">78</div>
+        <div class="text-xs text-muted mt-1">2020.01 - 2026.06</div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-5">
+        <div class="text-xs text-muted">月度记录</div>
+        <div class="mt-1 font-mono text-3xl font-semibold">2,295</div>
+        <div class="text-xs text-muted mt-1">完整无缺失</div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-5">
+        <div class="text-xs text-muted">领涨累计</div>
+        <div class="mt-1 font-mono text-3xl font-semibold text-up">+280.87%</div>
+        <div class="text-xs text-muted mt-1">通信 · 2020 至今</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- §1 Overview -->
+  <section id="overview" class="px-5 md:px-10 py-14 md:py-20">
+    <div class="section-head">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">数据概览</h2>
+      <p class="sec-sub">数据来源、范围与完整性说明。</p>
+    </div>
+    <div class="grid lg:grid-cols-5 gap-6 mt-8">
+      <div class="lg:col-span-3 bg-card border border-border rounded-lg p-6 md:p-8">
+        <h3 class="font-serif font-bold text-lg mb-3">数据来源与范围</h3>
+        <p class="text-sm md:text-[15px] text-foreground/80 leading-7">
+          本报告基于<strong>申万一级行业指数（2021版）</strong>的月度 K 线数据，覆盖 A 股 31 个一级行业。
+          时间跨度为 <strong>2020 年 1 月至 2026 年 6 月</strong>，共 78 个月，累计 2,295 条月度记录。
+          字段涵盖行业代码、行业名称、年月、开/收/高/低四价、成交量、成交额及月涨跌幅(%)等 10 个核心指标。
+        </p>
+        <h3 class="font-serif font-bold text-lg mt-7 mb-3">行业覆盖情况</h3>
+        <p class="text-sm md:text-[15px] text-foreground/80 leading-7">
+          28 个行业拥有完整 78 个月数据；石油石化、环保、美容护理为 2021 年新增行业，各 55 个月；
+          煤炭因数据源限制仅 24 个月（2024.07 — 2026.06）。整体数据质量良好，无缺失值。
+        </p>
+      </div>
+      <div class="lg:col-span-2 bg-card border border-border rounded-lg p-6 md:p-8">
+        <h3 class="font-serif font-bold text-lg mb-4">数据完整性分布</h3>
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-muted border-b border-border">
+              <th class="text-left py-2 font-medium">完整性</th>
+              <th class="text-right py-2 font-medium">行业数</th>
+              <th class="text-left py-2 font-medium pl-3">代表行业</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            <tr class="border-b border-border/60"><td class="py-2.5">完整 78 个月</td><td class="text-right">28</td><td class="pl-3 text-xs text-muted font-sans">通信、电子、有色金属、电力设备…</td></tr>
+            <tr class="border-b border-border/60"><td class="py-2.5">55 个月（2021+）</td><td class="text-right">3</td><td class="pl-3 text-xs text-muted font-sans">石油石化、环保、美容护理</td></tr>
+            <tr><td class="py-2.5">24 个月（2024+）</td><td class="text-right">1</td><td class="pl-3 text-xs text-muted font-sans">煤炭</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- §2 Cumulative -->
+  <section id="cumulative" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">累计涨跌幅排名（2020 至今）</h2>
+      <p class="sec-sub">通信以 280.87% 累计涨幅遥遥领先，美容护理跌幅最深 -53.42%。</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-6 mt-8">
+      <div class="bg-card border border-border rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif font-bold text-lg">累计涨幅 TOP 10</h3>
+          <span class="text-xs text-up bg-up/10 px-2 py-0.5 rounded">领涨榜</span>
+        </div>
+        <div id="cum-up-list" class="space-y-2"></div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif font-bold text-lg">累计跌幅 TOP 10</h3>
+          <span class="text-xs text-down bg-down/10 px-2 py-0.5 rounded">领跌榜</span>
+        </div>
+        <div id="cum-down-list" class="space-y-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §3 Trend Chart -->
+  <section id="trend" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">交互式月度趋势图</h2>
+      <p class="sec-sub">31 个一级行业月度走势 · 支持行业多选、指标切换、时间范围缩放。</p>
+    </div>
+
+    <div class="mt-8 bg-card border border-border rounded-lg p-5 md:p-7">
+      <!-- Controls -->
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <div class="flex bg-background border border-border rounded-md p-0.5 text-sm">
+          <button data-metric="close" class="metric-btn px-3 py-1.5 rounded font-medium">收盘点位</button>
+          <button data-metric="pct" class="metric-btn px-3 py-1.5 rounded font-medium">月涨跌幅</button>
+        </div>
+        <div class="flex flex-wrap gap-1 text-xs">
+          <button data-range="all" class="range-btn px-2.5 py-1 rounded border border-border">全部</button>
+          <button data-range="12" class="range-btn px-2.5 py-1 rounded border border-border">近1Y</button>
+          <button data-range="36" class="range-btn px-2.5 py-1 rounded border border-border">近3Y</button>
+          <button data-range="2024" class="range-btn px-2.5 py-1 rounded border border-border">2024</button>
+          <button data-range="2025" class="range-btn px-2.5 py-1 rounded border border-border">2025</button>
+          <button data-range="2026" class="range-btn px-2.5 py-1 rounded border border-border">2026</button>
+        </div>
+        <div class="ml-auto flex items-center gap-2 text-xs">
+          <button id="preset-tech" class="px-2.5 py-1 rounded border border-border hover:bg-background">科技组合</button>
+          <button id="preset-finance" class="px-2.5 py-1 rounded border border-border hover:bg-background">金融组合</button>
+          <button id="preset-clear" class="px-2.5 py-1 rounded border border-border hover:bg-background">清空</button>
+        </div>
+      </div>
+
+      <!-- industry chips -->
+      <div class="mb-4">
+        <div class="text-xs text-muted mb-2">点击切换行业（已选 <span id="chip-count" class="font-mono text-foreground">0</span> 个）</div>
+        <div id="chip-box" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <!-- chart -->
+      <div id="trend-chart" style="width:100%;height:520px;"></div>
+    </div>
+  </section>
+
+  <!-- §4 Yearly TOP5 -->
+  <section id="yearly" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">各年度表现 TOP 5</h2>
+      <p class="sec-sub">逐年切换观察领涨与领跌行业，识别风格轮动节奏。</p>
+    </div>
+    <div class="mt-8">
+      <div id="year-tabs" class="flex flex-wrap gap-2 mb-6"></div>
+      <div id="year-content" class="grid lg:grid-cols-2 gap-6"></div>
+    </div>
+  </section>
+
+  <!-- §5 Win Rate -->
+  <section id="winrate" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">05</span>
+      <h2 class="sec-title">月度胜率排名</h2>
+      <p class="sec-sub">汽车 60.26%、综合 58.97% 居前；美容护理 34.55% 垫底。</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-6 mt-8">
+      <div class="bg-card border border-border rounded-lg p-6">
+        <h3 class="font-serif font-bold text-lg mb-4">高胜率组（前十）</h3>
+        <div id="win-up" class="space-y-2"></div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <h3 class="font-serif font-bold text-lg mb-4">低胜率组（后十）</h3>
+        <div id="win-down" class="space-y-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §6 Volatility -->
+  <section id="volatility" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">06</span>
+      <h2 class="sec-title">波动率排名</h2>
+      <p class="sec-sub">月涨跌幅标准差衡量风险水平 · 高波动适合波段，低波动适合底仓。</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-6 mt-8">
+      <div class="bg-card border border-border rounded-lg p-6">
+        <h3 class="font-serif font-bold text-lg mb-4">高波动行业（前十）</h3>
+        <div class="overflow-x-auto"><table id="vol-high" class="w-full text-sm vol-table"></table></div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <h3 class="font-serif font-bold text-lg mb-4">低波动行业（后十）</h3>
+        <div class="overflow-x-auto"><table id="vol-low" class="w-full text-sm vol-table"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §7 Recent 12 -->
+  <section id="recent" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">07</span>
+      <h2 class="sec-title">近 12 月表现（2025.07 — 2026.06）</h2>
+      <p class="sec-sub">科技成长占据绝对主导：通信 +146.96%、电子 +92.95%、有色金属 +59.49%。</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-6 mt-8">
+      <div class="bg-card border border-border rounded-lg p-6">
+        <h3 class="font-serif font-bold text-lg mb-4">近12月涨幅 TOP 10</h3>
+        <div id="r12-up" class="space-y-2"></div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <h3 class="font-serif font-bold text-lg mb-4">近12月跌幅 TOP 10</h3>
+        <div id="r12-down" class="space-y-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §8 Insight -->
+  <section id="insight" class="px-5 md:px-10 py-14 md:py-20 border-t border-border">
+    <div class="section-head">
+      <span class="sec-num">08</span>
+      <h2 class="sec-title">行业轮动分析与投资启示</h2>
+      <p class="sec-sub">核心特征与策略建议。</p>
+    </div>
+
+    <h3 class="font-serif font-bold text-xl mt-8 mb-4">行业轮动核心特征</h3>
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="bg-card border border-border rounded-lg p-6">
+        <div class="text-xs text-primary font-medium mb-2">01 · 科技成长主导</div>
+        <h4 class="font-serif font-bold text-base mb-2">主导周期明确</h4>
+        <p class="text-sm text-foreground/75 leading-7">通信 2020-2026 累计涨幅 280.87%，且在 2023、2025、2026 连续领涨，反映 AI 与通信基础设施升级的长期产业趋势。电子累计涨幅 139.95%，受益半导体周期与 AI 算力需求双重驱动。</p>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <div class="text-xs text-primary font-medium mb-2">02 · 周期脉冲</div>
+        <h4 class="font-serif font-bold text-base mb-2">周期行业脉冲式轮动</h4>
+        <p class="text-sm text-foreground/75 leading-7">有色金属（185.55%）和电力设备（137.39%）的强势集中在 2021 与 2025，呈明显阶段性爆发。煤炭 2021 +40.04% 后归于平淡，2025 再度走强，体现资源品价格周期性。</p>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <div class="text-xs text-down font-medium mb-2">03 · 消费承压</div>
+        <h4 class="font-serif font-bold text-base mb-2">消费板块持续低迷</h4>
+        <p class="text-sm text-foreground/75 leading-7">美容护理（-53.42%）、房地产（-50.22%）、商贸零售（-38.87%）长期弱势，反映消费升级逻辑阶段性逆转。医药生物 2020 领涨后持续回调，估值回归过程漫长。</p>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-6">
+        <div class="text-xs text-primary font-medium mb-2">04 · 高股息防御</div>
+        <h4 class="font-serif font-bold text-base mb-2">高股息防御价值凸显</h4>
+        <p class="text-sm text-foreground/75 leading-7">银行与交通运输累计涨幅有限，但在 2024 市场调整中表现突出，银行年度 +24.53% 领跑全市场，体现高股息策略在低利率环境下的配置价值。</p>
+      </div>
+    </div>
+
+    <h3 class="font-serif font-bold text-xl mt-12 mb-4">投资策略启示</h3>
+    <div class="space-y-3">
+      <div class="bg-card border border-border rounded-lg p-5 flex gap-5">
+        <div class="font-mono text-2xl text-primary font-semibold w-10 shrink-0">01</div>
+        <div>
+          <h4 class="font-bold mb-1">趋势跟踪优于均值回归</h4>
+          <p class="text-sm text-foreground/75 leading-7">月度胜率显示，汽车（60.26%）、通信（57.69%）具有显著动量效应，追涨策略在强势行业中更有效。低胜率行业（美容护理 34.55%、房地产 38.46%）抄底风险高。</p>
+        </div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-5 flex gap-5">
+        <div class="font-mono text-2xl text-primary font-semibold w-10 shrink-0">02</div>
+        <div>
+          <h4 class="font-bold mb-1">波动率分层配置</h4>
+          <p class="text-sm text-foreground/75 leading-7">高波动行业（有色 9.63、电子 9.08）适合趋势交易与波段；低波动行业（银行 4.77、交运 4.65）适合底仓配置与防御持仓。</p>
+        </div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-5 flex gap-5">
+        <div class="font-mono text-2xl text-primary font-semibold w-10 shrink-0">03</div>
+        <div>
+          <h4 class="font-bold mb-1">年度轮动节奏加快</h4>
+          <p class="text-sm text-foreground/75 leading-7">领涨行业几乎每年切换：2020 社会服务 → 2021 电力设备 → 2023 通信 → 2024 银行 → 2025 通信。轮动周期缩短至 1 年左右，要求较强的行业切换能力。</p>
+        </div>
+      </div>
+      <div class="bg-card border border-border rounded-lg p-5 flex gap-5">
+        <div class="font-mono text-2xl text-primary font-semibold w-10 shrink-0">04</div>
+        <div>
+          <h4 class="font-bold mb-1">科技与消费的跷跷板效应</h4>
+          <p class="text-sm text-foreground/75 leading-7">通信、电子与食品饮料、医药生物呈明显负相关轮动：科技走强时，消费往往承压，跷跷板效应在 2023 — 2026 间尤为显著。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-5 md:px-10 py-12 border-t border-border">
+    <div class="grid md:grid-cols-3 gap-8 text-sm">
+      <div>
+        <div class="font-serif font-bold text-base mb-2">数据来源</div>
+        <ul class="space-y-1 text-muted">
+          <li>申万宏源研究 · 申万行业分类标准（2021）</li>
+          <li>腾讯自选股 · A 股行情数据接口</li>
+          <li>东方财富网 · 申万一级行业指数行情</li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-serif font-bold text-base mb-2">原始数据</div>
+        <ul class="space-y-1 text-muted font-mono text-xs">
+          <li>shenwan_industry_monthly_data.csv</li>
+          <li>shenwan_industry_codes.json</li>
+          <li>analysis_cumulative_return.csv</li>
+          <li>analysis_win_rate.csv / volatility.csv / recent_12m.csv</li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-serif font-bold text-base mb-2">字段说明</div>
+        <p class="text-muted leading-6">行业代码 / 行业名称 / 年月 / 开盘 / 收盘 / 最高 / 最低 / 成交量(亿手) / 成交额(亿元) / 月涨跌幅(%)</p>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-border text-xs text-muted flex flex-wrap items-center justify-between gap-3">
+      <div>© 2026 · 申万一级行业月度表现研究 · 仅供学术研究参考，不构成投资建议</div>
+      <div class="font-mono">31 industries × 78 months × 2,295 records</div>
+    </div>
+  </footer>
+</div>
+<!-- /FILE:index.html -->
+
+<style>
+/* ===== STYLE ===== */
+/* FILE:style.css */
+html{scroll-behavior:smooth}
+body{font-feature-settings:"tnum","ss01"}
+.section-head{border-left:3px solid #1E3A8A;padding-left:16px}
+.sec-num{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:12px;color:#1E3A8A;letter-spacing:.1em;margin-bottom:6px}
+.sec-title{font-family:"Noto Serif SC",serif;font-weight:800;font-size:28px;line-height:1.2;color:#0F172A}
+@media(min-width:768px){.sec-title{font-size:34px}}
+.sec-sub{color:#64748B;font-size:14px;margin-top:6px;max-width:720px;line-height:1.7}
+
+/* Nav active */
+.nav-link.active{background:#1E3A8A;color:#fff}
+.nav-link.active:hover{background:#1E3A8A}
+
+/* Rank rows */
+.rank-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed #EEF1F5;font-size:14px}
+.rank-row:last-child{border-bottom:none}
+.rank-no{font-family:"JetBrains Mono",monospace;font-size:12px;color:#94A3B8;width:22px;text-align:right}
+.rank-name{width:88px;font-weight:500;color:#0F172A;flex-shrink:0}
+.rank-bar{flex:1;height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden;position:relative}
+.rank-bar>span{display:block;height:100%;border-radius:4px}
+.rank-val{font-family:"JetBrains Mono",monospace;font-weight:600;width:88px;text-align:right;font-size:13px}
+.up-bar{background:linear-gradient(90deg,#FCA5A5,#D14343)}
+.down-bar{background:linear-gradient(90deg,#86EFAC,#1F9D55)}
+.text-up{color:#D14343}
+.text-down{color:#1F9D55}
+
+/* Chip */
+.chip{font-size:12px;padding:4px 10px;border:1px solid #E5E7EB;border-radius:999px;cursor:pointer;background:#fff;color:#475569;transition:all .15s;user-select:none}
+.chip:hover{border-color:#1E3A8A;color:#1E3A8A}
+.chip.active{background:#1E3A8A;border-color:#1E3A8A;color:#fff}
+
+/* Metric / range btn */
+.metric-btn{color:#64748B}
+.metric-btn.active{background:#1E3A8A;color:#fff}
+.range-btn{color:#64748B;background:#fff}
+.range-btn.active{background:#1E3A8A;color:#fff;border-color:#1E3A8A}
+.range-btn:hover{border-color:#1E3A8A;color:#1E3A8A}
+.range-btn.active:hover{color:#fff}
+
+/* Year tab */
+.year-tab{padding:8px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;font-family:"JetBrains Mono",monospace;font-weight:600;font-size:14px;color:#64748B;transition:.15s}
+.year-tab:hover{border-color:#1E3A8A;color:#1E3A8A}
+.year-tab.active{background:#1E3A8A;color:#fff;border-color:#1E3A8A}
+
+/* Volatility table */
+.vol-table th{font-weight:500;color:#64748B;text-align:right;padding:8px 6px;border-bottom:1px solid #E5E7EB;font-size:12px}
+.vol-table th:first-child,.vol-table td:first-child{text-align:left}
+.vol-table td{padding:8px 6px;border-bottom:1px dashed #EEF1F5;text-align:right;font-family:"JetBrains Mono",monospace;font-size:13px}
+.vol-table tr:hover td{background:#F8FAFC}
+.vol-table td.name{font-family:"Inter","PingFang SC",sans-serif;font-weight:500;color:#0F172A}
+
+/* Year table */
+.year-block{background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:20px 22px}
+.year-block h4{font-family:"Noto Serif SC",serif;font-weight:700;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+.year-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px dashed #EEF1F5;font-size:14px}
+.year-row:last-child{border-bottom:none}
+.year-row .no{font-family:"JetBrains Mono",monospace;color:#94A3B8;width:24px;font-size:12px}
+.year-row .nm{flex:1;color:#0F172A}
+.year-row .v{font-family:"JetBrains Mono",monospace;font-weight:600}
+
+/* /FILE:style.css */
+</style>
+
+<script>
+/* ===== DATA ===== */
+// FILE:data.js
+window.appData = {"industries":["交通运输","传媒","公用事业","农林牧渔","医药生物","商贸零售","国防军工","基础化工","家用电器","建筑材料","建筑装饰","房地产","有色金属","机械设备","汽车","煤炭","环保","电力设备","电子","石油石化","社会服务","纺织服饰","综合","美容护理","计算机","轻工制造","通信","钢铁","银行","非银金融","食品饮料"],"allMonths":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"monthly":{"交通运输":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2223.63,2090.24,2026.02,2105.5,2110.12,2140.03,2317.63,2440.69,2298.3,2251.31,2419.47,2387.33,2364.7,2404.72,2401.24,2336.86,2407.68,2432.63,2147.21,2303.58,2356.04,2315.48,2308.12,2448.58,2377.95,2444.52,2274.18,2228.89,2383.85,2431.12,2311.99,2337.8,2275.36,2197.72,2376.73,2364.99,2411.61,2400.09,2380.82,2406.61,2244.57,2178.95,2300.07,2117.77,2099.91,2050.71,2070.96,1995.32,1938.94,2035.7,2056.19,2106.37,2156.22,2061.96,2072.23,1972.26,2294.76,2204.54,2251.26,2254.93,2160.13,2142.7,2147.58,2120.95,2238.78,2213.82,2208.98,2256.28,2227.32,2289.79,2228.13,2280.32,2271.68,2365.2,2234.06,2217.73,2147.5,2094.19],"pct":[-7.05,3.86,-3.42,4.46,1.78,1.26,8.25,4.75,-5.64,-3.26,7.39,-1.19,-1.07,3.13,-0.31,-2.72,2.62,1.31,-11.89,7.75,2.33,-3.95,-0.12,6.19,-3.41,1.88,-6.84,-1.63,8.36,2.4,-4.8,1.28,-2.81,-3.37,8.09,-1.68,2.01,-0.68,-0.89,1.31,-6.61,-2.69,5.35,-7.9,-0.92,-2.26,0.89,-3.75,-3.02,5.56,1.15,2.17,1.16,-4.55,0.41,-4.57,16.64,-12.27,1.95,-0.18,-4.21,-0.99,0.15,-1.3,5.04,-0.88,-0.23,1.97,-1.36,3.29,-2.66,2.33,-0.31,4.2,-5.46,-1.93,-3.53,-2.41]},"传媒":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[697.64,710.17,633.27,668.47,684.4,797.76,857.18,882.86,811.62,788.44,771.95,733.62,732.94,704.2,671.13,685.26,704.07,679.32,598.35,595.63,605.38,609.97,637.98,730.14,624.99,616.3,595.62,510.79,542.2,567.65,542.91,549.13,473.2,460.78,527.53,539.82,567.14,590.74,724.68,819.35,782.19,770.62,712.26,704.3,650.56,611.62,648.32,630.49,532.97,611.98,621.18,588.7,542.92,495.99,489.25,481.19,610.38,641.85,684.54,644.57,640.75,679.83,671.01,656.08,670.54,726.87,749.96,830.23,874.61,821.82,835.69,819.69,966.75,918.86,780.87,798.3,738.98,719.46],"pct":[1.63,12.22,-11.82,5.88,3.61,15.4,7.27,1.87,-7.92,-4.06,-2.12,-4.79,-0.37,-3.53,-5.45,2.13,3.11,-3.41,-11.93,-0.1,1.46,-2.31,4.78,14.66,-14.83,-2.16,-3.38,-13.46,8.88,4.99,-4.39,1.39,-13.67,-2.71,14.25,0.82,4.89,4.02,22.76,13.97,-6.23,-0.53,-7.57,-0.91,-7.45,-5.27,6.51,-2.81,-16.23,16.12,1.64,-5.66,-8.93,-8.47,-0.97,-1.6,27.26,-6.84,7.02,-5.58,-0.55,3.89,-1.67,-2.34,1.51,8.69,2.95,10.48,5.31,-5.87,0.5,-2.05,17.18,-4.21,-12.86,0.22,-8.29,-2.83]},"公用事业":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[1909.41,1857.64,1827.92,1862.91,1823.13,1870.63,2042.69,2105.77,1979.64,1952.89,2024.76,2000.65,1903.22,1937.7,2230.71,2030.51,2123.95,2105.64,2038.3,2274.8,2636.32,2430.18,2412.71,2628.49,2292.95,2473.92,2256.6,2106.78,2298.44,2312.43,2406.0,2395.02,2207.47,2131.73,2305.43,2198.51,2245.69,2271.14,2232.36,2281.87,2379.51,2347.02,2297.14,2193.83,2175.94,2157.69,2165.74,2172.91,2152.07,2228.12,2307.51,2337.48,2411.0,2428.52,2408.09,2295.5,2500.2,2396.16,2342.72,2395.27,2271.28,2250.0,2292.14,2325.57,2379.4,2366.45,2348.18,2407.56,2417.33,2525.46,2481.1,2420.02,2497.12,2610.38,2643.02,2647.14,2865.67,2758.59],"pct":[-4.11,6.73,-1.9,2.08,-1.56,2.4,8.93,2.46,-5.97,-2.44,3.55,-1.18,-4.84,1.91,14.52,-8.4,4.65,-0.76,-3.23,11.45,15.6,-6.71,-0.12,8.92,-13.13,6.45,-8.95,-5.27,9.56,1.12,2.95,-0.22,-7.55,-3.88,8.01,-4.96,2.2,1.05,-1.79,2.24,4.5,-1.11,-2.23,-4.63,-0.7,-0.89,0.23,0.31,-0.84,4.21,3.58,1.1,2.65,0.58,-0.78,-4.22,9.44,-11.9,-2.02,1.96,-5.09,-1.17,1.73,1.29,2.01,-0.33,-0.93,2.67,0.22,4.01,-1.86,-2.69,2.94,4.57,1.46,-0.4,7.87,-4.29]},"农林牧渔":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[3175.56,3437.52,3825.95,3813.87,3646.69,3869.82,4497.91,4723.52,3906.89,3727.04,3841.56,3913.1,3925.6,4251.73,3930.18,3934.5,3748.7,3609.43,3094.99,3080.7,3371.1,3461.92,3472.41,3720.12,3549.03,3575.99,3717.52,3211.55,3387.55,3525.97,3651.63,3670.63,3289.68,3083.89,3248.26,3294.77,3402.91,3422.68,3355.93,3214.63,2891.47,2977.75,3144.54,2887.39,2813.69,2825.14,2901.79,2862.23,2483.72,2622.16,2691.47,2671.15,2786.77,2479.85,2473.11,2266.38,2707.96,2645.86,2638.89,2530.84,2455.32,2460.33,2508.8,2593.74,2658.0,2671.66,2774.22,3000.65,2964.24,2946.64,2991.22,2981.2,2976.84,2972.6,2791.67,2853.0,2480.48,2379.55],"pct":[-5.13,19.93,10.45,-0.06,-3.39,5.92,15.99,4.44,-17.26,-5.98,2.66,2.2,-0.94,8.58,-8.27,-0.17,-4.45,-3.92,-14.56,0.55,9.61,-1.58,1.25,7.43,-4.86,-0.12,3.31,-13.22,5.9,4.59,3.16,0.59,-10.39,-8.63,5.41,0.79,3.65,0.6,-1.92,-3.87,-9.73,3.28,5.58,-7.98,-2.69,0.64,2.73,-1.07,-13.23,6.13,2.94,-0.69,3.32,-11.37,-0.39,-8.36,19.51,-11.91,-0.0,-3.98,-2.94,-0.05,1.91,3.24,2.17,1.02,3.84,8.16,-1.52,-0.01,1.47,-0.42,-0.06,1.32,-5.35,1.3,-13.06,-3.84]},"医药生物":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[8366.66,8562.5,8663.89,9134.6,9593.55,11212.87,12964.33,12605.46,11541.14,11810.92,11027.79,12077.43,12141.88,11946.81,11586.91,12858.54,13238.64,13203.85,11884.84,10859.69,11397.99,10931.26,11331.86,11385.45,9684.57,10069.57,10196.8,8737.96,8838.33,9763.76,9031.09,8804.36,8203.47,8670.85,9309.53,9069.94,9566.21,9577.38,9238.91,9198.21,8968.47,8565.25,8487.36,8083.63,8430.98,8589.0,8837.55,8430.68,6863.18,7583.92,7412.1,7606.12,7284.24,6652.73,6667.56,6448.82,7825.19,7487.07,7647.86,7222.31,6949.92,7302.5,7388.06,7235.18,7699.75,7754.01,8833.95,9064.19,8909.13,8746.44,8430.03,8084.61,8338.3,8323.7,8011.99,8094.68,7501.27,7158.13],"pct":[4.25,7.37,0.3,5.76,5.72,16.13,15.34,-3.57,-8.31,0.7,-6.67,9.41,0.8,-1.7,-3.96,10.84,4.39,-0.56,-10.09,-8.43,4.99,-4.67,3.42,0.74,-14.93,2.55,1.25,-12.9,2.17,10.67,-7.54,-2.36,-6.66,5.13,7.09,-3.89,5.01,-0.02,-3.69,-0.34,-2.29,-4.35,-0.98,-4.87,4.25,1.83,2.85,-4.56,-18.68,10.96,-2.23,2.44,-5.33,-8.57,0.36,-3.35,21.55,-15.7,2.36,-5.73,-3.79,4.39,1.14,-2.32,5.72,1.21,13.85,2.72,-1.9,-1.97,-4.09,-4.2,2.75,0.37,-2.54,-0.14,-7.53,-4.49]},"商贸零售":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[3136.14,3020.6,3183.08,3200.37,3432.25,3743.61,4151.2,3937.29,3615.59,3547.79,3506.91,3233.83,2976.01,3069.46,3097.86,3061.29,3264.96,3101.0,2915.78,3055.45,2999.21,3034.49,3050.0,3085.05,2884.44,2884.57,2656.97,2601.88,2678.68,2968.13,2758.86,2711.95,2605.76,2421.47,2767.4,2866.74,2832.77,2761.72,2720.36,2555.16,2257.13,2194.91,2419.13,2175.06,2171.66,2060.73,2102.58,1969.32,1757.64,1832.42,1839.24,1776.42,1694.16,1485.06,1559.28,1502.54,1893.41,1969.51,2237.26,2238.88,2068.4,2129.91,2054.78,2090.45,2125.05,2182.68,2224.41,2390.65,2297.25,2325.71,2329.48,2422.59,2435.34,2349.12,2072.95,2114.93,1971.72,1917.01],"pct":[-3.78,6.36,5.1,1.09,8.11,8.32,10.42,-5.94,-8.05,-3.08,-0.71,-7.52,-8.14,2.83,-0.01,-1.26,6.84,-4.96,-6.07,5.27,-1.82,-0.99,0.8,1.2,-6.81,-1.76,-7.91,-0.84,4.74,10.68,-6.36,-1.29,-3.64,-7.14,14.35,0.41,-1.17,-2.87,-1.43,-5.8,-11.09,-2.53,10.14,-9.85,-0.65,-4.59,1.58,-6.22,-10.7,5.13,0.34,-3.68,-5.23,-12.24,5.19,-3.39,26.72,-5.44,13.52,-0.52,-7.38,2.69,-3.2,1.98,1.51,3.33,1.98,7.56,-3.71,1.54,0.09,3.97,0.81,-2.44,-10.11,0.66,-6.66,-1.5]},"国防军工":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[1162.04,1171.96,1073.04,1152.28,1157.28,1191.47,1522.65,1628.61,1550.18,1485.04,1604.63,1779.43,1597.85,1572.76,1436.74,1378.09,1558.14,1574.72,1627.38,1894.23,1699.69,1768.74,1998.4,1978.19,1623.66,1711.76,1550.57,1313.45,1461.5,1581.52,1612.43,1543.35,1465.39,1635.82,1549.43,1477.62,1572.93,1593.42,1534.69,1521.23,1516.24,1577.5,1509.05,1450.18,1429.2,1394.96,1403.04,1377.33,1095.17,1236.1,1290.63,1264.86,1288.06,1239.21,1294.46,1179.19,1410.92,1554.99,1514.89,1474.78,1367.46,1417.56,1448.81,1413.12,1502.68,1666.32,1717.62,1887.49,1751.33,1716.47,1689.66,1980.68,2061.63,2211.42,1859.03,2031.61,1854.97,1841.67],"pct":[2.56,11.66,-9.43,7.65,0.8,2.64,27.45,5.76,-5.39,-5.74,8.36,10.84,-11.74,-1.51,-9.01,-4.07,13.22,1.27,2.73,15.99,-10.39,5.15,12.62,-0.67,-17.97,3.89,-9.59,-12.98,10.22,8.43,1.82,-4.62,-5.04,11.33,-5.27,-4.76,6.47,1.34,-3.5,-0.81,0.18,4.34,-4.43,-4.06,-1.44,-2.46,0.68,-1.67,-20.58,13.75,4.17,-2.55,0.94,-3.75,4.71,-8.73,20.01,-2.24,-2.0,-2.67,-6.85,2.99,2.12,-3.11,5.76,10.5,3.03,10.08,-7.19,-2.01,-1.52,16.23,2.19,7.3,-17.32,7.56,-9.05,-0.42]},"基础化工":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2699.54,2695.22,2466.94,2583.61,2611.53,2780.36,3287.16,3421.79,3215.8,3304.31,3556.83,3649.16,3891.83,4058.78,3795.36,3933.82,4206.42,4432.35,4659.64,5240.33,5039.58,5021.18,5003.66,5006.44,4476.27,4910.85,4534.6,3921.87,4351.8,4705.44,4604.24,4477.69,4073.14,3878.7,4235.88,4051.36,4375.48,4491.05,4167.81,3845.13,3633.33,3726.06,3871.88,3634.37,3599.13,3563.96,3509.29,3456.27,2898.95,3166.76,3240.86,3387.0,3337.67,3035.18,2936.74,2818.26,3397.01,3362.31,3420.03,3280.48,3261.94,3370.21,3409.61,3318.52,3383.91,3522.64,3729.35,4064.3,4113.74,4136.19,4187.02,4372.39,4928.61,5211.18,4674.38,4989.33,4544.02,4578.8],"pct":[-0.7,10.02,-9.57,4.87,1.9,5.82,17.86,3.17,-5.82,0.82,7.64,2.73,6.08,4.19,-7.34,3.33,6.83,5.53,4.74,12.34,-4.22,0.33,-0.22,0.13,-11.03,8.24,-7.77,-11.4,10.61,8.46,-2.19,-2.53,-8.98,-4.89,9.02,-4.93,8.02,2.47,-7.24,-7.85,-4.94,2.68,3.59,-6.11,-1.17,-0.88,-1.62,-1.53,-16.21,9.55,2.14,4.26,-2.49,-8.74,-3.17,-4.14,20.6,-10.97,1.84,-4.12,-0.56,2.83,0.74,-2.81,1.37,4.45,5.85,9.13,0.95,-0.11,0.93,4.13,12.06,7.15,-10.38,5.23,-9.22,0.82]},"家用电器":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[7574.76,7336.08,6539.99,7040.56,7472.98,7652.68,8482.06,8536.71,8380.47,8989.39,9776.2,10197.01,9881.23,9730.02,9408.8,9338.27,9208.79,8607.78,7816.95,7813.68,7734.73,7682.11,7690.51,8204.5,7830.52,7455.44,6504.13,6469.56,6573.61,7307.06,7127.87,6824.32,6491.79,5656.01,6418.89,6485.78,7023.37,7045.12,6987.68,7130.3,6604.62,7347.58,7399.91,7023.52,7033.93,6781.91,6748.65,6730.52,6598.44,7250.08,7421.09,8051.89,7729.71,7301.34,7135.89,6998.38,8531.42,8416.05,8213.3,8442.57,8385.56,8447.48,8812.41,8314.43,8605.14,8343.74,8397.45,8963.39,9032.42,9096.04,9102.47,9213.92,9124.68,9217.41,8560.07,9096.84,8851.36,8863.84],"pct":[-3.22,7.28,-11.03,7.76,7.71,1.7,10.51,-0.16,-1.64,5.69,8.04,4.61,-3.5,-1.62,-3.62,-0.73,-0.08,-6.25,-9.29,0.29,-1.5,-3.72,-1.17,6.91,-4.76,-6.21,-12.89,-0.25,0.35,11.19,-2.42,-4.21,-4.88,-12.66,12.81,-0.12,8.06,0.07,-0.83,1.18,-5.97,13.3,0.72,-5.09,-0.35,-3.44,-0.32,-0.58,-2.06,10.1,1.8,8.06,-5.15,-5.7,-2.01,-1.88,21.99,-10.91,-2.54,2.8,-1.08,0.73,4.42,-5.56,2.74,-2.69,0.46,6.63,0.07,1.2,0.21,1.29,-1.84,1.23,-6.02,5.29,-2.31,0.51]},"建筑材料":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[5946.27,6371.95,6412.09,6963.04,6850.57,6773.89,8394.13,8556.2,7762.7,7601.9,7966.83,7818.18,7913.37,8202.96,8286.25,8379.47,8571.39,7994.93,7529.51,8205.37,7563.9,7265.33,7238.71,8166.83,7542.25,7494.8,7114.9,6719.1,6862.11,7551.9,6792.0,6329.82,5740.64,5181.75,6244.46,6032.67,6573.03,6576.73,6148.43,5840.45,5344.24,5397.98,5946.56,5563.02,5456.05,5085.88,4859.79,4666.64,4263.33,4449.19,4375.1,4419.34,4432.76,4027.9,3958.4,3676.04,4517.88,4730.73,4614.26,4390.94,4335.12,4359.65,4473.7,4312.12,4370.54,4336.66,4916.22,5248.01,5210.65,5278.74,5172.4,5362.85,6076.69,6571.81,5801.73,6403.33,6798.91,6461.34],"pct":[-6.71,18.97,-0.56,8.94,-0.8,-1.93,23.27,0.49,-9.01,-4.07,4.46,-1.53,1.25,3.48,0.17,0.72,2.45,-6.85,-5.62,7.85,-7.81,-5.42,-0.08,12.89,-7.62,-2.25,-5.33,-5.72,1.79,10.18,-10.05,-7.08,-9.05,-9.94,20.16,-4.31,9.01,0.03,-7.13,-5.29,-8.14,1.16,9.83,-6.31,-2.43,-6.58,-4.6,-4.02,-9.02,4.85,-1.85,0.74,-1.07,-9.04,-1.61,-7.13,23.37,-4.93,-2.16,-5.24,-1.42,0.43,2.6,-3.13,0.79,-0.42,13.43,7.29,-0.87,0.95,-2.0,3.24,12.73,9.22,-10.34,7.35,5.4,-3.67]},"建筑装饰":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2032.8,1998.23,2009.6,2019.45,1944.26,1928.2,2135.9,2213.02,2050.27,2036.88,2084.64,1923.6,1846.24,1954.91,2069.8,1962.37,1966.48,1977.15,1964.63,2145.51,2107.8,2054.18,2076.5,2238.81,2174.22,2261.87,2215.18,2151.12,2186.75,2183.24,2121.78,2073.74,1917.84,1884.09,2144.13,1993.53,2103.95,2155.57,2216.64,2445.52,2228.7,2185.24,2317.69,2081.9,2062.9,1946.63,1912.61,1886.47,1819.53,1845.13,1865.38,1825.22,1822.69,1732.47,1708.69,1601.99,1899.48,2023.39,2044.7,1991.51,1873.55,1939.23,1874.43,1848.99,1902.79,1930.55,2034.94,2072.65,2100.43,2153.34,2124.5,2124.98,2261.84,2339.77,2228.33,2237.41,2118.74,2090.69],"pct":[-3.56,9.09,-0.74,0.78,-3.5,-0.98,10.61,3.06,-7.34,-1.68,2.21,-7.64,-3.9,6.08,5.35,-5.46,0.15,0.48,-0.77,9.37,-2.25,-2.97,1.46,7.97,-3.11,2.89,-2.15,-1.97,3.81,0.44,-2.98,-2.34,-7.39,-1.93,13.44,-7.37,5.56,2.25,2.9,10.25,-8.17,-1.71,5.9,-9.96,-1.18,-5.43,-1.96,-1.36,-3.67,2.52,1.03,-2.46,-0.91,-4.9,-1.4,-6.43,19.06,-3.55,0.94,-2.73,-5.81,2.98,-3.39,-1.51,2.42,1.79,5.3,1.96,1.32,1.87,-1.61,0.04,6.31,3.97,-3.46,-1.43,-5.79,-1.26]},"房地产":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[4009.45,3931.95,3686.79,3842.72,3723.77,3896.61,4190.32,4258.81,4061.43,3882.75,4120.78,3826.41,3565.13,3933.24,3779.47,3721.14,3787.06,3481.81,3070.16,3224.52,3394.35,3092.67,3159.96,3371.59,3328.14,3302.2,3573.19,3314.41,3118.44,3293.43,3087.5,3053.69,3022.3,2577.31,3293.73,2995.12,3106.31,3043.71,2812.03,2740.1,2552.13,2567.03,2930.4,2727.31,2577.66,2390.17,2354.78,2204.67,2027.04,2073.17,1994.8,1909.74,2026.98,1753.96,1793.73,1713.17,2333.64,2404.97,2391.95,2157.29,2025.21,2133.95,2031.53,1998.59,1989.86,2008.35,2093.78,2229.34,2411.09,2353.92,2287.77,2197.09,2291.65,2289.83,2032.13,2173.89,2069.2,1996.03],"pct":[-7.85,8.67,-6.92,3.69,-2.2,3.99,7.24,0.99,-4.57,-5.15,5.99,-7.07,-6.2,10.41,-4.11,-1.66,2.12,-8.18,-11.95,5.43,5.44,-8.72,2.56,6.88,-0.81,-0.54,8.38,-7.58,-2.77,5.74,-6.25,-0.73,-1.09,-14.76,27.82,-9.29,3.59,-1.91,-7.52,-2.69,-6.16,0.89,13.89,-6.59,-6.86,-6.9,-1.12,-6.29,-7.97,3.29,-4.04,-4.18,3.77,-12.98,2.25,-4.5,37.61,-5.96,-1.31,-9.65,-6.15,5.39,-5.03,-1.62,-0.89,1.5,4.15,6.49,7.94,-1.96,-2.84,-4.02,4.15,1.42,-9.8,5.51,-5.64,-2.75]},"有色金属":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[3012.39,2938.77,2628.62,2680.43,2790.86,2921.17,3514.02,3477.72,3142.05,3201.79,3858.53,4094.32,4254.59,4538.78,4075.37,4442.7,4816.81,4605.5,5867.48,6923.62,5669.68,5634.4,6132.59,5751.42,5133.86,6015.64,5372.17,4644.74,5015.52,5615.58,5524.34,5166.24,4698.07,4531.63,4871.74,4583.23,5255.45,5067.31,4865.39,4793.0,4403.02,4443.81,4676.04,4310.88,4271.25,4232.15,4091.26,4184.7,3672.0,4037.77,4542.31,4651.51,4638.44,4298.49,4144.76,3980.48,4760.66,4590.56,4572.59,4317.99,4510.9,4486.84,4834.57,4603.44,4668.39,5100.49,5393.43,6413.26,7233.5,7595.37,7396.64,8408.59,10308.42,10528.63,8716.31,9410.78,8745.93,8601.93],"pct":[-1.38,7.79,-10.79,2.57,4.75,4.45,19.47,-1.01,-9.76,0.16,20.37,7.07,2.67,5.99,-10.75,8.62,6.64,-3.87,26.99,16.55,-18.31,-0.4,9.17,-5.97,-11.31,14.68,-10.71,-11.13,11.28,12.91,-1.28,-6.5,-8.87,-3.67,7.42,-7.48,14.85,-4.09,-4.12,-1.18,-8.9,0.98,4.85,-8.24,-1.05,-0.26,-3.07,2.39,-12.23,10.69,12.49,1.08,-0.06,-6.6,-4.2,-4.99,20.25,-11.95,0.02,-5.47,4.4,-1.89,7.0,-5.01,0.25,8.33,5.51,19.03,10.95,0.59,-2.26,10.89,20.59,9.79,-18.57,5.34,-7.89,-1.37]},"机械设备":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[1158.47,1171.95,1092.85,1146.74,1159.8,1231.69,1386.37,1454.22,1393.93,1416.59,1484.89,1536.78,1557.96,1580.56,1540.6,1519.32,1556.0,1592.16,1625.51,1773.21,1656.66,1634.21,1756.9,1764.68,1556.58,1601.73,1439.01,1226.81,1354.58,1495.89,1572.95,1457.46,1322.22,1398.05,1479.67,1398.74,1534.63,1585.71,1539.88,1494.59,1478.02,1586.75,1559.16,1471.95,1488.32,1400.41,1461.98,1445.09,1186.38,1340.06,1388.41,1379.98,1349.68,1256.85,1227.53,1172.16,1431.32,1496.36,1547.65,1517.89,1532.55,1696.66,1678.87,1600.92,1613.54,1659.05,1753.05,1979.45,2084.16,2050.17,1980.56,2150.73,2286.55,2452.72,2136.48,2368.82,2472.95,2530.5],"pct":[-1.85,12.12,-7.6,5.15,1.82,5.46,12.15,4.22,-4.11,-0.3,4.46,3.65,1.2,2.07,-3.34,-0.99,2.13,2.39,1.75,8.85,-6.59,-1.63,7.52,0.54,-12.05,1.24,-10.35,-13.57,10.62,10.58,5.07,-7.38,-9.11,5.51,5.76,-6.17,9.77,3.09,-3.01,-3.16,-1.05,7.69,-2.04,-5.62,0.93,-5.71,4.32,-0.96,-17.93,13.45,3.19,-1.13,-3.15,-6.79,-2.28,-4.84,22.23,-7.73,3.76,-2.59,1.21,9.95,-1.17,-4.93,-0.12,3.19,5.54,12.95,4.9,-1.97,-3.5,8.29,6.14,7.62,-11.58,8.56,3.4,2.42]},"汽车":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[3991.14,4060.96,3649.83,3692.65,3685.28,3923.35,4481.24,4703.55,4756.45,5307.64,5732.7,5708.2,5853.44,5551.46,5223.21,5391.25,5698.52,6215.25,6187.65,6669.58,6076.62,6678.2,7026.94,6689.82,5912.87,5945.63,5350.63,4778.03,5650.46,6472.76,6802.32,5996.25,5366.04,5285.21,5710.0,5342.91,5924.99,5885.11,5552.97,5228.43,5195.32,5657.44,5982.01,5549.32,5575.28,5709.83,5866.41,5518.47,4668.98,5305.74,5550.51,5692.34,5490.73,5337.35,5350.42,5046.06,6179.61,6269.41,6312.9,6420.22,6473.85,7068.05,7152.42,6871.66,6970.5,6992.03,7021.49,7839.33,8244.77,7949.25,7545.76,7976.9,7997.5,8212.25,7469.2,7797.16,7451.52,7321.55],"pct":[1.33,12.73,-10.65,0.56,0.59,5.92,13.38,4.0,0.9,8.85,7.53,0.25,2.21,-4.6,-6.41,2.84,6.24,9.25,-0.61,6.34,-8.89,7.94,5.99,-4.77,-12.32,-1.45,-10.75,-8.5,18.13,13.68,5.36,-11.69,-10.32,-1.17,7.76,-7.95,11.16,-1.01,-5.65,-5.79,-0.72,9.04,5.03,-6.85,0.09,1.54,2.96,-6.02,-15.58,14.12,4.29,2.32,-4.72,-2.97,0.27,-5.6,22.69,-8.06,0.69,1.12,1.07,8.47,0.62,-4.1,0.47,0.85,0.36,11.63,5.76,-3.47,-5.35,5.52,0.28,3.48,-7.62,2.8,-5.34,-1.59]},"煤炭":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12"],"close":[2392.29,2225.47,2082.16,2064.54,2049.41,2046.99,2299.42,2321.31,2205.9,2185.87,2513.91,2481.63,2337.24,2487.74,2591.78,2670.58,2845.35,2910.92,2969.61,3844.43,3976.45,3444.71,3278.75,3426.43],"pct":[-5.43,3.08,-7.25,-0.54,-0.22,0.14,12.09,0.56,-4.84,-2.23,15.07,-1.33,-5.4,6.77,3.63,3.36,5.5,2.39,2.12,31.79,2.08,-12.66,-4.12,4.58]},"环保":{"months":["2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2293.17,2059.22,2217.88,2000.06,1700.22,1875.6,1916.55,2018.61,1896.76,1722.37,1734.43,1863.98,1769.44,1874.81,1908.33,1836.84,1790.09,1798.65,1790.78,1843.06,1771.91,1731.36,1688.65,1711.23,1644.91,1447.87,1464.56,1536.82,1552.66,1536.44,1392.33,1418.8,1335.74,1608.25,1749.44,1763.36,1675.45,1604.61,1680.78,1728.15,1674.85,1789.23,1808.48,1837.43,1934.42,1949.36,1999.72,1959.26,1958.5,2074.76,2235.08,2053.93,2195.25,2100.75,2073.3],"pct":[3.78,-10.67,6.32,-9.92,-14.86,11.59,2.52,4.77,-5.82,-9.32,0.38,7.07,-5.4,5.72,1.67,-3.8,-2.59,0.71,-0.13,2.79,-4.17,-2.16,-2.52,1.24,-3.95,-12.03,1.63,4.49,0.94,-1.76,-9.14,1.62,-5.76,20.5,-3.26,0.71,-5.22,-4.03,4.21,2.59,-3.19,6.32,2.13,1.45,5.12,0.67,1.64,-2.48,-0.29,5.4,8.43,-6.94,5.29,-4.96,-1.21]},"电力设备":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[4587.73,4664.52,4288.77,4717.68,4683.0,5186.25,6283.56,6397.0,6535.41,6960.14,7069.25,8478.65,8965.85,8424.94,8032.9,8584.8,9246.22,10498.7,11624.19,12248.45,11879.27,13269.23,13713.37,12536.87,11180.55,11464.9,10594.81,8706.36,9788.71,11863.42,11818.36,10886.63,9726.37,9608.91,9738.09,9348.25,10453.33,9824.03,9314.6,8931.96,8667.72,9021.42,8800.39,8067.49,7607.06,7196.38,6883.39,6900.21,5774.01,6364.01,6600.94,6549.8,6512.23,5826.76,5856.07,5636.39,7164.63,7475.8,7566.53,7112.74,6851.81,7290.91,7063.23,6481.81,6622.59,7065.29,7311.64,8435.46,10221.22,10321.86,9962.15,10088.23,10496.42,11052.87,10772.31,11739.19,11480.88,10890.63],"pct":[4.64,11.62,-9.33,9.75,0.22,9.55,20.15,0.73,2.22,1.81,2.02,20.27,5.01,-5.15,-6.47,6.37,7.82,14.56,10.41,4.49,-2.93,13.02,3.71,-8.29,-11.88,0.29,-8.81,-14.87,16.71,21.46,-0.48,-7.57,-10.75,-1.33,0.97,-5.28,12.03,-6.44,-5.09,-4.11,-2.46,4.0,-2.98,-8.24,-5.79,-5.18,-4.39,0.33,-16.18,10.82,3.42,-1.34,-2.59,-10.32,0.55,-3.54,27.24,-8.7,1.62,-5.41,-3.65,5.98,-3.43,-8.38,1.41,7.02,3.59,15.34,20.76,0.34,-3.64,0.92,3.31,4.24,-1.02,7.47,-3.73,-5.85]},"电子":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[3951.21,4165.02,3313.79,3692.36,3635.54,4332.13,4800.55,4736.14,4447.5,4509.42,4690.54,4734.59,4799.98,4636.48,4367.49,4637.52,4734.79,5294.29,5506.4,5122.78,4921.4,5005.13,5432.09,5493.91,4758.41,4816.32,4182.23,3525.66,3841.41,4150.05,4000.99,3954.84,3420.42,3536.0,3650.41,3486.7,3818.53,3804.57,4027.21,3725.07,3809.26,3870.12,3838.26,3647.27,3598.55,3757.84,3785.94,3739.53,2845.33,3313.24,3348.59,3336.74,3295.17,3400.38,3438.74,3257.2,3879.86,4448.24,4410.74,4432.25,4420.46,4787.64,4578.33,4358.85,4234.59,4609.9,4913.73,6131.74,6803.98,6563.99,6232.95,6554.19,7242.89,7394.47,6395.22,8108.69,9558.91,9480.93],"pct":[12.64,16.95,-22.09,11.58,-0.81,17.82,10.74,-2.75,-5.72,-0.94,3.87,1.07,1.24,-3.5,-6.91,5.92,2.77,12.06,3.76,-6.48,-3.99,0.76,8.46,1.17,-13.72,-0.36,-13.2,-13.44,11.81,8.38,-3.81,-0.9,-13.59,3.63,3.19,-5.48,9.57,-0.5,5.9,-8.31,2.85,2.22,-1.35,-5.0,-1.45,4.51,0.98,-1.05,-23.89,16.99,0.6,-0.84,-2.84,3.03,1.31,-5.87,19.0,0.07,-0.48,0.41,0.05,6.48,-4.78,-5.18,-3.56,9.38,6.72,25.28,9.75,-4.92,-4.22,4.98,9.27,3.25,-11.66,23.19,14.6,-0.83]},"石油石化":{"months":["2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2408.54,2307.15,2665.51,2895.35,2838.99,3115.14,3164.45,2913.43,3142.19,3195.3,2793.26,2998.37,2672.19,2809.86,2892.28,2763.69,2714.09,2495.74,2537.09,2488.42,2436.41,2670.53,2590.1,2772.94,2782.24,2967.68,3192.27,3073.39,3101.49,3297.75,3115.01,2776.72,2750.62,3153.7,2900.21,2867.41,2904.91,2712.17,2506.49,2597.39,2485.03,2578.75,2548.02,2614.51,2626.05,2675.51,2943.6,2853.3,2751.81,2968.01,3179.62,3214.93,3390.76,3295.34,3505.0],"pct":[0.26,-6.62,13.52,7.9,-2.83,12.89,2.32,-7.16,7.79,1.66,-13.74,7.31,-11.67,5.59,2.91,-4.38,-2.16,-7.21,1.89,-1.93,-2.23,9.35,-2.48,7.18,0.26,6.68,7.96,-3.69,1.8,5.87,-5.69,-10.96,-1.5,14.7,-15.32,-1.21,1.35,-6.57,-7.9,3.42,-4.37,3.41,-0.69,2.77,0.51,1.96,9.96,-3.5,-3.55,7.44,8.99,-1.04,5.81,-2.03,6.06]},"社会服务":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[5634.85,5459.63,4932.43,6003.27,6403.32,8027.1,11349.27,10348.78,10673.56,9692.05,9845.27,12304.75,12450.83,13305.02,13538.24,13717.25,14176.53,12947.45,10391.92,10486.54,11254.97,11623.88,9692.11,11041.35,10255.01,10413.67,9729.0,9029.6,9394.66,10439.64,9478.67,9386.78,8859.55,8928.5,10139.93,10794.71,10762.46,11053.26,11015.65,10421.33,9996.07,9955.16,10246.31,9499.04,9146.82,8403.72,8876.4,8418.43,7182.64,7642.62,7801.9,7622.54,7316.14,6393.77,6491.56,6306.49,8019.72,8308.38,8423.14,7988.45,7773.9,8066.28,8333.68,7997.15,7928.75,8256.39,8680.16,9118.58,8684.16,8707.51,8814.97,8764.42,9283.84,9368.14,8382.2,8506.39,7890.3,7743.16],"pct":[-8.95,7.55,-9.49,22.24,8.51,24.49,38.77,-9.94,3.55,-9.6,2.15,24.82,1.37,3.51,0.02,0.68,1.88,-8.09,-19.54,5.84,7.24,-0.58,-11.17,14.31,-7.21,0.86,-6.6,-5.83,6.75,11.04,-7.97,-0.95,-5.44,0.93,13.47,4.1,0.1,2.72,-0.3,-5.33,-3.37,-0.36,2.82,-7.36,-3.75,-7.64,5.58,-5.18,-14.86,7.26,1.9,-2.29,-4.47,-12.44,1.45,-2.48,27.14,-7.62,0.47,-5.08,-2.8,2.95,2.99,-3.81,-1.67,4.4,4.46,5.24,-4.71,0.55,1.13,-1.0,5.89,1.9,-8.94,0.08,-6.87,-1.45]},"纺织服饰":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[1883.9,1927.53,1850.06,1753.21,1745.18,1805.5,1909.57,1952.73,1843.01,1882.96,1885.31,1783.63,1649.87,1711.41,1805.97,1827.38,1894.13,1931.14,1751.45,1801.76,1736.29,1715.91,1814.93,1844.08,1720.84,1777.48,1653.58,1489.55,1605.0,1642.87,1616.86,1593.2,1467.1,1405.75,1550.04,1573.75,1647.35,1725.23,1632.4,1622.58,1578.52,1625.74,1689.26,1599.48,1616.03,1585.12,1600.56,1579.06,1421.63,1460.21,1533.13,1511.21,1486.89,1316.06,1239.25,1205.71,1443.7,1424.1,1522.37,1495.03,1456.2,1480.74,1481.51,1459.4,1547.38,1577.37,1588.72,1631.81,1616.7,1660.68,1709.63,1692.13,1792.52,1791.75,1662.14,1739.15,1592.86,1563.57],"pct":[-2.47,10.77,-4.92,-4.59,0.78,2.88,5.83,1.94,-5.5,0.99,0.07,-5.33,-7.14,4.55,4.99,1.39,3.36,0.99,-9.29,2.93,-3.78,-4.51,5.94,1.86,-6.84,2.25,-6.88,-9.81,6.72,2.44,-1.55,-1.55,-8.14,-4.42,10.16,0.44,4.82,4.43,-5.51,-0.55,-3.0,3.13,3.6,-5.37,0.87,-1.83,1.0,-1.3,-9.93,3.5,4.89,-1.51,-2.17,-11.3,-5.66,-2.61,19.9,-10.39,6.84,-2.19,-2.5,1.15,-0.05,-1.81,5.04,1.92,0.22,2.68,-0.84,1.94,2.9,-1.31,5.74,1.49,-6.83,3.23,-8.48,-1.77]},"综合":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2162.55,2231.38,2067.59,2121.1,2134.04,2282.01,2555.97,2612.19,2331.6,2375.82,2358.13,2397.44,2302.19,2306.72,2401.91,2503.75,2569.74,2823.23,2713.16,2999.41,2635.01,2672.24,2599.28,2728.43,2547.38,2765.01,2821.78,2464.78,2575.2,2688.48,2738.36,2804.17,2658.38,2685.81,2949.64,3016.74,3019.33,3020.47,2983.24,2854.01,2759.74,2726.45,2831.51,2612.86,2626.72,2591.8,2640.24,2647.68,2248.6,2250.41,2374.14,2171.11,2069.96,1764.94,1896.8,1850.15,2315.66,2563.91,2783.74,2732.97,2657.34,2732.75,2614.64,2527.52,2647.97,2828.91,3098.24,3776.61,3755.81,3762.08,3915.06,3923.18,4314.38,5108.43,4459.47,4960.77,4593.9,4380.41],"pct":[1.18,12.24,-7.91,3.18,1.97,6.33,11.31,1.75,-10.68,0.48,-0.99,1.66,-3.82,0.71,3.54,4.32,2.86,10.05,-4.24,9.67,-12.76,0.39,-2.97,5.35,-7.64,8.75,2.03,-12.45,5.52,4.73,2.21,2.56,-5.38,0.65,9.74,0.76,0.13,-0.17,-1.25,-4.65,-2.85,-0.68,3.69,-7.62,0.31,-1.26,1.71,0.02,-15.25,1.68,5.2,-8.78,-5.63,-14.38,6.94,-2.08,25.16,0.94,8.77,-1.57,-3.8,3.15,-4.97,-3.58,4.15,6.82,9.32,22.04,-1.49,-0.08,4.04,-0.47,9.55,21.24,-12.47,9.22,-12.0,-3.28]},"美容护理":{"months":["2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[7668.61,6587.9,6870.28,6606.08,6459.83,6810.17,7529.61,7364.99,7043.65,6483.18,6040.27,6482.26,7151.56,7209.51,7378.86,7034.69,6691.94,6256.07,6177.98,6404.53,6087.8,5688.46,5224.31,5070.09,4861.05,4211.91,4819.55,4759.77,4750.69,4575.45,4167.1,4061.11,3731.08,4925.81,4707.94,4668.58,4358.5,4197.05,4294.26,4440.78,4713.82,4833.94,4659.39,4728.94,5052.44,4799.7,4615.16,4451.46,4375.58,4394.75,4515.57,3984.79,4050.16,3691.4,3572.4],"pct":[-6.41,-14.13,2.68,-3.81,-1.07,9.02,10.72,-2.27,-3.81,-7.98,-6.62,6.85,8.2,0.96,2.28,-4.62,-5.2,-6.37,-0.94,3.42,-4.87,-6.77,-7.86,-3.74,-3.96,-13.41,15.1,-1.1,-0.46,-5.12,-8.81,-2.35,-7.81,32.71,-16.82,-0.91,-6.72,-3.72,2.13,3.37,6.01,2.94,-3.36,1.54,6.56,-4.8,-3.81,-3.63,-1.56,0.03,2.51,-10.51,0.02,-8.78,-2.52]},"计算机":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[5032.71,5566.93,4853.74,5220.6,5102.79,5687.43,6053.96,6037.8,5503.85,5337.23,5195.42,5126.95,4881.63,4797.51,4664.05,4567.86,4948.91,5115.25,4893.53,4815.22,4756.16,4752.45,5113.82,5197.11,4755.18,4880.79,4311.0,3580.24,3658.49,3968.68,3928.56,3700.83,3392.26,3936.29,3937.12,3873.45,4369.17,4617.62,5298.33,4927.84,4929.19,4941.44,4733.33,4557.13,4362.9,4197.15,4305.95,4220.78,3222.55,3795.43,3777.26,3649.96,3395.09,3170.7,3161.17,2941.32,3968.77,4542.76,4742.35,4407.29,4311.96,5015.04,4742.95,4510.79,4480.16,4798.64,4983.8,5755.35,5642.86,5514.4,5224.25,5211.26,5573.0,5659.84,4814.59,5132.48,4768.07,4674.13],"pct":[6.75,22.72,-14.43,7.85,-1.44,10.04,6.05,-0.91,-8.72,-4.78,-2.85,-1.21,-5.3,-1.75,-3.56,-2.07,8.46,3.67,-4.48,-1.36,-1.14,-2.04,7.55,1.53,-9.03,0.92,-11.62,-16.45,6.57,8.55,-1.15,-5.65,-8.23,15.97,-0.23,-2.43,12.71,5.52,14.95,-7.54,0.4,0.97,-4.3,-3.32,-4.27,-3.71,2.63,-2.02,-23.66,18.6,-0.72,-3.78,-8.35,-6.63,-0.09,-6.91,35.18,0.18,5.23,-6.55,-1.68,12.18,-6.19,-5.1,-1.77,7.16,3.87,14.75,-2.79,-2.64,-5.47,-0.22,6.38,1.9,-13.23,4.35,-8.3,-2.29]},"轻工制造":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2241.55,2195.52,2078.08,2092.87,2222.82,2300.52,2652.21,2779.39,2544.94,2599.67,2664.82,2605.76,2677.16,2721.89,2771.83,2821.03,2844.67,2758.02,2561.6,2692.98,2604.93,2527.31,2671.79,2909.27,2628.77,2651.89,2448.44,2121.98,2281.96,2474.66,2335.28,2353.53,2163.98,2052.3,2305.93,2326.17,2442.74,2605.86,2414.13,2294.89,2213.15,2283.68,2411.57,2285.67,2265.97,2213.22,2223.89,2157.48,1855.78,1952.68,2028.86,2009.63,1962.49,1730.19,1662.07,1605.84,1973.5,2009.92,2137.05,2027.82,1974.44,2027.45,1993.35,1951.82,2045.9,2119.96,2139.76,2276.76,2264.44,2293.55,2346.69,2434.85,2558.39,2629.05,2399.41,2484.91,2312.37,2278.69],"pct":[-1.22,8.17,-6.19,1.05,7.26,3.02,14.81,4.27,-8.63,0.82,2.2,-2.34,2.54,1.82,1.1,1.47,0.77,-3.49,-7.23,5.44,-3.5,-5.28,6.19,8.87,-9.74,0.11,-7.83,-12.83,7.7,8.56,-5.69,0.86,-7.91,-5.35,12.1,0.11,4.9,6.63,-7.4,-5.01,-3.32,3.59,5.69,-5.31,-1.39,-2.31,0.26,-3.05,-14.12,5.85,3.94,-1.24,-3.5,-11.67,-3.79,-3.42,23.34,-7.64,6.33,-5.01,-2.29,2.28,-1.97,-2.34,3.92,4.24,0.87,6.33,-0.49,1.08,2.0,3.13,4.65,3.43,-7.42,2.22,-7.12,-1.33]},"通信":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2339.46,2598.61,2392.4,2436.77,2294.13,2473.18,2554.3,2532.61,2272.87,2213.5,2264.39,2113.6,1959.3,1985.93,1872.18,1804.67,1929.41,1989.92,2080.72,1958.46,1931.85,1922.81,2139.8,2178.01,1998.58,2109.99,1951.34,1698.96,1802.33,1918.59,1977.63,1957.35,1795.67,1895.21,1917.45,1838.28,2008.1,2180.57,2380.76,2463.47,2497.02,2769.56,2557.5,2457.23,2474.55,2249.63,2307.58,2311.69,1960.59,2343.36,2442.9,2479.65,2327.55,2395.55,2341.19,2196.0,2736.19,2908.04,2852.54,2977.81,2952.53,3060.7,2943.05,2746.04,2855.2,3257.61,3607.94,4849.39,4842.3,4820.57,4909.52,5501.52,5876.02,5889.41,5829.13,7124.95,8578.25,8910.23],"pct":[0.65,22.97,-9.74,2.45,-5.12,6.93,3.04,-1.66,-10.06,-4.06,2.27,-6.46,-6.61,1.45,-6.18,-4.16,6.95,3.13,4.3,-6.46,-1.34,-2.7,11.22,1.96,-8.55,3.82,-7.68,-11.72,8.29,6.76,3.06,-0.82,-8.13,5.37,1.23,-4.56,9.23,8.44,9.53,3.36,2.13,11.88,-7.91,-3.88,0.94,-8.74,2.52,0.3,-15.1,20.93,4.17,1.04,-7.3,2.71,-2.12,-7.13,24.97,-6.0,-1.47,4.11,-0.53,3.84,-4.0,-6.86,2.78,14.86,11.19,35.34,-1.77,-1.75,2.32,11.12,5.64,-0.41,1.1,18.47,17.63,4.09]},"钢铁":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2002.36,1912.01,1876.17,1928.8,1896.39,1918.45,2027.7,2068.31,1995.45,2029.6,2251.05,2237.34,2239.58,2426.81,2587.66,2816.68,2791.77,2765.76,3252.3,3823.54,3311.04,2924.2,2952.97,2999.35,2778.63,2998.42,2694.19,2475.78,2571.63,2625.42,2610.32,2440.83,2220.52,2159.72,2396.22,2285.98,2452.33,2563.84,2373.08,2309.7,2200.24,2188.14,2376.62,2217.21,2234.91,2218.2,2177.97,2099.0,1953.73,2085.1,2087.95,2128.02,2080.74,1877.16,1892.54,1760.88,2145.9,2134.59,2143.51,2102.31,2077.3,2224.75,2220.82,2130.74,2124.17,2123.09,2478.93,2498.05,2493.2,2621.93,2605.6,2660.39,2848.46,3133.97,2646.7,2690.21,2379.05,2349.15],"pct":[-6.75,5.91,-2.04,3.05,-0.93,0.91,5.82,1.55,-3.63,0.77,10.48,-0.74,-0.12,8.2,6.79,9.21,-2.81,-0.06,16.33,21.08,-15.2,-9.99,1.45,1.78,-7.58,6.31,-10.27,-7.68,6.08,2.44,-0.35,-6.27,-8.97,-2.97,10.82,-5.17,7.4,4.37,-7.68,-2.81,-4.55,-0.49,8.29,-6.87,0.67,-0.59,-2.19,-3.65,-6.88,7.34,0.3,1.73,-3.13,-9.46,0.93,-7.06,21.97,-9.46,0.32,-2.01,-1.22,6.5,-0.07,-4.4,-0.82,0.42,16.62,1.44,-0.66,3.79,-2.63,1.61,6.52,12.03,-15.13,0.23,-11.99,-1.13]},"银行":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[3651.03,3433.57,3255.7,3391.71,3316.86,3287.23,3320.91,3479.32,3342.61,3488.71,3807.35,3696.86,3937.42,4035.38,4085.5,3985.15,4181.14,3930.59,3425.19,3520.28,3553.63,3672.76,3517.5,3527.37,3609.43,3645.78,3536.81,3455.55,3336.68,3442.09,3121.72,3088.68,3034.49,2738.01,3124.74,3158.22,3263.33,3139.45,3072.81,3201.38,3133.09,3068.63,3238.99,3030.18,3114.79,2993.33,2921.54,2908.9,3088.49,3223.97,3217.12,3373.57,3473.38,3404.03,3354.69,3296.08,3720.81,3627.45,3664.47,3909.35,3923.12,3884.47,3988.9,3970.09,4210.35,4421.54,4335.15,4264.77,3970.79,4143.81,4267.63,4183.0,3904.92,3883.47,4036.09,4013.77,3911.15,3954.25],"pct":[-5.41,2.77,-5.46,4.2,-0.91,-1.37,0.93,4.11,-3.6,3.61,8.82,-3.03,7.55,2.83,0.87,-2.5,5.17,-5.58,-13.17,2.91,1.22,1.05,-4.19,0.3,2.32,-0.33,-3.12,-3.14,-2.08,3.13,-9.38,-0.86,-1.49,-9.25,13.81,-0.24,3.48,-4.11,-2.11,4.14,-1.13,-1.94,5.25,-6.19,2.36,-3.41,-2.55,-0.39,6.99,4.64,-0.02,4.78,1.97,-1.86,-1.4,-1.63,13.2,-9.86,1.05,6.67,0.2,-1.25,2.49,-0.34,5.76,4.81,-2.14,-1.65,-6.96,4.7,2.9,-1.8,-6.81,-0.73,4.22,-0.76,-2.53,1.11]},"非银金融":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[2052.76,1961.41,1802.38,1877.51,1791.83,1890.19,2189.53,2227.86,2164.6,2115.95,2309.34,2271.31,2112.21,2125.11,1987.47,1917.89,2050.09,1937.09,1732.17,1806.3,1824.54,1783.94,1776.08,1872.8,1747.62,1695.5,1606.49,1467.4,1470.06,1602.29,1471.97,1504.68,1355.27,1289.85,1483.14,1473.12,1604.27,1562.79,1508.0,1595.75,1512.04,1480.46,1693.84,1592.56,1563.72,1532.67,1480.64,1433.75,1385.32,1474.71,1383.83,1415.81,1395.44,1310.79,1384.89,1359.13,1857.02,1901.08,1929.7,1866.3,1749.59,1771.62,1760.89,1687.17,1731.99,1870.63,1956.59,2118.3,1994.85,2008.58,1932.15,2054.14,2043.23,1975.15,1746.5,1826.57,1709.44,1681.47],"pct":[-5.4,5.44,-9.16,4.5,-2.91,3.68,15.86,0.37,-2.36,-3.59,8.82,-1.65,-7.6,0.38,-6.68,-3.69,7.01,-4.97,-11.43,4.64,1.35,-5.03,0.11,5.6,-6.75,-4.73,-5.51,-7.51,2.63,9.06,-8.18,2.43,-9.51,-4.74,14.6,-2.41,9.89,-3.09,-3.3,5.89,-4.4,-2.01,14.33,-5.39,-2.49,-1.35,-4.08,-3.01,-3.35,7.38,-6.03,1.44,-3.47,-5.75,5.87,-1.36,37.03,-7.4,1.42,-2.64,-5.95,0.49,-0.78,-4.33,2.01,8.34,4.48,8.41,-6.02,1.32,-3.79,6.69,-0.95,-2.98,-10.7,3.07,-6.57,-1.45]},"食品饮料":{"months":["2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06"],"close":[14642.77,14291.07,14900.04,16190.67,17659.54,19176.57,22491.48,25199.64,22885.93,23838.89,24387.01,28773.45,29185.15,27712.45,26507.48,28092.33,30682.25,28944.2,23385.34,22384.45,25180.06,25628.28,26012.16,27044.37,24180.63,24000.44,21695.0,22461.22,22898.33,25886.41,23378.12,23548.72,22825.24,17771.98,20723.16,22956.3,24140.62,24394.06,23968.48,22540.28,20759.79,20873.29,22802.55,21468.31,20987.51,20453.6,20556.82,19526.97,17542.95,19058.0,19355.95,19506.75,18790.11,16576.06,16121.65,15727.09,19603.06,17752.08,18180.27,17958.34,16729.84,17422.31,17747.5,17707.51,17685.35,16642.76,16677.44,17786.45,17049.15,16967.17,17110.46,16217.81,16234.4,16255.31,15785.77,15609.46,14762.62,14085.68],"pct":[-4.23,6.9,4.42,8.55,10.22,7.61,17.02,11.45,-8.85,2.56,2.24,17.56,1.25,-5.34,-5.87,5.57,9.89,-5.83,-19.16,-2.79,12.9,-0.73,3.97,3.03,-10.53,-1.75,-9.91,4.39,3.19,13.18,-9.85,0.9,-2.46,-22.14,15.65,6.91,5.15,0.82,-1.75,-5.98,-8.5,0.84,9.06,-5.71,-2.75,-2.47,-4.98,-4.88,-9.86,8.8,1.81,0.33,-5.05,-11.86,-2.69,-2.34,25.72,-17.48,2.85,-1.27,-6.71,3.93,1.76,-0.35,-0.62,-5.18,0.31,6.7,-4.06,-0.1,0.94,-5.23,-0.12,-0.37,-2.14,-2.01,-4.08,-4.2]}},"cumulative":[{"行业名称":"通信","起始点位":2339.46,"最新点位":8910.23,"累计涨跌幅(%)":280.87,"数据月数":78},{"行业名称":"有色金属","起始点位":3012.39,"最新点位":8601.93,"累计涨跌幅(%)":185.55,"数据月数":78},{"行业名称":"电子","起始点位":3951.21,"最新点位":9480.93,"累计涨跌幅(%)":139.95,"数据月数":78},{"行业名称":"电力设备","起始点位":4587.73,"最新点位":10890.63,"累计涨跌幅(%)":137.39,"数据月数":78},{"行业名称":"机械设备","起始点位":1158.47,"最新点位":2530.5,"累计涨跌幅(%)":118.43,"数据月数":78},{"行业名称":"综合","起始点位":2162.55,"最新点位":4380.41,"累计涨跌幅(%)":102.56,"数据月数":78},{"行业名称":"汽车","起始点位":3991.14,"最新点位":7321.55,"累计涨跌幅(%)":83.45,"数据月数":78},{"行业名称":"基础化工","起始点位":2699.54,"最新点位":4578.8,"累计涨跌幅(%)":69.61,"数据月数":78},{"行业名称":"国防军工","起始点位":1162.04,"最新点位":1841.67,"累计涨跌幅(%)":58.49,"数据月数":78},{"行业名称":"石油石化","起始点位":2408.54,"最新点位":3505.0,"累计涨跌幅(%)":45.52,"数据月数":55},{"行业名称":"公用事业","起始点位":1909.41,"最新点位":2758.59,"累计涨跌幅(%)":44.47,"数据月数":78},{"行业名称":"煤炭","起始点位":2392.29,"最新点位":3426.43,"累计涨跌幅(%)":43.23,"数据月数":24},{"行业名称":"社会服务","起始点位":5634.85,"最新点位":7743.16,"累计涨跌幅(%)":37.42,"数据月数":78},{"行业名称":"钢铁","起始点位":2002.36,"最新点位":2349.15,"累计涨跌幅(%)":17.32,"数据月数":78},{"行业名称":"家用电器","起始点位":7574.76,"最新点位":8863.84,"累计涨跌幅(%)":17.02,"数据月数":78},{"行业名称":"建筑材料","起始点位":5946.27,"最新点位":6461.34,"累计涨跌幅(%)":8.66,"数据月数":78},{"行业名称":"银行","起始点位":3651.03,"最新点位":3954.25,"累计涨跌幅(%)":8.31,"数据月数":78},{"行业名称":"传媒","起始点位":697.64,"最新点位":719.46,"累计涨跌幅(%)":3.13,"数据月数":78},{"行业名称":"建筑装饰","起始点位":2032.8,"最新点位":2090.69,"累计涨跌幅(%)":2.85,"数据月数":78},{"行业名称":"轻工制造","起始点位":2241.55,"最新点位":2278.69,"累计涨跌幅(%)":1.66,"数据月数":78},{"行业名称":"食品饮料","起始点位":14642.77,"最新点位":14085.68,"累计涨跌幅(%)":-3.8,"数据月数":78},{"行业名称":"交通运输","起始点位":2223.63,"最新点位":2094.19,"累计涨跌幅(%)":-5.82,"数据月数":78},{"行业名称":"计算机","起始点位":5032.71,"最新点位":4674.13,"累计涨跌幅(%)":-7.12,"数据月数":78},{"行业名称":"环保","起始点位":2293.17,"最新点位":2073.3,"累计涨跌幅(%)":-9.59,"数据月数":55},{"行业名称":"医药生物","起始点位":8366.66,"最新点位":7158.13,"累计涨跌幅(%)":-14.44,"数据月数":78},{"行业名称":"纺织服饰","起始点位":1883.9,"最新点位":1563.57,"累计涨跌幅(%)":-17.0,"数据月数":78},{"行业名称":"非银金融","起始点位":2052.76,"最新点位":1681.47,"累计涨跌幅(%)":-18.09,"数据月数":78},{"行业名称":"农林牧渔","起始点位":3175.56,"最新点位":2379.55,"累计涨跌幅(%)":-25.07,"数据月数":78},{"行业名称":"商贸零售","起始点位":3136.14,"最新点位":1917.01,"累计涨跌幅(%)":-38.87,"数据月数":78},{"行业名称":"房地产","起始点位":4009.45,"最新点位":1996.03,"累计涨跌幅(%)":-50.22,"数据月数":78},{"行业名称":"美容护理","起始点位":7668.61,"最新点位":3572.4,"累计涨跌幅(%)":-53.42,"数据月数":55}],"volatility":[{"行业名称":"有色金属","波动率(标准差)":9.63,"平均月涨跌幅(%)":1.58,"最大单月涨幅(%)":26.99,"最大单月跌幅(%)":-18.57},{"行业名称":"社会服务","波动率(标准差)":9.52,"平均月涨跌幅(%)":0.74,"最大单月涨幅(%)":38.77,"最大单月跌幅(%)":-19.54},{"行业名称":"电子","波动率(标准差)":9.08,"平均月涨跌幅(%)":1.46,"最大单月涨幅(%)":25.28,"最大单月跌幅(%)":-23.89},{"行业名称":"电力设备","波动率(标准差)":8.89,"平均月涨跌幅(%)":1.32,"最大单月涨幅(%)":27.24,"最大单月跌幅(%)":-16.18},{"行业名称":"计算机","波动率(标准差)":8.87,"平均月涨跌幅(%)":0.14,"最大单月涨幅(%)":35.18,"最大单月跌幅(%)":-23.66},{"行业名称":"通信","波动率(标准差)":8.86,"平均月涨跌幅(%)":1.92,"最大单月涨幅(%)":35.34,"最大单月跌幅(%)":-15.1},{"行业名称":"煤炭","波动率(标准差)":8.72,"平均月涨跌幅(%)":2.05,"最大单月涨幅(%)":31.79,"最大单月跌幅(%)":-12.66},{"行业名称":"国防军工","波动率(标准差)":8.6,"平均月涨跌幅(%)":0.8,"最大单月涨幅(%)":27.45,"最大单月跌幅(%)":-20.58},{"行业名称":"传媒","波动率(标准差)":8.48,"平均月涨跌幅(%)":0.27,"最大单月涨幅(%)":27.26,"最大单月跌幅(%)":-16.23},{"行业名称":"食品饮料","波动率(标准差)":8.15,"平均月涨跌幅(%)":0.08,"最大单月涨幅(%)":25.72,"最大单月跌幅(%)":-22.14},{"行业名称":"房地产","波动率(标准差)":8.07,"平均月涨跌幅(%)":-0.62,"最大单月涨幅(%)":37.61,"最大单月跌幅(%)":-14.76},{"行业名称":"美容护理","波动率(标准差)":7.72,"平均月涨跌幅(%)":-1.45,"最大单月涨幅(%)":32.71,"最大单月跌幅(%)":-16.82},{"行业名称":"建筑材料","波动率(标准差)":7.71,"平均月涨跌幅(%)":0.12,"最大单月涨幅(%)":23.37,"最大单月跌幅(%)":-10.34},{"行业名称":"综合","波动率(标准差)":7.64,"平均月涨跌幅(%)":1.04,"最大单月涨幅(%)":25.16,"最大单月跌幅(%)":-15.25},{"行业名称":"汽车","波动率(标准差)":7.41,"平均月涨跌幅(%)":0.87,"最大单月涨幅(%)":22.69,"最大单月跌幅(%)":-15.58},{"行业名称":"非银金融","波动率(标准差)":7.34,"平均月涨跌幅(%)":-0.15,"最大单月涨幅(%)":37.03,"最大单月跌幅(%)":-11.43},{"行业名称":"钢铁","波动率(标准差)":7.33,"平均月涨跌幅(%)":0.32,"最大单月涨幅(%)":21.97,"最大单月跌幅(%)":-15.2},{"行业名称":"医药生物","波动率(标准差)":7.06,"平均月涨跌幅(%)":-0.09,"最大单月涨幅(%)":21.55,"最大单月跌幅(%)":-18.68},{"行业名称":"农林牧渔","波动率(标准差)":7.0,"平均月涨跌幅(%)":-0.28,"最大单月涨幅(%)":19.93,"最大单月跌幅(%)":-17.26},{"行业名称":"机械设备","波动率(标准差)":6.98,"平均月涨跌幅(%)":1.03,"最大单月涨幅(%)":22.23,"最大单月跌幅(%)":-17.93},{"行业名称":"基础化工","波动率(标准差)":6.96,"平均月涨跌幅(%)":0.76,"最大单月涨幅(%)":20.6,"最大单月跌幅(%)":-16.21},{"行业名称":"石油石化","波动率(标准差)":6.76,"平均月涨跌幅(%)":0.71,"最大单月涨幅(%)":14.7,"最大单月跌幅(%)":-15.32},{"行业名称":"商贸零售","波动率(标准差)":6.57,"平均月涨跌幅(%)":-0.45,"最大单月涨幅(%)":26.72,"最大单月跌幅(%)":-12.24},{"行业名称":"轻工制造","波动率(标准差)":6.32,"平均月涨跌幅(%)":0.07,"最大单月涨幅(%)":23.34,"最大单月跌幅(%)":-14.12},{"行业名称":"环保","波动率(标准差)":6.15,"平均月涨跌幅(%)":-0.25,"最大单月涨幅(%)":20.5,"最大单月跌幅(%)":-14.86},{"行业名称":"家用电器","波动率(标准差)":6.08,"平均月涨跌幅(%)":0.2,"最大单月涨幅(%)":21.99,"最大单月跌幅(%)":-12.89},{"行业名称":"纺织服饰","波动率(标准差)":5.37,"平均月涨跌幅(%)":-0.3,"最大单月涨幅(%)":19.9,"最大单月跌幅(%)":-11.3},{"行业名称":"公用事业","波动率(标准差)":5.3,"平均月涨跌幅(%)":0.53,"最大单月涨幅(%)":15.6,"最大单月跌幅(%)":-13.13},{"行业名称":"建筑装饰","波动率(标准差)":5.17,"平均月涨跌幅(%)":0.07,"最大单月涨幅(%)":19.06,"最大单月跌幅(%)":-9.96},{"行业名称":"银行","波动率(标准差)":4.77,"平均月涨跌幅(%)":0.12,"最大单月涨幅(%)":13.81,"最大单月跌幅(%)":-13.17},{"行业名称":"交通运输","波动率(标准差)":4.65,"平均月涨跌幅(%)":-0.1,"最大单月涨幅(%)":16.64,"最大单月跌幅(%)":-12.27}],"winRate":[{"行业名称":"汽车","总月数":78,"上涨月数":47,"下跌月数":31,"月度胜率(%)":60.26},{"行业名称":"综合","总月数":78,"上涨月数":46,"下跌月数":32,"月度胜率(%)":58.97},{"行业名称":"煤炭","总月数":24,"上涨月数":14,"下跌月数":10,"月度胜率(%)":58.33},{"行业名称":"通信","总月数":78,"上涨月数":45,"下跌月数":33,"月度胜率(%)":57.69},{"行业名称":"基础化工","总月数":78,"上涨月数":44,"下跌月数":34,"月度胜率(%)":56.41},{"行业名称":"电子","总月数":78,"上涨月数":43,"下跌月数":35,"月度胜率(%)":55.13},{"行业名称":"机械设备","总月数":78,"上涨月数":43,"下跌月数":35,"月度胜率(%)":55.13},{"行业名称":"石油石化","总月数":55,"上涨月数":30,"下跌月数":25,"月度胜率(%)":54.55},{"行业名称":"电力设备","总月数":78,"上涨月数":42,"下跌月数":36,"月度胜率(%)":53.85},{"行业名称":"轻工制造","总月数":78,"上涨月数":42,"下跌月数":36,"月度胜率(%)":53.85},{"行业名称":"环保","总月数":55,"上涨月数":29,"下跌月数":26,"月度胜率(%)":52.73},{"行业名称":"社会服务","总月数":78,"上涨月数":41,"下跌月数":37,"月度胜率(%)":52.56},{"行业名称":"有色金属","总月数":78,"上涨月数":40,"下跌月数":38,"月度胜率(%)":51.28},{"行业名称":"国防军工","总月数":78,"上涨月数":40,"下跌月数":38,"月度胜率(%)":51.28},{"行业名称":"公用事业","总月数":78,"上涨月数":40,"下跌月数":38,"月度胜率(%)":51.28},{"行业名称":"纺织服饰","总月数":78,"上涨月数":40,"下跌月数":38,"月度胜率(%)":51.28},{"行业名称":"农林牧渔","总月数":78,"上涨月数":38,"下跌月数":40,"月度胜率(%)":48.72},{"行业名称":"医药生物","总月数":78,"上涨月数":38,"下跌月数":40,"月度胜率(%)":48.72},{"行业名称":"钢铁","总月数":78,"上涨月数":37,"下跌月数":41,"月度胜率(%)":47.44},{"行业名称":"食品饮料","总月数":78,"上涨月数":36,"下跌月数":42,"月度胜率(%)":46.15},{"行业名称":"银行","总月数":78,"上涨月数":36,"下跌月数":42,"月度胜率(%)":46.15},{"行业名称":"家用电器","总月数":78,"上涨月数":35,"下跌月数":43,"月度胜率(%)":44.87},{"行业名称":"交通运输","总月数":78,"上涨月数":35,"下跌月数":43,"月度胜率(%)":44.87},{"行业名称":"传媒","总月数":78,"上涨月数":35,"下跌月数":43,"月度胜率(%)":44.87},{"行业名称":"建筑装饰","总月数":78,"上涨月数":35,"下跌月数":43,"月度胜率(%)":44.87},{"行业名称":"商贸零售","总月数":78,"上涨月数":33,"下跌月数":45,"月度胜率(%)":42.31},{"行业名称":"建筑材料","总月数":78,"上涨月数":33,"下跌月数":45,"月度胜率(%)":42.31},{"行业名称":"非银金融","总月数":78,"上涨月数":32,"下跌月数":46,"月度胜率(%)":41.03},{"行业名称":"房地产","总月数":78,"上涨月数":30,"下跌月数":48,"月度胜率(%)":38.46},{"行业名称":"计算机","总月数":78,"上涨月数":30,"下跌月数":48,"月度胜率(%)":38.46},{"行业名称":"美容护理","总月数":55,"上涨月数":19,"下跌月数":36,"月度胜率(%)":34.55}],"recent12m":[{"行业名称":"通信","12个月前点位":3607.94,"最新点位":8910.23,"近12月涨跌幅(%)":146.96,"数据月数":12},{"行业名称":"电子","12个月前点位":4913.73,"最新点位":9480.93,"近12月涨跌幅(%)":92.95,"数据月数":12},{"行业名称":"有色金属","12个月前点位":5393.43,"最新点位":8601.93,"近12月涨跌幅(%)":59.49,"数据月数":12},{"行业名称":"电力设备","12个月前点位":7311.64,"最新点位":10890.63,"近12月涨跌幅(%)":48.95,"数据月数":12},{"行业名称":"机械设备","12个月前点位":1753.05,"最新点位":2530.5,"近12月涨跌幅(%)":44.35,"数据月数":12},{"行业名称":"综合","12个月前点位":3098.24,"最新点位":4380.41,"近12月涨跌幅(%)":41.38,"数据月数":12},{"行业名称":"石油石化","12个月前点位":2614.51,"最新点位":3505.0,"近12月涨跌幅(%)":34.06,"数据月数":12},{"行业名称":"建筑材料","12个月前点位":4916.22,"最新点位":6461.34,"近12月涨跌幅(%)":31.43,"数据月数":12},{"行业名称":"基础化工","12个月前点位":3729.35,"最新点位":4578.8,"近12月涨跌幅(%)":22.78,"数据月数":12},{"行业名称":"公用事业","12个月前点位":2348.18,"最新点位":2758.59,"近12月涨跌幅(%)":17.48,"数据月数":12},{"行业名称":"环保","12个月前点位":1837.43,"最新点位":2073.3,"近12月涨跌幅(%)":12.84,"数据月数":12},{"行业名称":"国防军工","12个月前点位":1717.62,"最新点位":1841.67,"近12月涨跌幅(%)":7.22,"数据月数":12},{"行业名称":"轻工制造","12个月前点位":2139.76,"最新点位":2278.69,"近12月涨跌幅(%)":6.49,"数据月数":12},{"行业名称":"家用电器","12个月前点位":8397.45,"最新点位":8863.84,"近12月涨跌幅(%)":5.55,"数据月数":12},{"行业名称":"汽车","12个月前点位":7021.49,"最新点位":7321.55,"近12月涨跌幅(%)":4.27,"数据月数":12},{"行业名称":"建筑装饰","12个月前点位":2034.94,"最新点位":2090.69,"近12月涨跌幅(%)":2.74,"数据月数":12},{"行业名称":"纺织服饰","12个月前点位":1588.72,"最新点位":1563.57,"近12月涨跌幅(%)":-1.58,"数据月数":12},{"行业名称":"传媒","12个月前点位":749.96,"最新点位":719.46,"近12月涨跌幅(%)":-4.07,"数据月数":12},{"行业名称":"房地产","12个月前点位":2093.78,"最新点位":1996.03,"近12月涨跌幅(%)":-4.67,"数据月数":12},{"行业名称":"交通运输","12个月前点位":2208.98,"最新点位":2094.19,"近12月涨跌幅(%)":-5.2,"数据月数":12},{"行业名称":"钢铁","12个月前点位":2478.93,"最新点位":2349.15,"近12月涨跌幅(%)":-5.24,"数据月数":12},{"行业名称":"计算机","12个月前点位":4983.8,"最新点位":4674.13,"近12月涨跌幅(%)":-6.21,"数据月数":12},{"行业名称":"银行","12个月前点位":4335.15,"最新点位":3954.25,"近12月涨跌幅(%)":-8.79,"数据月数":12},{"行业名称":"社会服务","12个月前点位":8680.16,"最新点位":7743.16,"近12月涨跌幅(%)":-10.79,"数据月数":12},{"行业名称":"商贸零售","12个月前点位":2224.41,"最新点位":1917.01,"近12月涨跌幅(%)":-13.82,"数据月数":12},{"行业名称":"非银金融","12个月前点位":1956.59,"最新点位":1681.47,"近12月涨跌幅(%)":-14.06,"数据月数":12},{"行业名称":"农林牧渔","12个月前点位":2774.22,"最新点位":2379.55,"近12月涨跌幅(%)":-14.23,"数据月数":12},{"行业名称":"食品饮料","12个月前点位":16677.44,"最新点位":14085.68,"近12月涨跌幅(%)":-15.54,"数据月数":12},{"行业名称":"医药生物","12个月前点位":8833.95,"最新点位":7158.13,"近12月涨跌幅(%)":-18.97,"数据月数":12},{"行业名称":"美容护理","12个月前点位":4728.94,"最新点位":3572.4,"近12月涨跌幅(%)":-24.46,"数据月数":12}]};
+// /FILE:data.js
+</script>
+
+<script>
+/* ===== SCRIPT ===== */
+// FILE:render.js
+const D = window.appData;
+const UP='#D14343', DOWN='#1F9D55', PRIMARY='#1E3A8A';
+
+function fmtPct(v){return (v>=0?'+':'')+v.toFixed(2)+'%';}
+function fmtNum(v){return Number(v).toLocaleString('en-US',{maximumFractionDigits:2});}
+
+// ---- Cumulative ranking ----
+function renderCumulative(){
+  const arr = D.cumulative.slice().sort((a,b)=>b['累计涨跌幅(%)']-a['累计涨跌幅(%)']);
+  const ups = arr.slice(0,10);
+  const downs = arr.slice(-10).reverse();
+  const maxUp = ups[0]['累计涨跌幅(%)'];
+  const maxDown = Math.abs(downs[0]['累计涨跌幅(%)']);
+  document.getElementById('cum-up-list').innerHTML = ups.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rank-no">${i+1}</div>
+      <div class="rank-name">${r['行业名称']}</div>
+      <div class="rank-bar"><span class="up-bar" style="width:${(r['累计涨跌幅(%)']/maxUp*100).toFixed(1)}%"></span></div>
+      <div class="rank-val text-up">${fmtPct(r['累计涨跌幅(%)'])}</div>
+    </div>`).join('');
+  document.getElementById('cum-down-list').innerHTML = downs.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rank-no">${i+1}</div>
+      <div class="rank-name">${r['行业名称']}</div>
+      <div class="rank-bar"><span class="down-bar" style="width:${(Math.abs(r['累计涨跌幅(%)'])/maxDown*100).toFixed(1)}%"></span></div>
+      <div class="rank-val text-down">${fmtPct(r['累计涨跌幅(%)'])}</div>
+    </div>`).join('');
+}
+
+// ---- Win rate ----
+function renderWinRate(){
+  const arr = D.winRate.slice().sort((a,b)=>b['月度胜率(%)']-a['月度胜率(%)']);
+  const ups = arr.slice(0,10);
+  const downs = arr.slice(-10).reverse();
+  const max=70;
+  document.getElementById('win-up').innerHTML = ups.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rank-no">${i+1}</div>
+      <div class="rank-name">${r['行业名称']}</div>
+      <div class="rank-bar"><span class="up-bar" style="width:${(r['月度胜率(%)']/max*100).toFixed(1)}%"></span></div>
+      <div class="rank-val text-up">${r['月度胜率(%)'].toFixed(2)}%</div>
+    </div>`).join('');
+  document.getElementById('win-down').innerHTML = downs.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rank-no">${i+1}</div>
+      <div class="rank-name">${r['行业名称']}</div>
+      <div class="rank-bar"><span class="down-bar" style="width:${(r['月度胜率(%)']/max*100).toFixed(1)}%"></span></div>
+      <div class="rank-val text-down">${r['月度胜率(%)'].toFixed(2)}%</div>
+    </div>`).join('');
+}
+
+// ---- Volatility tables ----
+function renderVolatility(){
+  const arr = D.volatility.slice().sort((a,b)=>b['波动率(标准差)']-a['波动率(标准差)']);
+  const high = arr.slice(0,10);
+  const low = arr.slice(-10).reverse();
+  const head = `<thead><tr><th>行业</th><th>波动率</th><th>均值</th><th>最大涨</th><th>最大跌</th></tr></thead>`;
+  const body = rows => '<tbody>'+rows.map(r=>`
+    <tr><td class="name">${r['行业名称']}</td>
+    <td>${r['波动率(标准差)'].toFixed(2)}</td>
+    <td class="${r['平均月涨跌幅(%)']>=0?'text-up':'text-down'}">${fmtPct(r['平均月涨跌幅(%)'])}</td>
+    <td class="text-up">${fmtPct(r['最大单月涨幅(%)'])}</td>
+    <td class="text-down">${fmtPct(r['最大单月跌幅(%)'])}</td></tr>`).join('')+'</tbody>';
+  document.getElementById('vol-high').innerHTML = head+body(high);
+  document.getElementById('vol-low').innerHTML = head+body(low);
+}
+
+// ---- Recent 12m ----
+function renderRecent(){
+  const arr = D.recent12m.slice().sort((a,b)=>b['近12月涨跌幅(%)']-a['近12月涨跌幅(%)']);
+  const ups = arr.slice(0,10);
+  const downs = arr.slice(-10).reverse();
+  const maxUp = ups[0]['近12月涨跌幅(%)'];
+  const maxDown = Math.abs(downs[0]['近12月涨跌幅(%)']);
+  document.getElementById('r12-up').innerHTML = ups.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rank-no">${i+1}</div>
+      <div class="rank-name">${r['行业名称']}</div>
+      <div class="rank-bar"><span class="up-bar" style="width:${(r['近12月涨跌幅(%)']/maxUp*100).toFixed(1)}%"></span></div>
+      <div class="rank-val text-up">${fmtPct(r['近12月涨跌幅(%)'])}</div>
+    </div>`).join('');
+  document.getElementById('r12-down').innerHTML = downs.map((r,i)=>`
+    <div class="rank-row">
+      <div class="rank-no">${i+1}</div>
+      <div class="rank-name">${r['行业名称']}</div>
+      <div class="rank-bar"><span class="down-bar" style="width:${(Math.abs(r['近12月涨跌幅(%)'])/maxDown*100).toFixed(1)}%"></span></div>
+      <div class="rank-val text-down">${fmtPct(r['近12月涨跌幅(%)'])}</div>
+    </div>`).join('');
+}
+
+// ---- Yearly TOP5 (hardcoded from report) ----
+const YEARLY = {
+  '2020': {desc:'疫情冲击下的分化之年，社会服务领跑，房地产垫底',
+    best:[['社会服务',94.10],['食品饮料',75.45],['电力设备',73.65],['国防军工',57.16],['医药生物',46.43]],
+    worst:[['房地产',-3.19],['建筑装饰',0.31],['纺织服饰',0.45],['通信',1.21],['银行',4.66]]},
+  '2021': {desc:'新能源与周期共振，电力设备领涨，家电承压',
+    best:[['电力设备',42.55],['煤炭',40.04],['有色金属',37.33],['钢铁',36.66],['公用事业',32.99]],
+    worst:[['家用电器',-24.28],['非银金融',-20.31],['房地产',-7.98],['农林牧渔',-6.47],['美容护理',-6.41]]},
+  '2022': {desc:'系统性调整中的防御选择，仅综合与石油石化正收益',
+    best:[['综合',11.48],['石油石化',11.37],['社会服务',3.15],['房地产',-1.88],['美容护理',-2.22]],
+    worst:[['电子',-37.49],['建筑材料',-29.22],['国防军工',-24.54],['传媒',-24.27],['家用电器',-24.05]]},
+  '2023': {desc:'AI 驱动的科技行情，通信、传媒领涨，消费持续承压',
+    best:[['通信',27.80],['传媒',21.38],['计算机',12.02],['电子',8.37],['石油石化',6.79]],
+    worst:[['美容护理',-37.67],['商贸零售',-34.48],['电力设备',-28.32],['房地产',-27.67],['建筑材料',-24.47]]},
+  '2024': {desc:'高股息与金融股回归，银行领涨，医药与农牧走弱',
+    best:[['银行',24.53],['非银金融',23.14],['通信',18.81],['家用电器',14.50],['商贸零售',9.70]],
+    worst:[['医药生物',-21.92],['农林牧渔',-18.03],['美容护理',-15.70],['建筑材料',-13.09],['基础化工',-11.45]]},
+  '2025': {desc:'科技成长再度崛起，通信、有色、电子领涨',
+    best:[['通信',66.54],['有色金属',57.79],['电子',39.98],['电力设备',36.26],['综合',35.13]],
+    worst:[['食品饮料',-8.61],['石油石化',-4.55],['公用事业',-0.14],['交通运输',1.15],['美容护理',1.67]]},
+  '2026': {desc:'科技主线延续（截至 6 月），农牧、非银金融跌幅居前',
+    best:[['通信',46.52],['电子',37.82],['石油石化',25.23],['建筑材料',20.69],['机械设备',16.56]],
+    worst:[['农林牧渔',-19.69],['非银金融',-19.58],['美容护理',-19.25],['商贸零售',-19.24],['食品饮料',-12.92]]},
+};
+
+function renderYearly(){
+  const years = Object.keys(YEARLY);
+  const tabs = document.getElementById('year-tabs');
+  tabs.innerHTML = years.map(y=>`<button class="year-tab" data-year="${y}">${y}</button>`).join('');
+  function show(y){
+    tabs.querySelectorAll('.year-tab').forEach(b=>b.classList.toggle('active',b.dataset.year===y));
+    const o = YEARLY[y];
+    const renderList = (rows,cls) => rows.map((r,i)=>`
+      <div class="year-row">
+        <span class="no">${i+1}</span>
+        <span class="nm">${r[0]}</span>
+        <span class="v ${cls}">${fmtPct(r[1])}</span>
+      </div>`).join('');
+    document.getElementById('year-content').innerHTML = `
+      <div class="lg:col-span-2 -mb-2 text-sm text-muted">${y} 年：${o.desc}</div>
+      <div class="year-block">
+        <h4><span class="dot" style="background:#D14343"></span>最佳 TOP 5</h4>
+        ${renderList(o.best,'text-up')}
+      </div>
+      <div class="year-block">
+        <h4><span class="dot" style="background:#1F9D55"></span>最差 TOP 5</h4>
+        ${renderList(o.worst,'text-down')}
+      </div>`;
+  }
+  tabs.addEventListener('click',e=>{if(e.target.dataset.year) show(e.target.dataset.year);});
+  show('2025');
+}
+// /FILE:render.js
+
+// FILE:chart.js
+const TrendChart = (()=>{
+  let chart, metric='close', selected=new Set(['通信','电子','有色金属','电力设备','银行']);
+  const PALETTE=['#1E3A8A','#D14343','#0EA5E9','#F59E0B','#7C3AED','#1F9D55','#EC4899','#0891B2','#65A30D','#DC2626','#475569','#A16207'];
+
+  function buildOption(){
+    const months = D.allMonths;
+    const series = [...selected].map((name,idx)=>{
+      const m = D.monthly[name];
+      const map = {};
+      m.months.forEach((mo,i)=>{ map[mo] = metric==='close'?m.close[i]:m.pct[i]; });
+      const data = months.map(mo => map[mo]!==undefined?map[mo]:null);
+      return {
+        name, type:'line', data, smooth:true, symbol:'none', connectNulls:false,
+        lineStyle:{width:2}, emphasis:{focus:'series',lineStyle:{width:3}},
+        color:PALETTE[idx%PALETTE.length]
+      };
+    });
+    return {
+      grid:{left:60,right:24,top:30,bottom:80},
+      tooltip:{trigger:'axis', backgroundColor:'#fff',borderColor:'#E5E7EB',textStyle:{color:'#0F172A',fontSize:12},
+        valueFormatter:v=>v==null?'-':(metric==='close'?Number(v).toLocaleString('en-US',{maximumFractionDigits:2}):(v>=0?'+':'')+v.toFixed(2)+'%')
+      },
+      legend:{type:'scroll',bottom:32,textStyle:{color:'#475569',fontSize:12},itemWidth:18,itemHeight:8},
+      xAxis:{type:'category',data:months,boundaryGap:false,
+        axisLine:{lineStyle:{color:'#CBD5E1'}},axisLabel:{color:'#64748B',fontSize:11},
+        axisTick:{show:false}},
+      yAxis:{type:'value',scale:true,
+        axisLabel:{color:'#64748B',fontSize:11,
+          formatter:metric==='close'?'{value}':'{value}%'},
+        splitLine:{lineStyle:{color:'#EEF1F5'}}},
+      dataZoom:[
+        {type:'inside',start:0,end:100},
+        {type:'slider',height:18,bottom:6,borderColor:'transparent',backgroundColor:'#F1F5F9',
+          fillerColor:'rgba(30,58,138,0.15)',handleStyle:{color:'#1E3A8A'},
+          textStyle:{color:'#94A3B8',fontSize:10}}
+      ],
+      series
+    };
+  }
+  function update(){
+    document.getElementById('chip-count').textContent = selected.size;
+    if (selected.size===0){
+      chart.clear();
+      chart.setOption({title:{text:'请选择至少一个行业',left:'center',top:'middle',textStyle:{color:'#94A3B8',fontSize:14,fontWeight:'normal'}}});
+      return;
+    }
+    chart.setOption(buildOption(),true);
+  }
+
+  function init(){
+    chart = echarts.init(document.getElementById('trend-chart'));
+    window.addEventListener('resize',()=>chart.resize());
+
+    // chips
+    const chipBox = document.getElementById('chip-box');
+    chipBox.innerHTML = D.industries.map(n=>`<span class="chip ${selected.has(n)?'active':''}" data-name="${n}">${n}</span>`).join('');
+    chipBox.addEventListener('click',e=>{
+      const el = e.target.closest('.chip'); if(!el) return;
+      const n = el.dataset.name;
+      if (selected.has(n)) selected.delete(n); else selected.add(n);
+      el.classList.toggle('active');
+      update();
+    });
+
+    // metric
+    document.querySelectorAll('.metric-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.metric===metric);
+      b.addEventListener('click',()=>{
+        metric = b.dataset.metric;
+        document.querySelectorAll('.metric-btn').forEach(x=>x.classList.toggle('active',x.dataset.metric===metric));
+        update();
+      });
+    });
+
+    // range
+    document.querySelectorAll('.range-btn').forEach(b=>{
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.range-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        const r = b.dataset.range;
+        const months = D.allMonths; const n = months.length;
+        let s=0,e=100;
+        if (r==='all'){s=0;e=100;}
+        else if (r==='12'){s=(n-12)/n*100;e=100;}
+        else if (r==='36'){s=(n-36)/n*100;e=100;}
+        else { // year
+          const yi = months.findIndex(m=>m.startsWith(r));
+          const yEnd = months.map((m,i)=>m.startsWith(r)?i:-1).filter(i=>i>=0).pop();
+          if (yi>=0 && yEnd>=0){s=yi/(n-1)*100;e=yEnd/(n-1)*100;}
+        }
+        chart.dispatchAction({type:'dataZoom',start:Math.max(0,s),end:Math.min(100,e)});
+      });
+    });
+    document.querySelector('.range-btn[data-range="all"]').classList.add('active');
+
+    // presets
+    const setSel = list=>{
+      selected = new Set(list);
+      document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', selected.has(c.dataset.name)));
+      update();
+    };
+    document.getElementById('preset-tech').onclick = ()=>setSel(['通信','电子','计算机','传媒','电力设备']);
+    document.getElementById('preset-finance').onclick = ()=>setSel(['银行','非银金融','房地产','建筑装饰']);
+    document.getElementById('preset-clear').onclick = ()=>setSel([]);
+
+    update();
+  }
+  return {init};
+})();
+// /FILE:chart.js
+
+// FILE:main.js
+document.addEventListener('DOMContentLoaded',()=>{
+  renderCumulative();
+  renderYearly();
+  renderWinRate();
+  renderVolatility();
+  renderRecent();
+  TrendChart.init();
+
+  // Nav active on scroll
+  const links = document.querySelectorAll('.nav-link');
+  const map = {};
+  links.forEach(l=>{ map[l.getAttribute('href').slice(1)] = l; });
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if (en.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        map[en.target.id]?.classList.add('active');
+      }
+    });
+  },{rootMargin:'-40% 0px -55% 0px'});
+  Object.keys(map).forEach(id=>{const el=document.getElementById(id); if(el) obs.observe(el);});
+});
+// /FILE:main.js
+</script>
+</body>
+</html>
