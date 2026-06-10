@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <!-- title -->
+<!-- keywords -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="荷月归">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="荷月归">
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog,荷月归,游戏推荐">
+    <meta name="description" content="">
+    <meta name="description" content="摘要对比学习（Contrastive Learning）作为自监督学习的核心范式，通过构建正负样本对来学习具有判别性的特征表示，已成为计算机视觉领域的重要研究方向。这里参考李沐论文精读 ，系统梳理了2018年至2021年间CV领域对比学习的发展历程，涵盖14篇里程碑式论文，按技术演进划分为四个阶段：百花齐放期（2018-2019）、CV双雄期（2020）、无负样本探索期（2020-2021）和Tr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机视觉领域对比学习综述">
+<meta property="og:url" content="https://dmrookie.github.io/2026/06/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E9%A2%86%E5%9F%9F%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/">
+<meta property="og:site_name" content="荷月归">
+<meta property="og:description" content="摘要对比学习（Contrastive Learning）作为自监督学习的核心范式，通过构建正负样本对来学习具有判别性的特征表示，已成为计算机视觉领域的重要研究方向。这里参考李沐论文精读 ，系统梳理了2018年至2021年间CV领域对比学习的发展历程，涵盖14篇里程碑式论文，按技术演进划分为四个阶段：百花齐放期（2018-2019）、CV双雄期（2020）、无负样本探索期（2020-2021）和Tr">
+<meta property="og:locale">
+<meta property="og:image" content="https://km.woa.com/asset/000100022603004e63fd9d8dd0413001?height=552&width=2338">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260300b9ff98f06f0f432d01?height=520&width=1696">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226030085854ad5c175411b01?height=562&width=1280">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260300c1505df94f664ce401?height=490&width=840">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600a7dd5930f3a84cdb01?height=470&width=580">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606007a51f89dbfd5460401?height=374&width=482">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600a30aa66c62a044ef01?height=474&width=572">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600cae57b3c053a489401?height=602&width=1128">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600851e884d111e484901?height=662&width=1722">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600796b75c64656432301?height=384&width=1348">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606001db7bb4f9aea434101?height=538&width=1598">
+<meta property="og:image" content="https://km.woa.com/asset/000100022606006a4094cf281d4cdd01?height=318&width=450">
+<meta property="og:image" content="https://km.woa.com/asset/0001000226060042a9734bb7f744c101?height=384&width=390">
+<meta property="og:image" content="https://km.woa.com/asset/00010002260600121a77f78c1a4c0d01?height=1136&width=2102">
+<meta property="article:published_time" content="2026-06-10T12:42:00.000Z">
+<meta property="article:modified_time" content="2026-06-10T04:48:08.635Z">
+<meta property="article:author" content="荷月归">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://km.woa.com/asset/000100022603004e63fd9d8dd0413001?height=552&width=2338">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    <title>计算机视觉领域对比学习综述 · 荷月归</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .footer-fixed-btn,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(
+            -45deg,
+            #444 0,
+            #444 80px,
+            #333 80px,
+            #333 160px
+        );
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link id="stylesheet-fancybox" rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="stylesheet-base" rel="preload" href="/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link id="stylesheet-mobile" rel="preload" href="/css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet';this.media='screen and (max-width: 960px)'">
+    <link id="stylesheet-theme-dark" rel="preload" href="/css/dark.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    <!-- 百度统计  -->
+    <!-- 谷歌统计  -->
+    <!-- Google tag (gtag.js) -->
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+        <body class="post-body">
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        <div class="header-sidebar-menu">
+            <div style="padding-left: 1px;">&#xe775;</div>
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href="/">dmrookie's Studio.</a>
+        </span>
+    </div>
+    <!-- toggle banner -->
+    <div class="banner">
+        <div class="blog-title header-element">
+            <a href="/">dmrookie&#39;s Studio.</a>
+        </div>
+        <div class="post-title header-element">
+            <a href="#" class="post-name">计算机视觉领域对比学习综述</a>
+        </div>
+    </div>
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- donate button -->
+    <div class="donate-popup donate-popup--hidden">
+    <div class="donate-popup__title">Buy Me A Coffee</div>
+    <div class="donate-popup__content">
+        <div class="donate-popup__content-description">If this post helped you, please consider buying the author a cup of sugar-free coffee ☕️.</div>
+        <img
+            class="donate-popup__content-qrCode"
+            title="Wechat"
+            alt="Wechat"
+            src="/assets/donate-wechat.png"
+        ></img>
+        <img
+            class="donate-popup__content-qrCode"
+            title="Alipay"
+            alt="Alipay"
+            src="/assets/donate-alipay.png"
+        ></img>
+    </div>
+</div>
+
+    <div
+        title="Donate to the author"
+        class="footer-fixed-btn footer-fixed-btn--hidden donate-btn"
+    >
+        <i class="fas fa-donate"></i>
+    </div>
+
+    <!-- back to top button -->
+    <div class="footer-fixed-btn footer-fixed-btn--hidden back-top">
+        <div>&#xe639;</div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="    height:50vh;
+">
+    <!-- 主页  -->
+    <!-- 404页  -->
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+                计算机视觉领域对比学习综述
+            <!-- 404 -->
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            <!-- 404 -->
+        </p>
+        <!-- 文章页 meta -->
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                    <div class="post-intro-tags" >
+</div>
+
+                <!-- 文章字数统计 -->
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">6.5k</span>阅读时长: <span class="post-count reading-time">27 min</span></span>
+                    </div>
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2026/06/10</span>
+                    <!-- busuanzi -->
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" alt="loading">
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>对比学习（Contrastive Learning）作为自监督学习的核心范式，通过构建正负样本对来学习具有判别性的特征表示，已成为计算机视觉领域的重要研究方向。这里参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV171stzXELd?spm_id_from=333.788.videopod.episodes&vd_source=4bc0b9eb30ce78456563d7ca931fd566&p=14">李沐论文精读</a> ，系统梳理了2018年至2021年间CV领域对比学习的发展历程，涵盖14篇里程碑式论文，按技术演进划分为四个阶段：百花齐放期（2018-2019）、CV双雄期（2020）、无负样本探索期（2020-2021）和Transformer时代（2021）。报告详细分析了每篇论文的核心思想、关键技术创新、有效tricks及性能表现，并总结了技术演进脉络和未来发展方向。</p>
+<hr>
+<h2 id="1-引言"><a href="#1-引言" class="headerlink" title="1. 引言"></a>1. 引言</h2><h3 id="1-1-对比学习的核心思想"><a href="#1-1-对比学习的核心思想" class="headerlink" title="1.1 对比学习的核心思想"></a>1.1 对比学习的核心思想</h3><p>对比学习是自监督学习（Self-supervised Learning，SSL）的重要代表，其基本思想是：<strong>将相似样本（正样本对）在特征空间中拉近，将不相似样本（负样本对）推远</strong>。这一简单而强大的思想为无监督&#x2F;自监督学习提供了有效的训练信号。</p>
+<p>对比学习通过代理任务（pretext task），来定义那些样本相似，那些不相似，从而产生监督信号来训练模型。代理任务通常是人为设定的规则，例如在计算机视觉中，对比学习通常通过以下方式构建正负样本对：</p>
+<ul>
+<li><strong>正样本对</strong>：同一图像的不同数据增强视角（如随机裁剪、颜色抖动等）</li>
+<li><strong>负样本对</strong>：不同图像之间的样本</li>
+</ul>
+<h3 id="1-2-对比学习的重要意义"><a href="#1-2-对比学习的重要意义" class="headerlink" title="1.2 对比学习的重要意义"></a>1.2 对比学习的重要意义</h3><ol>
+<li><strong>突破标注瓶颈</strong>：无需大量人工标注即可学习高质量特征表示</li>
+<li><strong>性能逼近监督学习</strong>：在ImageNet等基准数据集上，自监督预训练的性能已接近甚至超越监督学习</li>
+<li><strong>迁移能力强</strong>：预训练模型在下游任务（目标检测、分割等）上表现优异</li>
+<li><strong>推动理论研究</strong>：促进了对深度学习表征学习本质的理解</li>
+</ol>
+<h3 id="1-3-发展历程概览"><a href="#1-3-发展历程概览" class="headerlink" title="1.3 发展历程概览"></a>1.3 发展历程概览</h3><p>本报告将CV对比学习的发展划分为四个阶段：</p>
+<table>
+<thead>
+<tr>
+<th align="left">阶段</th>
+<th align="left">时间</th>
+<th align="left">特征</th>
+<th align="left">代表工作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">百花齐放</td>
+<td align="left">2018-2019</td>
+<td align="left">方法多样，性能有限</td>
+<td align="left">InstDisc, CPC, CMC</td>
+</tr>
+<tr>
+<td align="left">CV双雄</td>
+<td align="left">2020</td>
+<td align="left">MoCo与SimCLR竞争，性能飞跃</td>
+<td align="left">MoCo v1&#x2F;v2, SimCLR v1&#x2F;v2, SwAV</td>
+</tr>
+<tr>
+<td align="left">无负样本</td>
+<td align="left">2020-2021</td>
+<td align="left">突破负样本依赖</td>
+<td align="left">BYOL, SimSiam</td>
+</tr>
+<tr>
+<td align="left">Transformer</td>
+<td align="left">2021</td>
+<td align="left">架构升级，性能新高</td>
+<td align="left">MoCo v3, DINO</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-第一阶段：百花齐放-2018-2019"><a href="#2-第一阶段：百花齐放-2018-2019" class="headerlink" title="2. 第一阶段：百花齐放 (2018-2019)"></a>2. 第一阶段：百花齐放 (2018-2019)</h2><p>在对比学习的萌芽期，研究者们探索了不同的代理任务、模型架构和目标函数，为后续发展奠定了基础。</p>
+<h3 id="2-1-InstDisc-CVPR-2018"><a href="#2-1-InstDisc-CVPR-2018" class="headerlink" title="2.1 InstDisc (CVPR 2018)"></a>2.1 InstDisc (CVPR 2018)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.01978">Unsupervised Feature Learning via Non-Parametric Instance Discrimination</a>* </p>
+<p><img src="https://km.woa.com/asset/000100022603004e63fd9d8dd0413001?height=552&width=2338" alt="image.png"></p>
+<h4 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h4><p>提出”个体判别”（Instance Discrimination）任务：<strong>将每个图像实例视为一个独立的类别</strong>，通过区分不同实例来学习判别性特征。</p>
+<h4 id="关键技术创新"><a href="#关键技术创新" class="headerlink" title="关键技术创新"></a>关键技术创新</h4><ol>
+<li><p><strong>Memory Bank机制</strong></p>
+<ul>
+<li>存储整个数据集（128万张ImageNet图像）的特征向量</li>
+<li>解决了负样本数量受限于Batch Size的问题</li>
+<li>特征维度：128维，经过L2归一化</li>
+</ul>
+</li>
+<li><p><strong>NCE损失函数</strong></p>
+<p>$$L_{NCE} &#x3D; -E_{P_d}[\log h(i, v_{i}^{(t-1)})-\lambda|| v_{i}^{(t)}- v_{i}^{(t-1)}||<em>2^2] - m \cdot E</em>{P_n}[\log(1 - h(i, v^{‘(t-1)}))]$$</p>
+</li>
+<li><p><strong>Proximal Regularization</strong><br>因为每类样本只有一个实例，随机采样过程会带来大的波动，所以在损失函数里加了一个特征更新幅度的约束，使训练过程更稳定。</p>
+</li>
+</ol>
+<h4 id="有效Tricks"><a href="#有效Tricks" class="headerlink" title="有效Tricks"></a>有效Tricks</h4><ul>
+<li>温度系数 $\tau &#x3D; 0.07$</li>
+<li>负样本数量 $m &#x3D; 4096$</li>
+<li>使用ResNet-50作为Encoder</li>
+</ul>
+<h4 id="性能表现"><a href="#性能表现" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 46.5%</li>
+</ul>
+<h4 id="历史意义"><a href="#历史意义" class="headerlink" title="历史意义"></a>历史意义</h4><p>InstDisc首次将实例判别引入CV领域，开创了对比学习的先河，但Memory Bank的特征一致性问题为后续MoCo的改进留下了空间。</p>
+<hr>
+<h3 id="2-2-InvaSpread-CVPR-2019"><a href="#2-2-InvaSpread-CVPR-2019" class="headerlink" title="2.2 InvaSpread (CVPR 2019)"></a>2.2 InvaSpread (CVPR 2019)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.03436">Unsupervised Embedding Learning via Invariant and Spreading Instance Feature</a>*  </p>
+<p><img src="https://km.woa.com/asset/00010002260300b9ff98f06f0f432d01?height=520&width=1696" alt="image.png"></p>
+<h4 id="核心思想-1"><a href="#核心思想-1" class="headerlink" title="核心思想"></a>核心思想</h4><p>强调特征学习的两个关键属性：</p>
+<ul>
+<li><strong>不变性（Invariance）</strong>：对数据增强保持鲁棒</li>
+<li><strong>扩散性（Spreading）</strong>：不同实例在特征空间应尽可能分散</li>
+</ul>
+<h4 id="关键技术创新-1"><a href="#关键技术创新-1" class="headerlink" title="关键技术创新"></a>关键技术创新</h4><ol>
+<li><p><strong>端到端Siamese架构</strong></p>
+<ul>
+<li>摒弃Memory Bank，实现纯端到端训练</li>
+<li>在同一mini-batch内构建正负样本对</li>
+</ul>
+</li>
+<li><p><strong>基于多分类交叉熵的对比损失</strong></p>
+<ul>
+<li>将对比学习转化为多分类问题</li>
+<li>每个样本的增强视角作为正类，batch内其他样本作为负类</li>
+</ul>
+</li>
+</ol>
+<h4 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h4><ul>
+<li>受限于当时的硬件条件，Batch Size仅为256</li>
+<li>负样本数量不足，限制了性能提升</li>
+</ul>
+<h4 id="性能表现-1"><a href="#性能表现-1" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 48.8%</li>
+</ul>
+<h4 id="历史意义-1"><a href="#历史意义-1" class="headerlink" title="历史意义"></a>历史意义</h4><p>InvaSpread是SimCLR的重要前身，证明了端到端训练的可行性，为后续大Batch训练奠定了基础。</p>
+<hr>
+<h3 id="2-3-CPC-v1-2018"><a href="#2-3-CPC-v1-2018" class="headerlink" title="2.3 CPC v1 (2018)"></a>2.3 CPC v1 (2018)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1807.03748">Representation Learning with Contrastive Predictive Coding</a>*<br><img src="https://km.woa.com/asset/0001000226030085854ad5c175411b01?height=562&width=1280" alt="image.png"></p>
+<h4 id="核心思想-2"><a href="#核心思想-2" class="headerlink" title="核心思想"></a>核心思想</h4><p>通过<strong>预测序列的未来信息</strong>来学习表征，基于”能够预测未来的特征必然包含高层语义”的假设，是一种生成式的对比学习。</p>
+<h4 id="网络架构"><a href="#网络架构" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><strong>Encoder</strong> $g_{enc}$：将输入 $x_t$ 映射为潜在表示 $z_t$</li>
+<li><strong>自回归模型</strong> $g_{ar}$（如GRU）：将历史信息 $z_{\le t}$ 总结为上下文向量 $c_t$</li>
+<li><strong>预测</strong>：使用 $c_t$ 预测未来的 $z_{t+k}$</li>
+</ol>
+<h4 id="InfoNCE损失函数"><a href="#InfoNCE损失函数" class="headerlink" title="InfoNCE损失函数"></a>InfoNCE损失函数</h4><p>$$L_N &#x3D; -\mathbb{E}<em>X \left[ \log \frac{\exp(z</em>{t+k}^T W_k c_t)}{\sum_{x_j \in X} \exp(z_j^T W_k c_t)} \right]$$</p>
+<p><strong>理论贡献</strong>：证明了最小化InfoNCE等价于最大化 $c_t$ 与 $x_{t+k}$ 之间的互信息下界。</p>
+<h4 id="在CV中的应用"><a href="#在CV中的应用" class="headerlink" title="在CV中的应用"></a>在CV中的应用</h4><ul>
+<li>将图像切分为Patches</li>
+<li>利用空间位置关系进行预测（如预测下方或右侧的Patch）</li>
+</ul>
+<h4 id="性能表现-2"><a href="#性能表现-2" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 48.7%</li>
+</ul>
+<h4 id="历史意义-2"><a href="#历史意义-2" class="headerlink" title="历史意义"></a>历史意义</h4><p>CPC提出的InfoNCE损失成为对比学习的标准损失函数，被后续大量工作采用。</p>
+<hr>
+<h3 id="2-4-CMC-ECCV-2019"><a href="#2-4-CMC-ECCV-2019" class="headerlink" title="2.4 CMC (ECCV 2019)"></a>2.4 CMC (ECCV 2019)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1906.05849">Contrastive Multiview Coding</a> *<br><img src="https://km.woa.com/asset/00010002260300c1505df94f664ce401?height=490&width=840" alt="image.png"></p>
+<h4 id="核心思想-3"><a href="#核心思想-3" class="headerlink" title="核心思想"></a>核心思想</h4><p><strong>多视角对比学习</strong>：人类通过多种感官（视觉、听觉、触觉）感知世界，不同视角共享相同的语义信息。</p>
+<h4 id="网络架构-1"><a href="#网络架构-1" class="headerlink" title="网络架构"></a>网络架构</h4><ul>
+<li>为每个View（如RGB、深度图、法线图）配备独立的Encoder</li>
+<li>将不同View的特征投影到同一个单位球面上</li>
+</ul>
+<h4 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h4><p>扩展的InfoNCE损失，最大化同一物体不同View之间的互信息：</p>
+<p>$$L &#x3D; -\log \frac{\exp(f_1 \cdot f_2 &#x2F; \tau)}{\sum_{j} \exp(f_1 \cdot f_j &#x2F; \tau)}$$</p>
+<p>其中 $f_1, f_2$ 是同一物体的不同View特征。</p>
+<h4 id="关键发现"><a href="#关键发现" class="headerlink" title="关键发现"></a>关键发现</h4><ul>
+<li>View-invariant特征具有强大的泛化能力</li>
+<li>多视角学习优于单视角学习</li>
+</ul>
+<h4 id="历史意义-3"><a href="#历史意义-3" class="headerlink" title="历史意义"></a>历史意义</h4><p>CMC将对比学习从单模态扩展到多模态，启发了后续多模态预训练工作（如CLIP）。这里使用了不同编码器来处理不同类型的输入，而后续transformer面世后，提供了统一处理不同模态数据的可能性。</p>
+<hr>
+<h3 id="第一阶段小结"><a href="#第一阶段小结" class="headerlink" title="第一阶段小结"></a>第一阶段小结</h3><table>
+<thead>
+<tr>
+<th align="left">论文</th>
+<th align="left">核心创新</th>
+<th align="left">负样本来源</th>
+<th align="left">性能 (Top-1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">InstDisc</td>
+<td align="left">Memory Bank + NCE Loss</td>
+<td align="left">Memory Bank</td>
+<td align="left">46.5%</td>
+</tr>
+<tr>
+<td align="left">InvaSpread</td>
+<td align="left">端到端Siamese</td>
+<td align="left">Batch内</td>
+<td align="left">48.8%</td>
+</tr>
+<tr>
+<td align="left">CPC v1</td>
+<td align="left">InfoNCE + 预测未来</td>
+<td align="left">随机采样</td>
+<td align="left">48.7%</td>
+</tr>
+<tr>
+<td align="left">CMC</td>
+<td align="left">多视角对比</td>
+<td align="left">跨View</td>
+<td align="left">-</td>
+</tr>
+</tbody></table>
+<p><strong>阶段特征</strong>：方法多样化，但性能尚未突破50%，主要瓶颈在于负样本数量和特征一致性。</p>
+<hr>
+<h2 id="3-第二阶段：CV双雄-2020"><a href="#3-第二阶段：CV双雄-2020" class="headerlink" title="3. 第二阶段：CV双雄 (2020)"></a>3. 第二阶段：CV双雄 (2020)</h2><p>2020年是对比学习的爆发期，MoCo系列和SimCLR系列的竞争推动了技术快速迭代，性能实现飞跃。</p>
+<h3 id="3-1-MoCo-v1-CVPR-2020"><a href="#3-1-MoCo-v1-CVPR-2020" class="headerlink" title="3.1 MoCo v1 (CVPR 2020)"></a>3.1 MoCo v1 (CVPR 2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.05722">Momentum Contrast for Unsupervised Visual Representation Learning</a>*<br><img src="https://km.woa.com/asset/00010002260600a7dd5930f3a84cdb01?height=470&width=580" alt="image.png"></p>
+<h4 id="核心思想-4"><a href="#核心思想-4" class="headerlink" title="核心思想"></a>核心思想</h4><p>将对比学习视为<strong>字典查询（Dictionary Look-up）</strong>任务，字典应满足：</p>
+<ol>
+<li><strong>规模大</strong>：包含足够多的负样本</li>
+<li><strong>一致性</strong>：特征在演进过程中保持一致</li>
+</ol>
+<h4 id="网络架构-2"><a href="#网络架构-2" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><strong>Query Encoder</strong> $f_q$：正常梯度更新</li>
+<li><strong>Key Encoder</strong> $f_k$：动量更新</li>
+<li><strong>Queue</strong>：存储最近的K个负样本特征</li>
+</ol>
+<h4 id="动量更新机制"><a href="#动量更新机制" class="headerlink" title="动量更新机制"></a>动量更新机制</h4><p>$$\theta_k \leftarrow m \theta_k + (1-m) \theta_q$$</p>
+<p>其中 $m &#x3D; 0.999$ 为动量系数。</p>
+<h4 id="关键技术创新-2"><a href="#关键技术创新-2" class="headerlink" title="关键技术创新"></a>关键技术创新</h4><ol>
+<li><p><strong>Queue机制</strong></p>
+<ul>
+<li>解耦字典大小与Batch Size</li>
+<li>Queue Size &#x3D; 65536，远大于Batch Size (256)</li>
+<li>先进先出（FIFO）策略</li>
+</ul>
+</li>
+<li><p><strong>动量更新</strong></p>
+<ul>
+<li>保证Key Encoder缓慢演进，维持特征一致性</li>
+<li>避免Memory Bank的特征过时问题</li>
+</ul>
+</li>
+</ol>
+<h4 id="损失函数-1"><a href="#损失函数-1" class="headerlink" title="损失函数"></a>损失函数</h4><p>InfoNCE损失：</p>
+<p>$$L_q &#x3D; -\log \frac{\exp(q \cdot k_+ &#x2F; \tau)}{ \sum_{i&#x3D;0}^{K} \exp(q \cdot k_i &#x2F; \tau)}$$</p>
+<h4 id="有效Tricks-1"><a href="#有效Tricks-1" class="headerlink" title="有效Tricks"></a>有效Tricks</h4><ul>
+<li>Batch Size: 256</li>
+<li>Queue Size: 65536</li>
+<li>动量系数: $m &#x3D; 0.999$</li>
+<li>温度系数: $\tau &#x3D; 0.07$</li>
+</ul>
+<h4 id="性能表现-3"><a href="#性能表现-3" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 68.6%</li>
+</ul>
+<h4 id="历史意义-4"><a href="#历史意义-4" class="headerlink" title="历史意义"></a>历史意义</h4><p>MoCo首次将对比学习性能提升到60%以上，证明了动量机制的有效性，成为后续工作的重要基线。</p>
+<hr>
+<h3 id="3-2-SimCLR-v1-ICML-2020"><a href="#3-2-SimCLR-v1-ICML-2020" class="headerlink" title="3.2 SimCLR v1 (ICML 2020)"></a>3.2 SimCLR v1 (ICML 2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.05709">A Simple Framework for Contrastive Learning of Visual Representations</a>*  </p>
+<p><img src="https://km.woa.com/asset/000100022606007a51f89dbfd5460401?height=374&width=482" alt="image.png"></p>
+<h4 id="核心思想-5"><a href="#核心思想-5" class="headerlink" title="核心思想"></a>核心思想</h4><p>一个<strong>简单的端到端框架</strong>，通过强大的数据增强和非线性投影提升表征质量。</p>
+<h4 id="网络架构-3"><a href="#网络架构-3" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><strong>Encoder</strong> $f(\cdot)$：ResNet-50</li>
+<li><strong>Projection Head</strong> $g(\cdot)$：<strong>2层MLP</strong>（关键创新）<ul>
+<li>结构：Linear → ReLU → Linear</li>
+<li>输入维度：2048，输出维度：128</li>
+</ul>
+</li>
+</ol>
+<h4 id="NT-Xent损失函数"><a href="#NT-Xent损失函数" class="headerlink" title="NT-Xent损失函数"></a>NT-Xent损失函数</h4><p><strong>Normalized Temperature-scaled Cross Entropy Loss</strong>:</p>
+<p>$$l_{i,j} &#x3D; -\log \frac{\exp(\text{sim}(z_i, z_j)&#x2F;\tau)}{\sum_{k&#x3D;1}^{2N} \mathbb{1}_{[k \neq i]} \exp(\text{sim}(z_i, z_k)&#x2F;\tau)}$$</p>
+<p>其中 $\text{sim}(u, v) &#x3D; u^T v &#x2F; (|u| |v|)$ 为余弦相似度。</p>
+<h4 id="关键技术创新-3"><a href="#关键技术创新-3" class="headerlink" title="关键技术创新"></a>关键技术创新</h4><ol>
+<li><p><strong>MLP Projection Head</strong></p>
+<ul>
+<li>发现：Projector后的特征 $z$ 适合对比学习</li>
+<li>发现：Projector前的特征 $h$ 更适合下游任务</li>
+<li>这一发现至关重要，被后续工作广泛采用</li>
+</ul>
+</li>
+<li><p><strong>强数据增强组合</strong></p>
+<ul>
+<li><strong>RandomResizedCrop</strong> (0.08-1.0)</li>
+<li><strong>ColorJitter</strong> (strength&#x3D;1.0)：亮度、对比度、饱和度、色调</li>
+<li><strong>GaussianBlur</strong> (10%概率)</li>
+<li><strong>RandomHorizontalFlip</strong><br>其中随机裁剪和随机颜色变换效果最好</li>
+</ul>
+</li>
+<li><p><strong>大Batch训练</strong></p>
+<ul>
+<li>Batch Size: 4096（需要128个TPU核心）</li>
+<li>训练Epochs: 1000</li>
+</ul>
+</li>
+</ol>
+<h4 id="性能表现-4"><a href="#性能表现-4" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 76.5%</li>
+</ul>
+<h4 id="历史意义-5"><a href="#历史意义-5" class="headerlink" title="历史意义"></a>历史意义</h4><p>SimCLR证明了端到端训练的潜力，MLP Projector和强数据增强成为对比学习的标配。</p>
+<hr>
+<h3 id="3-3-MoCo-v2-2020"><a href="#3-3-MoCo-v2-2020" class="headerlink" title="3.3 MoCo v2 (2020)"></a>3.3 MoCo v2 (2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.04297">Improved Baselines with Momentum Contrastive Learning</a>*  </p>
+<p><img src="https://km.woa.com/asset/00010002260600a30aa66c62a044ef01?height=474&width=572" alt="image.png"></p>
+<h4 id="核心思想-6"><a href="#核心思想-6" class="headerlink" title="核心思想"></a>核心思想</h4><p>将SimCLR的有效组件集成到MoCo框架中，证明<strong>MoCo架构在小Batch下也能超越SimCLR</strong>。</p>
+<h4 id="改进点"><a href="#改进点" class="headerlink" title="改进点"></a>改进点</h4><ol>
+<li><strong>增加MLP Projector</strong>（来自SimCLR）</li>
+<li><strong>增强数据增强</strong>（来自SimCLR）<ul>
+<li>添加ColorJitter和GaussianBlur</li>
+</ul>
+</li>
+<li><strong>使用余弦学习率调度</strong></li>
+</ol>
+<h4 id="性能表现-5"><a href="#性能表现-5" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 71.1%</li>
+<li>Batch Size仅256，可以在单机8卡下训练，性能超过需要更多机器的SimCLR v1</li>
+</ul>
+<h4 id="历史意义-6"><a href="#历史意义-6" class="headerlink" title="历史意义"></a>历史意义</h4><p>MoCo v2证明了架构设计的重要性，小Batch + 好架构可以战胜大Batch + 简单架构。</p>
+<hr>
+<h3 id="3-4-SimCLR-v2-NeurIPS-2020"><a href="#3-4-SimCLR-v2-NeurIPS-2020" class="headerlink" title="3.4 SimCLR v2 (NeurIPS 2020)"></a>3.4 SimCLR v2 (NeurIPS 2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.10029">Big Self-Supervised Models are Strong Semi-Supervised Learners</a>*<br><img src="https://km.woa.com/asset/00010002260600cae57b3c053a489401?height=602&width=1128" alt="image.png"></p>
+<h4 id="核心思想-7"><a href="#核心思想-7" class="headerlink" title="核心思想"></a>核心思想</h4><p><strong>大模型是强半监督学习者</strong>，通过”自监督预训练 → 部分标签微调 → 知识蒸馏”三步走策略。</p>
+<h4 id="关键改进"><a href="#关键改进" class="headerlink" title="关键改进"></a>关键改进</h4><ol>
+<li><p><strong>更深的Projector</strong></p>
+<ul>
+<li>从1层MLP增加到3层MLP(2层最优)</li>
+<li>中间层维度更大</li>
+</ul>
+</li>
+<li><p><strong>更大的模型</strong></p>
+<ul>
+<li>ResNet-152 (3x)：宽度扩大3倍</li>
+<li>参数量大幅增加</li>
+</ul>
+</li>
+<li><p><strong>半监督学习流程</strong></p>
+<ul>
+<li>Step 1: 自监督预训练（无标签）</li>
+<li>Step 2: 使用1%或10%标签微调</li>
+<li>Step 3: 将大模型知识蒸馏到小模型</li>
+</ul>
+</li>
+<li><p><strong>动量编码器</strong></p>
+<ul>
+<li>增加moco的动量编码器思路</li>
+</ul>
+</li>
+</ol>
+<h4 id="性能表现-6"><a href="#性能表现-6" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet 线性评估Top-1</strong>: 79.8%</li>
+</ul>
+<h4 id="历史意义-7"><a href="#历史意义-7" class="headerlink" title="历史意义"></a>历史意义</h4><p>SimCLR v2证明了自监督预训练在半监督学习中的巨大潜力，为后续大模型预训练提供了思路。</p>
+<hr>
+<h3 id="3-5-CPC-v2-ICLR-2020"><a href="#3-5-CPC-v2-ICLR-2020" class="headerlink" title="3.5 CPC v2 (ICLR 2020)"></a>3.5 CPC v2 (ICLR 2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.09272">Data-Efficient Image Recognition with Contrastive Predictive Coding</a>*<br><img src="https://km.woa.com/asset/00010002260600851e884d111e484901?height=662&width=1722" alt="image.png"></p>
+<h4 id="核心思想-8"><a href="#核心思想-8" class="headerlink" title="核心思想"></a>核心思想</h4><p>通过增大模型容量和改进训练细节提升CPC性能。</p>
+<h4 id="关键改进-1"><a href="#关键改进-1" class="headerlink" title="关键改进"></a>关键改进</h4><ol>
+<li><p><strong>更大的模型</strong></p>
+<ul>
+<li>使用ResNet-161（161层）</li>
+<li>显著增加模型容量</li>
+</ul>
+</li>
+<li><p><strong>Layer Normalization替代Batch Normalization</strong></p>
+<ul>
+<li>防止Patch之间的信息泄漏</li>
+<li>BN会在batch维度上共享统计信息，导致作弊</li>
+</ul>
+</li>
+<li><p><strong>多方向预测</strong></p>
+<ul>
+<li>不仅预测下方和右侧，还预测上方和左侧</li>
+<li>增加预测任务的难度</li>
+</ul>
+</li>
+</ol>
+<h4 id="性能表现-7"><a href="#性能表现-7" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 71.5%</li>
+</ul>
+<h4 id="历史意义-8"><a href="#历史意义-8" class="headerlink" title="历史意义"></a>历史意义</h4><p>CPC v2证明了预测式对比学习的潜力，但复杂度较高，后续工作较少采用。</p>
+<hr>
+<h3 id="3-6-SwAV-NeurIPS-2020"><a href="#3-6-SwAV-NeurIPS-2020" class="headerlink" title="3.6 SwAV (NeurIPS 2020)"></a>3.6 SwAV (NeurIPS 2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.09882">Unsupervised Learning of Visual Features by Contrasting Cluster Assignments</a>* </p>
+<p><img src="https://km.woa.com/asset/00010002260600796b75c64656432301?height=384&width=1348" alt="image.png"></p>
+<h4 id="核心思想-9"><a href="#核心思想-9" class="headerlink" title="核心思想"></a>核心思想</h4><p><strong>对比聚类指派（Cluster Assignments）而非特征本身</strong>，通过在线聚类实现无负样本对比学习。</p>
+<h4 id="网络架构-4"><a href="#网络架构-4" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><strong>Encoder</strong> $f(\cdot)$：ResNet-50</li>
+<li><strong>Projection Head</strong> $g(\cdot)$：2层MLP</li>
+<li><strong>Prototypes</strong> $C$：可学习的聚类中心（如3000个）</li>
+</ol>
+<h4 id="Swapped-Prediction损失"><a href="#Swapped-Prediction损失" class="headerlink" title="Swapped Prediction损失"></a>Swapped Prediction损失</h4><p>给定同一图像的两个增强视角 $x_1, x_2$：</p>
+<ol>
+<li>计算特征 $z_1 &#x3D; g(f(x_1)), z_2 &#x3D; g(f(x_2))$</li>
+<li>使用Sinkhorn-Knopp算法计算聚类分配 $q_1, q_2$</li>
+<li>交换预测：用 $z_1$ 预测 $q_2$，用 $z_2$ 预测 $q_1$</li>
+</ol>
+<p>$$L(z_1, z_2) &#x3D; \ell(z_1, q_2) + \ell(z_2, q_1)$$</p>
+<h4 id="关键技术创新-4"><a href="#关键技术创新-4" class="headerlink" title="关键技术创新"></a>关键技术创新</h4><ol>
+<li><p><strong>Multi-crop策略</strong></p>
+<ul>
+<li>2个标准分辨率裁剪（224×224）</li>
+<li>6个小分辨率裁剪（96×96）</li>
+<li>大幅增加正样本对数量（从1对增加到8对）</li>
+</ul>
+</li>
+<li><p><strong>在线聚类</strong></p>
+<ul>
+<li>使用Sinkhorn-Knopp算法快速求解最优传输问题</li>
+<li>避免聚类坍塌（所有样本分配到同一类）</li>
+</ul>
+</li>
+</ol>
+<h4 id="性能表现-8"><a href="#性能表现-8" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 75.3%</li>
+</ul>
+<h4 id="历史意义-9"><a href="#历史意义-9" class="headerlink" title="历史意义"></a>历史意义</h4><p>SwAV证明了聚类方法在对比学习中的有效性，Multi-crop策略被后续工作广泛采用。</p>
+<hr>
+<h3 id="第二阶段小结"><a href="#第二阶段小结" class="headerlink" title="第二阶段小结"></a>第二阶段小结</h3><table>
+<thead>
+<tr>
+<th align="left">论文</th>
+<th align="left">年份</th>
+<th align="left">核心创新</th>
+<th align="left">Batch Size</th>
+<th align="left">性能 (Top-1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">MoCo v1</td>
+<td align="left">2020</td>
+<td align="left">Momentum Queue</td>
+<td align="left">256</td>
+<td align="left">68.6%</td>
+</tr>
+<tr>
+<td align="left">SimCLR v1</td>
+<td align="left">2020</td>
+<td align="left">MLP Projector + 强增强</td>
+<td align="left">4096</td>
+<td align="left">76.5%</td>
+</tr>
+<tr>
+<td align="left">MoCo v2</td>
+<td align="left">2020</td>
+<td align="left">集成SimCLR tricks</td>
+<td align="left">256</td>
+<td align="left">71.1%</td>
+</tr>
+<tr>
+<td align="left">SimCLR v2</td>
+<td align="left">2020</td>
+<td align="left">大模型 + 半监督</td>
+<td align="left">4096</td>
+<td align="left">79.8%</td>
+</tr>
+<tr>
+<td align="left">CPC v2</td>
+<td align="left">2020</td>
+<td align="left">LayerNorm + 大模型</td>
+<td align="left">-</td>
+<td align="left">71.5%</td>
+</tr>
+<tr>
+<td align="left">SwAV</td>
+<td align="left">2020</td>
+<td align="left">在线聚类 + Multi-crop</td>
+<td align="left">4096</td>
+<td align="left">75.3%</td>
+</tr>
+</tbody></table>
+<p><strong>阶段特征</strong>：</p>
+<ul>
+<li>MoCo与SimCLR的竞争推动技术快速迭代</li>
+<li>性能从60%提升到75%，逼近监督学习</li>
+<li>MLP Projector、强数据增强、Multi-crop成为标配</li>
+</ul>
+<hr>
+<h2 id="4-第三阶段：不用负样本-2020-2021"><a href="#4-第三阶段：不用负样本-2020-2021" class="headerlink" title="4. 第三阶段：不用负样本 (2020-2021)"></a>4. 第三阶段：不用负样本 (2020-2021)</h2><p>这一阶段的研究挑战了”对比学习必须依赖负样本”的直觉，通过非对称结构避免模型坍塌。</p>
+<h3 id="4-1-BYOL-NeurIPS-2020"><a href="#4-1-BYOL-NeurIPS-2020" class="headerlink" title="4.1 BYOL (NeurIPS 2020)"></a>4.1 BYOL (NeurIPS 2020)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.07733">Bootstrap Your Own Latent - A New Approach to Self-Supervised Learning</a>*<br><img src="https://km.woa.com/asset/000100022606001db7bb4f9aea434101?height=538&width=1598" alt="image.png"></p>
+<h4 id="核心思想-10"><a href="#核心思想-10" class="headerlink" title="核心思想"></a>核心思想</h4><p>通过一个网络<strong>预测另一个网络的输出</strong>来学习，完全不需要负样本。</p>
+<h4 id="网络架构-5"><a href="#网络架构-5" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><p><strong>Online Network</strong></p>
+<ul>
+<li>Encoder $f_\theta$</li>
+<li>Projector $g_\theta$</li>
+<li>**Predictor $q_\theta$**（关键创新）</li>
+</ul>
+</li>
+<li><p><strong>Target Network</strong></p>
+<ul>
+<li>Encoder $f_\xi$</li>
+<li>Projector $g_\xi$</li>
+<li>无Predictor</li>
+</ul>
+</li>
+<li><p><strong>动量更新</strong><br>$$\xi \leftarrow \tau \xi + (1-\tau) \theta$$<br>其中 $\tau &#x3D; 0.996$</p>
+</li>
+</ol>
+<h4 id="损失函数-2"><a href="#损失函数-2" class="headerlink" title="损失函数"></a>损失函数</h4><p>均方误差（MSE）损失：</p>
+<p>$$L_\theta &#x3D; | \bar{q}_\theta(z_\theta) - \bar{z}’_\xi |^2_2$$</p>
+<p>其中 $\bar{\cdot}$ 表示L2归一化。</p>
+<h4 id="为什么不坍塌？"><a href="#为什么不坍塌？" class="headerlink" title="为什么不坍塌？"></a>为什么不坍塌？</h4><ol>
+<li><strong>Predictor的非对称性</strong>：Online Network有Predictor，Target Network没有</li>
+<li><strong>动量更新</strong>：Target Network缓慢演进，提供稳定的目标</li>
+<li><strong>Batch Normalization</strong>：隐式地引入了负样本信息（有争议）</li>
+</ol>
+<h4 id="性能表现-9"><a href="#性能表现-9" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 74.3%</li>
+<li>无需负样本，性能超过MoCo v2</li>
+</ul>
+<h4 id="历史意义-10"><a href="#历史意义-10" class="headerlink" title="历史意义"></a>历史意义</h4><p>BYOL首次证明了无负样本对比学习的可行性，引发了对”为什么不坍塌”的广泛讨论。</p>
+<hr>
+<h3 id="4-2-SimSiam-CVPR-2021"><a href="#4-2-SimSiam-CVPR-2021" class="headerlink" title="4.2 SimSiam (CVPR 2021)"></a>4.2 SimSiam (CVPR 2021)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2011.10566">Exploring Simple Siamese Representation Learning</a>*<br><img src="https://km.woa.com/asset/000100022606006a4094cf281d4cdd01?height=318&width=450" alt="image.png"></p>
+<h4 id="核心思想-11"><a href="#核心思想-11" class="headerlink" title="核心思想"></a>核心思想</h4><p>探究Siamese网络在<strong>没有负样本、没有动量编码器</strong>时为何不坍塌，发现<strong>Stop-gradient是核心</strong>。</p>
+<h4 id="网络架构-6"><a href="#网络架构-6" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><strong>对称的Encoder</strong> $f(\cdot)$</li>
+<li><strong>Projection Head</strong> $h(\cdot)$：3层MLP</li>
+<li><strong>Prediction Head</strong> $g(\cdot)$：2层MLP（仅一侧有）</li>
+</ol>
+<h4 id="损失函数-3"><a href="#损失函数-3" class="headerlink" title="损失函数"></a>损失函数</h4><p>负余弦相似度：</p>
+<p>$$\mathcal{D}(p_1, z_2) &#x3D; -\frac{p_1}{|p_1|_2} \cdot \frac{z_2}{|z_2|_2}$$</p>
+<p>对称化损失：</p>
+<p>$$\mathcal{L} &#x3D; \frac{1}{2}\mathcal{D}(p_1, \text{stopgrad}(z_2)) + \frac{1}{2}\mathcal{D}(p_2, \text{stopgrad}(z_1))$$</p>
+<h4 id="关键发现：Stop-gradient是核心"><a href="#关键发现：Stop-gradient是核心" class="headerlink" title="关键发现：Stop-gradient是核心"></a>关键发现：Stop-gradient是核心</h4><p><strong>消融实验</strong>：</p>
+<table>
+<thead>
+<tr>
+<th align="left">配置</th>
+<th align="left">是否坍塌</th>
+<th align="left">性能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">有Stop-gradient</td>
+<td align="left">否</td>
+<td align="left">71.3%</td>
+</tr>
+<tr>
+<td align="left">无Stop-gradient</td>
+<td align="left">是</td>
+<td align="left">0.1%</td>
+</tr>
+<tr>
+<td align="left">有动量更新，无Stop-gradient</td>
+<td align="left">是</td>
+<td align="left">0.1%</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：</p>
+<ul>
+<li>Stop-gradient是防止坍塌的充分必要条件</li>
+<li>动量更新不是必须的（与BYOL不同）</li>
+<li>Predictor + Stop-gradient构成非对称性</li>
+</ul>
+<h4 id="理论解释"><a href="#理论解释" class="headerlink" title="理论解释"></a>理论解释</h4><p>SimSiam可以看作EM算法的一种形式：</p>
+<ul>
+<li><strong>E-step</strong>：固定一侧网络（Stop-gradient），优化另一侧</li>
+<li><strong>M-step</strong>：交替优化</li>
+</ul>
+<h4 id="性能表现-10"><a href="#性能表现-10" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 71.3%</li>
+<li>架构最简单，但性能略低于BYOL</li>
+</ul>
+<h4 id="历史意义-11"><a href="#历史意义-11" class="headerlink" title="历史意义"></a>历史意义</h4><p>SimSiam是对比学习的<strong>总结性工作</strong>，将所有方法归纳到统一框架中，揭示了防止坍塌的本质机制。</p>
+<hr>
+<h3 id="第三阶段小结"><a href="#第三阶段小结" class="headerlink" title="第三阶段小结"></a>第三阶段小结</h3><table>
+<thead>
+<tr>
+<th align="left">论文</th>
+<th align="left">负样本</th>
+<th align="left">动量更新</th>
+<th align="left">Predictor</th>
+<th align="left">Stop-gradient</th>
+<th align="left">性能 (Top-1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">BYOL</td>
+<td align="left">否</td>
+<td align="left">是</td>
+<td align="left">是</td>
+<td align="left">隐式</td>
+<td align="left">74.3%</td>
+</tr>
+<tr>
+<td align="left">SimSiam</td>
+<td align="left">否</td>
+<td align="left">否</td>
+<td align="left">是</td>
+<td align="left">显式</td>
+<td align="left">71.3%</td>
+</tr>
+</tbody></table>
+<p><strong>阶段特征</strong>：</p>
+<ul>
+<li>突破了”对比学习必须有负样本”的直觉</li>
+<li>揭示了非对称结构（Predictor + Stop-gradient）的重要性</li>
+<li>为后续简化对比学习框架提供了思路</li>
+</ul>
+<hr>
+<h2 id="5-第四阶段：Transformer时代-2021"><a href="#5-第四阶段：Transformer时代-2021" class="headerlink" title="5. 第四阶段：Transformer时代 (2021)"></a>5. 第四阶段：Transformer时代 (2021)</h2><p>随着Vision Transformer (ViT)在CV领域的普及，对比学习也开始向Transformer架构迁移。</p>
+<h3 id="5-1-MoCo-v3-ICCV-2021"><a href="#5-1-MoCo-v3-ICCV-2021" class="headerlink" title="5.1 MoCo v3 (ICCV 2021)"></a>5.1 MoCo v3 (ICCV 2021)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.02057">An Empirical Study of Training Self-Supervised Vision Transformers</a>*  </p>
+<h4 id="核心思想-12"><a href="#核心思想-12" class="headerlink" title="核心思想"></a>核心思想</h4><p>研究自监督ViT训练的<strong>不稳定性问题</strong>，并提出解决方案。</p>
+<h4 id="发现的问题"><a href="#发现的问题" class="headerlink" title="发现的问题"></a>发现的问题</h4><p>在将MoCo v2直接应用于ViT时，训练会出现：</p>
+<ul>
+<li><strong>梯度突变（Gradient Spike）</strong>：损失突然增大</li>
+<li><strong>训练不稳定</strong>：性能波动剧烈</li>
+</ul>
+<h4 id="问题定位"><a href="#问题定位" class="headerlink" title="问题定位"></a>问题定位</h4><p>通过梯度分析发现：</p>
+<ul>
+<li>梯度突变主要发生在<strong>Patch Embedding层</strong>（第一层线性投影）</li>
+<li>ViT的自注意力机制放大了第一层的梯度</li>
+</ul>
+<h4 id="解决方案：Fixed-Random-Patch-Projection"><a href="#解决方案：Fixed-Random-Patch-Projection" class="headerlink" title="解决方案：Fixed Random Patch Projection"></a>解决方案：Fixed Random Patch Projection</h4><p><strong>冻结第一层线性投影层，不参与训练</strong>：</p>
+<h4 id="其他改进"><a href="#其他改进" class="headerlink" title="其他改进"></a>其他改进</h4><ol>
+<li><strong>使用AdamW优化器</strong>（而非SGD）</li>
+<li><strong>更大的Batch Size</strong>：4096</li>
+<li><strong>更长的训练</strong>：300 epochs</li>
+</ol>
+<h4 id="性能表现-11"><a href="#性能表现-11" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 81%</li>
+</ul>
+<h4 id="历史意义-12"><a href="#历史意义-12" class="headerlink" title="历史意义"></a>历史意义</h4><p>MoCo v3首次成功将对比学习应用于ViT，性能突破80%，为后续ViT自监督学习奠定了基础。</p>
+<hr>
+<h3 id="5-2-DINO-ICCV-2021"><a href="#5-2-DINO-ICCV-2021" class="headerlink" title="5.2 DINO (ICCV 2021)"></a>5.2 DINO (ICCV 2021)</h3><p><strong>论文</strong>：*<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.14294">Emerging Properties in Self-Supervised Vision Transformers</a>* </p>
+<p><img src="https://km.woa.com/asset/0001000226060042a9734bb7f744c101?height=384&width=390" alt="image.png"></p>
+<h4 id="核心思想-13"><a href="#核心思想-13" class="headerlink" title="核心思想"></a>核心思想</h4><p><strong>自蒸馏（Self-Distillation）</strong>框架，发现自监督ViT能自动学习到物体的语义分割边界。</p>
+<h4 id="网络架构-7"><a href="#网络架构-7" class="headerlink" title="网络架构"></a>网络架构</h4><ol>
+<li><strong>Student Network</strong>：正常梯度更新</li>
+<li><strong>Teacher Network</strong>：动量更新（EMA）<br>$$\theta_t \leftarrow \lambda \theta_t + (1-\lambda) \theta_s$$<br>其中 $\lambda$ 从0.996线性增加到1</li>
+</ol>
+<h4 id="损失函数-4"><a href="#损失函数-4" class="headerlink" title="损失函数"></a>损失函数</h4><p>交叉熵损失，匹配Student和Teacher的输出分布：</p>
+<p>$$\min_{\theta_s} H(P_t(x), P_s(x))$$</p>
+<p>其中 $P$ 是经过softmax的输出分布。</p>
+<h4 id="关键技术创新-5"><a href="#关键技术创新-5" class="headerlink" title="关键技术创新"></a>关键技术创新</h4><ol>
+<li><p><strong>Centering操作</strong></p>
+<ul>
+<li>维护Teacher输出的指数移动平均 $c$</li>
+<li>在softmax前减去 $c$，防止某一维度主导</li>
+</ul>
+<p>$$P_t(x) &#x3D; \text{softmax}\left(\frac{g_{\theta_t}(x) - c}{\tau_t}\right)$$</p>
+</li>
+<li><p><strong>Sharpening操作</strong></p>
+<ul>
+<li>Student使用较低的温度 $\tau_s &#x3D; 0.1$</li>
+<li>Teacher使用较高的温度 $\tau_t &#x3D; 0.04 \to 0.07$（warmup）</li>
+</ul>
+</li>
+<li><p><strong>Multi-crop策略</strong></p>
+<ul>
+<li>2个全局视角（224×224）</li>
+<li>多个局部视角（96×96）</li>
+<li>仅全局视角通过Teacher</li>
+</ul>
+</li>
+</ol>
+<h4 id="惊人发现：自动学习语义分割"><a href="#惊人发现：自动学习语义分割" class="headerlink" title="惊人发现：自动学习语义分割"></a>惊人发现：自动学习语义分割</h4><p><strong>无需任何分割标注</strong>，DINO的ViT自注意力图能够：</p>
+<ul>
+<li>自动分割出前景物体</li>
+<li>捕捉物体的精细边界</li>
+<li>对不同物体类别泛化</li>
+</ul>
+<p>这一现象在CNN中从未观察到，是ViT的独特性质。</p>
+<h4 id="性能表现-12"><a href="#性能表现-12" class="headerlink" title="性能表现"></a>性能表现</h4><ul>
+<li><strong>ImageNet线性评估 Top-1</strong>: 80.1%</li>
+</ul>
+<h4 id="有效Tricks-2"><a href="#有效Tricks-2" class="headerlink" title="有效Tricks"></a>有效Tricks</h4><ul>
+<li>小Patch Size（8×8）显著提升性能</li>
+<li>Multi-crop增强</li>
+<li>Centering + Sharpening防止坍塌</li>
+</ul>
+<h4 id="历史意义-13"><a href="#历史意义-13" class="headerlink" title="历史意义"></a>历史意义</h4><p>DINO不仅在性能上达到SOTA，更重要的是发现了自监督ViT的<strong>涌现特性（Emerging Properties）</strong>，为理解ViT提供了新视角。</p>
+<hr>
+<h3 id="第四阶段小结"><a href="#第四阶段小结" class="headerlink" title="第四阶段小结"></a>第四阶段小结</h3><table>
+<thead>
+<tr>
+<th align="left">论文</th>
+<th align="left">架构</th>
+<th align="left">核心创新</th>
+<th align="left">性能 (Top-1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">MoCo v3</td>
+<td align="left">ViT</td>
+<td align="left">Fixed Patch Projection</td>
+<td align="left">81.0%</td>
+</tr>
+<tr>
+<td align="left">DINO</td>
+<td align="left">ViT</td>
+<td align="left">Centering + 自蒸馏</td>
+<td align="left">80.1%</td>
+</tr>
+</tbody></table>
+<p><strong>阶段特征</strong>：</p>
+<ul>
+<li>成功将对比学习迁移到ViT架构</li>
+<li>性能突破80%，达到新高度</li>
+<li>发现ViT的独特性质（自动语义分割）</li>
+</ul>
+<hr>
+<h2 id="6-论文演进关系图"><a href="#6-论文演进关系图" class="headerlink" title="6. 论文演进关系图"></a>6. 论文演进关系图</h2><p>下图展示了CV对比学习四个阶段的技术演进脉络和论文之间的继承关系：</p>
+<p><img src="https://km.woa.com/asset/00010002260600121a77f78c1a4c0d01?height=1136&width=2102" alt="image.png"></p>
+<p><strong>关键演进路径</strong>：</p>
+<ol>
+<li><p><strong>InstDisc → MoCo系列</strong></p>
+<ul>
+<li>Memory Bank → Queue（解决特征一致性）</li>
+<li>引入动量更新机制</li>
+</ul>
+</li>
+<li><p><strong>InvaSpread → SimCLR系列</strong></p>
+<ul>
+<li>端到端训练 → 大Batch + 强增强</li>
+<li>引入MLP Projector</li>
+</ul>
+</li>
+<li><p><strong>MoCo&#x2F;SimCLR → BYOL&#x2F;SimSiam</strong></p>
+<ul>
+<li>从依赖负样本到无需负样本</li>
+<li>引入Predictor + Stop-gradient</li>
+</ul>
+</li>
+<li><p><strong>CNN → ViT</strong></p>
+<ul>
+<li>MoCo v2 → MoCo v3（Fixed Patch Projection）</li>
+<li>SwAV → DINO（Centering + 自蒸馏）</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="7-核心技术对比总结"><a href="#7-核心技术对比总结" class="headerlink" title="7. 核心技术对比总结"></a>7. 核心技术对比总结</h2><h3 id="7-1-完整对比表格"><a href="#7-1-完整对比表格" class="headerlink" title="7.1 完整对比表格"></a>7.1 完整对比表格</h3><table>
+<thead>
+<tr>
+<th align="left">论文</th>
+<th align="left">年份</th>
+<th align="left">会议</th>
+<th align="left">负样本</th>
+<th align="left">核心组件</th>
+<th align="left">关键Trick</th>
+<th align="left">性能 (Top-1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>InstDisc</strong></td>
+<td align="left">2018</td>
+<td align="left">CVPR</td>
+<td align="left">是</td>
+<td align="left">Memory Bank</td>
+<td align="left">NCE Loss</td>
+<td align="left">46.5%</td>
+</tr>
+<tr>
+<td align="left"><strong>InvaSpread</strong></td>
+<td align="left">2019</td>
+<td align="left">CVPR</td>
+<td align="left">是</td>
+<td align="left">Siamese</td>
+<td align="left">端到端</td>
+<td align="left">48.8%</td>
+</tr>
+<tr>
+<td align="left"><strong>CPC v1</strong></td>
+<td align="left">2018</td>
+<td align="left">-</td>
+<td align="left">是</td>
+<td align="left">预测未来</td>
+<td align="left">InfoNCE</td>
+<td align="left">48.7%</td>
+</tr>
+<tr>
+<td align="left"><strong>CMC</strong></td>
+<td align="left">2019</td>
+<td align="left">ECCV</td>
+<td align="left">是</td>
+<td align="left">多视角</td>
+<td align="left">跨模态</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><strong>MoCo v1</strong></td>
+<td align="left">2020</td>
+<td align="left">CVPR</td>
+<td align="left">是</td>
+<td align="left">Momentum Queue</td>
+<td align="left">动量更新</td>
+<td align="left">68.6%</td>
+</tr>
+<tr>
+<td align="left"><strong>SimCLR v1</strong></td>
+<td align="left">2020</td>
+<td align="left">ICML</td>
+<td align="left">是</td>
+<td align="left">MLP Projector</td>
+<td align="left">强数据增强</td>
+<td align="left">76.5%</td>
+</tr>
+<tr>
+<td align="left"><strong>MoCo v2</strong></td>
+<td align="left">2020</td>
+<td align="left">-</td>
+<td align="left">是</td>
+<td align="left">Queue + MLP</td>
+<td align="left">集成tricks</td>
+<td align="left">71.1%</td>
+</tr>
+<tr>
+<td align="left"><strong>SimCLR v2</strong></td>
+<td align="left">2020</td>
+<td align="left">NeurIPS</td>
+<td align="left">是</td>
+<td align="left">大模型</td>
+<td align="left">半监督</td>
+<td align="left">79.8%</td>
+</tr>
+<tr>
+<td align="left"><strong>CPC v2</strong></td>
+<td align="left">2020</td>
+<td align="left">ICLR</td>
+<td align="left">是</td>
+<td align="left">大模型</td>
+<td align="left">LayerNorm</td>
+<td align="left">71.5%</td>
+</tr>
+<tr>
+<td align="left"><strong>SwAV</strong></td>
+<td align="left">2020</td>
+<td align="left">NeurIPS</td>
+<td align="left">否(聚类)</td>
+<td align="left">Prototypes</td>
+<td align="left">Multi-crop</td>
+<td align="left">75.3%</td>
+</tr>
+<tr>
+<td align="left"><strong>BYOL</strong></td>
+<td align="left">2020</td>
+<td align="left">NeurIPS</td>
+<td align="left">否</td>
+<td align="left">Predictor + EMA</td>
+<td align="left">非对称</td>
+<td align="left">74.3%</td>
+</tr>
+<tr>
+<td align="left"><strong>SimSiam</strong></td>
+<td align="left">2021</td>
+<td align="left">CVPR</td>
+<td align="left">否</td>
+<td align="left">Stop-gradient</td>
+<td align="left">梯度截断</td>
+<td align="left">71.3%</td>
+</tr>
+<tr>
+<td align="left"><strong>MoCo v3</strong></td>
+<td align="left">2021</td>
+<td align="left">ICCV</td>
+<td align="left">是</td>
+<td align="left">ViT + Queue</td>
+<td align="left">Fixed Patch</td>
+<td align="left">81.0%</td>
+</tr>
+<tr>
+<td align="left"><strong>DINO</strong></td>
+<td align="left">2021</td>
+<td align="left">ICCV</td>
+<td align="left">否</td>
+<td align="left">ViT + 自蒸馏</td>
+<td align="left">Centering</td>
+<td align="left">80.1%</td>
+</tr>
+</tbody></table>
+<h3 id="7-2-技术组件对比"><a href="#7-2-技术组件对比" class="headerlink" title="7.2 技术组件对比"></a>7.2 技术组件对比</h3><table>
+<thead>
+<tr>
+<th align="left">技术组件</th>
+<th align="left">首次提出</th>
+<th align="left">采用论文</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Memory Bank</strong></td>
+<td align="left">InstDisc</td>
+<td align="left">InstDisc</td>
+<td align="left">存储负样本特征</td>
+</tr>
+<tr>
+<td align="left"><strong>InfoNCE Loss</strong></td>
+<td align="left">CPC v1</td>
+<td align="left">MoCo, SimCLR等</td>
+<td align="left">标准对比损失</td>
+</tr>
+<tr>
+<td align="left"><strong>Momentum Update</strong></td>
+<td align="left">MoCo v1</td>
+<td align="left">MoCo, BYOL, DINO</td>
+<td align="left">稳定特征演进</td>
+</tr>
+<tr>
+<td align="left"><strong>MLP Projector</strong></td>
+<td align="left">SimCLR v1</td>
+<td align="left">几乎所有后续工作</td>
+<td align="left">分离对比空间与表征空间</td>
+</tr>
+<tr>
+<td align="left"><strong>强数据增强</strong></td>
+<td align="left">SimCLR v1</td>
+<td align="left">几乎所有后续工作</td>
+<td align="left">提升不变性</td>
+</tr>
+<tr>
+<td align="left"><strong>Multi-crop</strong></td>
+<td align="left">SwAV</td>
+<td align="left">SwAV, DINO</td>
+<td align="left">增加正样本对</td>
+</tr>
+<tr>
+<td align="left"><strong>Predictor</strong></td>
+<td align="left">BYOL</td>
+<td align="left">BYOL, SimSiam</td>
+<td align="left">打破对称性</td>
+</tr>
+<tr>
+<td align="left"><strong>Stop-gradient</strong></td>
+<td align="left">SimSiam</td>
+<td align="left">SimSiam</td>
+<td align="left">防止坍塌</td>
+</tr>
+<tr>
+<td align="left"><strong>Centering</strong></td>
+<td align="left">DINO</td>
+<td align="left">DINO</td>
+<td align="left">防止维度坍塌</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="8-技术演进脉络深度分析"><a href="#8-技术演进脉络深度分析" class="headerlink" title="8. 技术演进脉络深度分析"></a>8. 技术演进脉络深度分析</h2><h3 id="8-1-负样本策略的演进"><a href="#8-1-负样本策略的演进" class="headerlink" title="8.1 负样本策略的演进"></a>8.1 负样本策略的演进</h3><p><strong>阶段1：Memory Bank（InstDisc）</strong></p>
+<ul>
+<li>优点：负样本数量不受Batch Size限制</li>
+<li>缺点：特征不一致（更新滞后）</li>
+</ul>
+<p><strong>阶段2：Queue + Momentum（MoCo）</strong></p>
+<ul>
+<li>优点：特征一致性好，负样本数量大</li>
+<li>缺点：需要额外的动量编码器</li>
+</ul>
+<p><strong>阶段3：大Batch（SimCLR）</strong></p>
+<ul>
+<li>优点：端到端训练，特征完全一致</li>
+<li>缺点：需要大量计算资源</li>
+</ul>
+<p><strong>阶段4：无需负样本（BYOL&#x2F;SimSiam）</strong></p>
+<ul>
+<li>优点：简化训练，无需大Batch或Queue</li>
+<li>缺点：需要精心设计防止坍塌</li>
+</ul>
+<h3 id="8-2-防止坍塌的机制"><a href="#8-2-防止坍塌的机制" class="headerlink" title="8.2 防止坍塌的机制"></a>8.2 防止坍塌的机制</h3><p><strong>坍塌问题</strong>：所有样本映射到相同的特征，模型失去判别能力。</p>
+<p><strong>解决方案演进</strong>：</p>
+<ol>
+<li><p><strong>负样本推开</strong>（InstDisc, MoCo, SimCLR）</p>
+<ul>
+<li>通过对比损失显式推开负样本</li>
+<li>需要大量负样本</li>
+</ul>
+</li>
+<li><p><strong>聚类约束</strong>（SwAV）</p>
+<ul>
+<li>通过聚类分配约束特征分布</li>
+<li>使用Sinkhorn-Knopp算法保证均匀分配</li>
+</ul>
+</li>
+<li><p><strong>非对称架构</strong>（BYOL, SimSiam）</p>
+<ul>
+<li>Predictor打破对称性</li>
+<li>Stop-gradient阻止信息流</li>
+</ul>
+</li>
+<li><p><strong>Centering</strong>（DINO）</p>
+<ul>
+<li>减去输出均值，防止某一维度主导</li>
+<li>结合Sharpening控制熵</li>
+</ul>
+</li>
+</ol>
+<h3 id="8-3-数据增强的重要性"><a href="#8-3-数据增强的重要性" class="headerlink" title="8.3 数据增强的重要性"></a>8.3 数据增强的重要性</h3><p><strong>SimCLR的消融实验</strong>表明，数据增强对性能的影响巨大：</p>
+<table>
+<thead>
+<tr>
+<th align="left">增强组合</th>
+<th align="left">性能 (Top-1)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">仅RandomCrop</td>
+<td align="left">48.3%</td>
+</tr>
+<tr>
+<td align="left">+ ColorJitter</td>
+<td align="left">61.9% (+13.6%)</td>
+</tr>
+<tr>
+<td align="left">+ GaussianBlur</td>
+<td align="left">66.6% (+4.7%)</td>
+</tr>
+</tbody></table>
+<p><strong>关键发现</strong>：</p>
+<ul>
+<li>ColorJitter是最重要的增强（+13.6%）</li>
+<li>不同增强的组合效果优于单一增强</li>
+<li>增强强度需要精心调节</li>
+</ul>
+<h3 id="8-4-架构演进：CNN-→-ViT"><a href="#8-4-架构演进：CNN-→-ViT" class="headerlink" title="8.4 架构演进：CNN → ViT"></a>8.4 架构演进：CNN → ViT</h3><p><strong>CNN时代的挑战</strong>：</p>
+<ul>
+<li>归纳偏置强（局部性、平移不变性）</li>
+<li>难以捕捉全局依赖</li>
+</ul>
+<p><strong>ViT的优势</strong>：</p>
+<ul>
+<li>自注意力机制捕捉全局信息</li>
+<li>更灵活的表征能力</li>
+</ul>
+<p><strong>ViT的挑战</strong>：</p>
+<ul>
+<li>训练不稳定（梯度突变）</li>
+<li>需要更多数据</li>
+</ul>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>MoCo v3：Fixed Patch Projection</li>
+<li>DINO：Centering + 自蒸馏</li>
+</ul>
+<hr>
+<h2 id="9-总结与展望"><a href="#9-总结与展望" class="headerlink" title="9. 总结与展望"></a>9. 总结与展望</h2><h3 id="9-1-发展规律总结"><a href="#9-1-发展规律总结" class="headerlink" title="9.1 发展规律总结"></a>9.1 发展规律总结</h3><ol>
+<li><p><strong>从复杂到简单</strong></p>
+<ul>
+<li>早期：Memory Bank、复杂的代理任务</li>
+<li>后期：简单的Siamese架构 + Stop-gradient</li>
+</ul>
+</li>
+<li><p><strong>从依赖负样本到无需负样本</strong></p>
+<ul>
+<li>早期：大量负样本是必须的</li>
+<li>后期：通过非对称结构避免坍塌</li>
+</ul>
+</li>
+<li><p><strong>从小模型到大模型</strong></p>
+<ul>
+<li>早期：ResNet-50</li>
+<li>后期：ResNet-152 (3x)、ViT-L</li>
+</ul>
+</li>
+<li><p><strong>从CNN到Transformer</strong></p>
+<ul>
+<li>2018-2020：CNN主导</li>
+<li>2021-：ViT成为主流</li>
+</ul>
+</li>
+</ol>
+<h3 id="9-2-核心经验总结"><a href="#9-2-核心经验总结" class="headerlink" title="9.2 核心经验总结"></a>9.2 核心经验总结</h3><p><strong>必备组件</strong>：</p>
+<ol>
+<li><strong>MLP Projector</strong>：分离对比空间与表征空间</li>
+<li><strong>强数据增强</strong>：ColorJitter + GaussianBlur</li>
+<li><strong>防坍塌机制</strong>：负样本 &#x2F; Predictor &#x2F; Centering</li>
+</ol>
+<p><strong>有效Tricks</strong>：</p>
+<ol>
+<li><strong>Multi-crop</strong>：增加正样本对，提升性能</li>
+<li><strong>动量更新</strong>：稳定特征演进</li>
+<li><strong>温度系数</strong>：控制分布的平滑度（通常0.07-0.1）</li>
+<li><strong>长训练</strong>：800-1000 epochs</li>
+</ol>
+<h3 id="9-3-未来发展方向"><a href="#9-3-未来发展方向" class="headerlink" title="9.3 未来发展方向"></a>9.3 未来发展方向</h3><h4 id="1-多模态对比学习"><a href="#1-多模态对比学习" class="headerlink" title="1. 多模态对比学习"></a>1. 多模态对比学习</h4><ul>
+<li><strong>CLIP</strong>（2021）：图像-文本对比学习</li>
+<li><strong>ALIGN</strong>（2021）：大规模噪声数据训练</li>
+<li><strong>方向</strong>：视觉-语言-音频多模态统一表征</li>
+</ul>
+<h4 id="2-大规模预训练"><a href="#2-大规模预训练" class="headerlink" title="2. 大规模预训练"></a>2. 大规模预训练</h4><ul>
+<li><strong>MAE</strong>（2021）：Masked Autoencoder</li>
+<li><strong>BEiT</strong>（2021）：BERT式的视觉预训练</li>
+<li><strong>方向</strong>：结合对比学习与生成式学习</li>
+</ul>
+<h2 id="10-参考文献"><a href="#10-参考文献" class="headerlink" title="10. 参考文献"></a>10. 参考文献</h2><p>[1] Wu, Z., Xiong, Y., Yu, S. X., &amp; Lin, D. (2018). Unsupervised feature learning via non-parametric instance discrimination. In <em>CVPR</em> (pp. 3733-3742). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.01978">https://arxiv.org/abs/1805.01978</a></p>
+<p>[2] Ye, M., Zhang, X., Yuen, P. C., &amp; Chang, S. F. (2019). Unsupervised embedding learning via invariant and spreading instance feature. In <em>CVPR</em> (pp. 6210-6219). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.03436">https://arxiv.org/abs/1904.03436</a></p>
+<p>[3] Oord, A. v. d., Li, Y., &amp; Vinyals, O. (2018). Representation learning with contrastive predictive coding. <em>arXiv preprint arXiv:1807.03748</em>. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1807.03748">https://arxiv.org/abs/1807.03748</a></p>
+<p>[4] Tian, Y., Krishnan, D., &amp; Isola, P. (2019). Contrastive multiview coding. In <em>ECCV</em> (pp. 776-794). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1906.05849">https://arxiv.org/abs/1906.05849</a></p>
+<p>[5] He, K., Fan, H., Wu, Y., Xie, S., &amp; Girshick, R. (2020). Momentum contrast for unsupervised visual representation learning. In <em>CVPR</em> (pp. 9729-9738). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.05722">https://arxiv.org/abs/1911.05722</a></p>
+<p>[6] Chen, T., Kornblith, S., Norouzi, M., &amp; Hinton, G. (2020). A simple framework for contrastive learning of visual representations. In <em>ICML</em> (pp. 1597-1607). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.05709">https://arxiv.org/abs/2002.05709</a></p>
+<p>[7] Chen, X., Fan, H., Girshick, R., &amp; He, K. (2020). Improved baselines with momentum contrastive learning. <em>arXiv preprint arXiv:2003.04297</em>. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.04297">https://arxiv.org/abs/2003.04297</a></p>
+<p>[8] Chen, T., Kornblith, S., Swersky, K., Norouzi, M., &amp; Hinton, G. (2020). Big self-supervised models are strong semi-supervised learners. In <em>NeurIPS</em> (pp. 22243-22255). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.10029">https://arxiv.org/abs/2006.10029</a></p>
+<p>[9] Hénaff, O. J., Srinivas, A., De Fauw, J., Razavi, A., Doersch, C., Eslami, S. M., &amp; Oord, A. v. d. (2020). Data-efficient image recognition with contrastive predictive coding. In <em>ICML</em> (pp. 4182-4192). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.09272">https://arxiv.org/abs/1905.09272</a></p>
+<p>[10] Caron, M., Misra, I., Mairal, J., Goyal, P., Bojanowski, P., &amp; Joulin, A. (2020). Unsupervised learning of visual features by contrasting cluster assignments. In <em>NeurIPS</em> (pp. 9912-9924). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.09882">https://arxiv.org/abs/2006.09882</a></p>
+<p>[11] Grill, J. B., Strub, F., Altché, F., Tallec, C., Richemond, P. H., Buchatskaya, E., … &amp; Valko, M. (2020). Bootstrap your own latent-a new approach to self-supervised learning. In <em>NeurIPS</em> (pp. 21271-21284). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.07733">https://arxiv.org/abs/2006.07733</a></p>
+<p>[12] Chen, X., &amp; He, K. (2021). Exploring simple siamese representation learning. In <em>CVPR</em> (pp. 15750-15758). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2011.10566">https://arxiv.org/abs/2011.10566</a></p>
+<p>[13] Chen, X., Xie, S., &amp; He, K. (2021). An empirical study of training self-supervised vision transformers. In <em>ICCV</em> (pp. 9640-9649). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.02057">https://arxiv.org/abs/2104.02057</a></p>
+<p>[14] Caron, M., Touvron, H., Misra, I., Jégou, H., Mairal, J., Bojanowski, P., &amp; Joulin, A. (2021). Emerging properties in self-supervised vision transformers. In <em>ICCV</em> (pp. 9650-9660). <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.14294">https://arxiv.org/abs/2104.14294</a></p>
+
+    </article>
+    <!-- license -->
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+        </li>
+        <li class="previous">
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2026/06/07/%E7%94%B3%E4%B8%87%E4%B8%80%E7%BA%A7%E8%A1%8C%E4%B8%9A%E6%9C%88%E5%BA%A6%E8%A1%A8%E7%8E%B0%E5%88%86%E6%9E%90/" title="A股申万一级行业指数月度表现分析（2020-2026）">
+                    <div class="prevTitle">A股申万一级行业指数月度表现分析（2020-2026）</div>
+                </a>
+        </li>
+    </ul>
+    <!-- comment -->
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+            
+            
+            
+            <!-- utteranc评论 -->
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+            
+            
+            
+        </div>
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    <!-- Mathjax -->
+</main>
+
+                <!-- profile -->
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+        <div class="social">
+                            <a href="mailto:sifaxie@tencent.com" class="iconfont-archer email" title="email" ></a>
+                <a href="//github.com/DMRookie" class="iconfont-archer github" target="_blank" title="github"></a>
+                <span class="iconfont-archer wechat" title="wechat">
+                    <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+                <a href="//www.zhihu.com/people/xie-si-fa" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+
+        </div>
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    <!-- 不蒜子  -->
+        <div class="busuanzi-container">
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+        </div>
+</footer>
+
+        </div>
+        <!-- toc -->
+            <div class="toc-wrapper toc-wrapper-loding" style=    top:50vh;
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%91%98%E8%A6%81"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BC%95%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">1. 引言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">2.1.</span> <span class="toc-text">1.1 对比学习的核心思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%9A%84%E9%87%8D%E8%A6%81%E6%84%8F%E4%B9%89"><span class="toc-number">2.2.</span> <span class="toc-text">1.2 对比学习的重要意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B%E6%A6%82%E8%A7%88"><span class="toc-number">2.3.</span> <span class="toc-text">1.3 发展历程概览</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%99%BE%E8%8A%B1%E9%BD%90%E6%94%BE-2018-2019"><span class="toc-number">3.</span> <span class="toc-text">2. 第一阶段：百花齐放 (2018-2019)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-InstDisc-CVPR-2018"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 InstDisc (CVPR 2018)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">3.1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0"><span class="toc-number">3.1.2.</span> <span class="toc-text">关键技术创新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88Tricks"><span class="toc-number">3.1.3.</span> <span class="toc-text">有效Tricks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0"><span class="toc-number">3.1.4.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89"><span class="toc-number">3.1.5.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-InvaSpread-CVPR-2019"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 InvaSpread (CVPR 2019)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">关键技术创新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">3.2.3.</span> <span class="toc-text">局限性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-1"><span class="toc-number">3.2.4.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-1"><span class="toc-number">3.2.5.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-CPC-v1-2018"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 CPC v1 (2018)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="toc-number">3.3.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#InfoNCE%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">3.3.3.</span> <span class="toc-text">InfoNCE损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8CV%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">3.3.4.</span> <span class="toc-text">在CV中的应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-2"><span class="toc-number">3.3.5.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-2"><span class="toc-number">3.3.6.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-CMC-ECCV-2019"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 CMC (ECCV 2019)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-1"><span class="toc-number">3.4.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">3.4.3.</span> <span class="toc-text">损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%8F%91%E7%8E%B0"><span class="toc-number">3.4.4.</span> <span class="toc-text">关键发现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-3"><span class="toc-number">3.4.5.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E5%B0%8F%E7%BB%93"><span class="toc-number">3.5.</span> <span class="toc-text">第一阶段小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9ACV%E5%8F%8C%E9%9B%84-2020"><span class="toc-number">4.</span> <span class="toc-text">3. 第二阶段：CV双雄 (2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-MoCo-v1-CVPR-2020"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 MoCo v1 (CVPR 2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-4"><span class="toc-number">4.1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-2"><span class="toc-number">4.1.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E9%87%8F%E6%9B%B4%E6%96%B0%E6%9C%BA%E5%88%B6"><span class="toc-number">4.1.3.</span> <span class="toc-text">动量更新机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0-2"><span class="toc-number">4.1.4.</span> <span class="toc-text">关键技术创新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-1"><span class="toc-number">4.1.5.</span> <span class="toc-text">损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88Tricks-1"><span class="toc-number">4.1.6.</span> <span class="toc-text">有效Tricks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-3"><span class="toc-number">4.1.7.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-4"><span class="toc-number">4.1.8.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-SimCLR-v1-ICML-2020"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 SimCLR v1 (ICML 2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-5"><span class="toc-number">4.2.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-3"><span class="toc-number">4.2.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NT-Xent%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">4.2.3.</span> <span class="toc-text">NT-Xent损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0-3"><span class="toc-number">4.2.4.</span> <span class="toc-text">关键技术创新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-4"><span class="toc-number">4.2.5.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-5"><span class="toc-number">4.2.6.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-MoCo-v2-2020"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 MoCo v2 (2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-6"><span class="toc-number">4.3.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E7%82%B9"><span class="toc-number">4.3.2.</span> <span class="toc-text">改进点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-5"><span class="toc-number">4.3.3.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-6"><span class="toc-number">4.3.4.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-SimCLR-v2-NeurIPS-2020"><span class="toc-number">4.4.</span> <span class="toc-text">3.4 SimCLR v2 (NeurIPS 2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-7"><span class="toc-number">4.4.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%94%B9%E8%BF%9B"><span class="toc-number">4.4.2.</span> <span class="toc-text">关键改进</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-6"><span class="toc-number">4.4.3.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-7"><span class="toc-number">4.4.4.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-CPC-v2-ICLR-2020"><span class="toc-number">4.5.</span> <span class="toc-text">3.5 CPC v2 (ICLR 2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-8"><span class="toc-number">4.5.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%94%B9%E8%BF%9B-1"><span class="toc-number">4.5.2.</span> <span class="toc-text">关键改进</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-7"><span class="toc-number">4.5.3.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-8"><span class="toc-number">4.5.4.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-SwAV-NeurIPS-2020"><span class="toc-number">4.6.</span> <span class="toc-text">3.6 SwAV (NeurIPS 2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-9"><span class="toc-number">4.6.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-4"><span class="toc-number">4.6.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Swapped-Prediction%E6%8D%9F%E5%A4%B1"><span class="toc-number">4.6.3.</span> <span class="toc-text">Swapped Prediction损失</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0-4"><span class="toc-number">4.6.4.</span> <span class="toc-text">关键技术创新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-8"><span class="toc-number">4.6.5.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-9"><span class="toc-number">4.6.6.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E5%B0%8F%E7%BB%93"><span class="toc-number">4.7.</span> <span class="toc-text">第二阶段小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9A%E4%B8%8D%E7%94%A8%E8%B4%9F%E6%A0%B7%E6%9C%AC-2020-2021"><span class="toc-number">5.</span> <span class="toc-text">4. 第三阶段：不用负样本 (2020-2021)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-BYOL-NeurIPS-2020"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 BYOL (NeurIPS 2020)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-10"><span class="toc-number">5.1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-5"><span class="toc-number">5.1.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-2"><span class="toc-number">5.1.3.</span> <span class="toc-text">损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%9D%8D%E5%A1%8C%EF%BC%9F"><span class="toc-number">5.1.4.</span> <span class="toc-text">为什么不坍塌？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-9"><span class="toc-number">5.1.5.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-10"><span class="toc-number">5.1.6.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-SimSiam-CVPR-2021"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 SimSiam (CVPR 2021)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-11"><span class="toc-number">5.2.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-6"><span class="toc-number">5.2.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-3"><span class="toc-number">5.2.3.</span> <span class="toc-text">损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%8F%91%E7%8E%B0%EF%BC%9AStop-gradient%E6%98%AF%E6%A0%B8%E5%BF%83"><span class="toc-number">5.2.4.</span> <span class="toc-text">关键发现：Stop-gradient是核心</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E8%A7%A3%E9%87%8A"><span class="toc-number">5.2.5.</span> <span class="toc-text">理论解释</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-10"><span class="toc-number">5.2.6.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-11"><span class="toc-number">5.2.7.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%E5%B0%8F%E7%BB%93"><span class="toc-number">5.3.</span> <span class="toc-text">第三阶段小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%EF%BC%9ATransformer%E6%97%B6%E4%BB%A3-2021"><span class="toc-number">6.</span> <span class="toc-text">5. 第四阶段：Transformer时代 (2021)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-MoCo-v3-ICCV-2021"><span class="toc-number">6.1.</span> <span class="toc-text">5.1 MoCo v3 (ICCV 2021)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-12"><span class="toc-number">6.1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%91%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">6.1.2.</span> <span class="toc-text">发现的问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D"><span class="toc-number">6.1.3.</span> <span class="toc-text">问题定位</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9AFixed-Random-Patch-Projection"><span class="toc-number">6.1.4.</span> <span class="toc-text">解决方案：Fixed Random Patch Projection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%94%B9%E8%BF%9B"><span class="toc-number">6.1.5.</span> <span class="toc-text">其他改进</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-11"><span class="toc-number">6.1.6.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-12"><span class="toc-number">6.1.7.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-DINO-ICCV-2021"><span class="toc-number">6.2.</span> <span class="toc-text">5.2 DINO (ICCV 2021)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-13"><span class="toc-number">6.2.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-7"><span class="toc-number">6.2.2.</span> <span class="toc-text">网络架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-4"><span class="toc-number">6.2.3.</span> <span class="toc-text">损失函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0-5"><span class="toc-number">6.2.4.</span> <span class="toc-text">关键技术创新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%8A%E4%BA%BA%E5%8F%91%E7%8E%B0%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%AD%A6%E4%B9%A0%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2"><span class="toc-number">6.2.5.</span> <span class="toc-text">惊人发现：自动学习语义分割</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%A1%A8%E7%8E%B0-12"><span class="toc-number">6.2.6.</span> <span class="toc-text">性能表现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88Tricks-2"><span class="toc-number">6.2.7.</span> <span class="toc-text">有效Tricks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E6%84%8F%E4%B9%89-13"><span class="toc-number">6.2.8.</span> <span class="toc-text">历史意义</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%E5%B0%8F%E7%BB%93"><span class="toc-number">6.3.</span> <span class="toc-text">第四阶段小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%BA%E6%96%87%E6%BC%94%E8%BF%9B%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="toc-number">7.</span> <span class="toc-text">6. 论文演进关系图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%AF%B9%E6%AF%94%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">7. 核心技术对比总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%AE%8C%E6%95%B4%E5%AF%B9%E6%AF%94%E8%A1%A8%E6%A0%BC"><span class="toc-number">8.1.</span> <span class="toc-text">7.1 完整对比表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%8A%80%E6%9C%AF%E7%BB%84%E4%BB%B6%E5%AF%B9%E6%AF%94"><span class="toc-number">8.2.</span> <span class="toc-text">7.2 技术组件对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E8%84%89%E7%BB%9C%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">9.</span> <span class="toc-text">8. 技术演进脉络深度分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E8%B4%9F%E6%A0%B7%E6%9C%AC%E7%AD%96%E7%95%A5%E7%9A%84%E6%BC%94%E8%BF%9B"><span class="toc-number">9.1.</span> <span class="toc-text">8.1 负样本策略的演进</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E9%98%B2%E6%AD%A2%E5%9D%8D%E5%A1%8C%E7%9A%84%E6%9C%BA%E5%88%B6"><span class="toc-number">9.2.</span> <span class="toc-text">8.2 防止坍塌的机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-number">9.3.</span> <span class="toc-text">8.3 数据增强的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-4-%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%EF%BC%9ACNN-%E2%86%92-ViT"><span class="toc-number">9.4.</span> <span class="toc-text">8.4 架构演进：CNN → ViT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%80%BB%E7%BB%93%E4%B8%8E%E5%B1%95%E6%9C%9B"><span class="toc-number">10.</span> <span class="toc-text">9. 总结与展望</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E5%8F%91%E5%B1%95%E8%A7%84%E5%BE%8B%E6%80%BB%E7%BB%93"><span class="toc-number">10.1.</span> <span class="toc-text">9.1 发展规律总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E6%A0%B8%E5%BF%83%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">10.2.</span> <span class="toc-text">9.2 核心经验总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E6%9C%AA%E6%9D%A5%E5%8F%91%E5%B1%95%E6%96%B9%E5%90%91"><span class="toc-number">10.3.</span> <span class="toc-text">9.3 未来发展方向</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0"><span class="toc-number">10.3.1.</span> <span class="toc-text">1. 多模态对比学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A4%A7%E8%A7%84%E6%A8%A1%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="toc-number">10.3.2.</span> <span class="toc-text">2. 大规模预训练</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">11.</span> <span class="toc-text">10. 参考文献</span></a></li></ol>
+            </div>
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+        
+        
+        
+        
+        
+        
+        
+        
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 8
+        </div>
+        <!-- search  -->
+    </div>
+    <div class="post-archive">
+            <div class="archive-year"> 2026 </div>
+            <ul class="year-list">
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/10</span>
+            <a class="archive-post-title" href="/2026/06/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E9%A2%86%E5%9F%9F%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/">计算机视觉领域对比学习综述</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span>
+            <a class="archive-post-title" href="/2026/06/07/%E7%94%B3%E4%B8%87%E4%B8%80%E7%BA%A7%E8%A1%8C%E4%B8%9A%E6%9C%88%E5%BA%A6%E8%A1%A8%E7%8E%B0%E5%88%86%E6%9E%90/">A股申万一级行业指数月度表现分析（2020-2026）</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/27</span>
+            <a class="archive-post-title" href="/2026/05/27/%E5%91%A8%E6%9C%9F%E4%BC%B0%E5%80%BC%E4%B8%8E%E4%BA%BA%E6%80%A7-A%E8%82%A120%E5%B9%B4%E4%BA%A4%E4%BA%92%E6%97%B6%E9%97%B4%E8%BD%B4/">周期、估值与人性 · A股20年交互时间轴</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/10</span>
+            <a class="archive-post-title" href="/2026/03/10/%E8%A7%86%E8%A7%89Token%22%E5%A4%B1%E5%A3%B0%22%EF%BC%9A%E6%8F%AD%E7%A7%98%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BD%95%22%E7%9D%81%E7%9C%BC%E8%AF%B4%E7%9E%8E%E8%AF%9D%22/">视觉Token"失声"：揭秘多模态大模型为何"睁眼说瞎话"</a>
+        </li>
+                </ul>
+            <div class="archive-year"> 2025 </div>
+            <ul class="year-list">
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2025/10/16/%E4%BB%8EQwenVL%E4%B8%8EInternVL%E7%9A%84%E6%BC%94%E8%BF%9B%E7%9C%8B%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%8C%83%E5%BC%8F%E6%94%B6%E6%95%9B/">从QwenVL与InternVL的演进看多模态大模型的范式收敛</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/26</span>
+            <a class="archive-post-title" href="/2025/03/26/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%AE%9E%E8%B7%B5/">大模型工程化实践</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/24</span>
+            <a class="archive-post-title" href="/2025/03/24/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/">大模型的应用实践</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/22</span>
+            <a class="archive-post-title" href="/2025/03/22/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86/">大模型的概念原理</a>
+        </li>
+            </ul>
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+            <span class="sidebar-tag-name" data-tags="大模型">
+                <span class="iconfont-archer">&#xe606;</span>
+                大模型
+            </span>
+            <span class="sidebar-tag-name" data-tags="多模态">
+                <span class="iconfont-archer">&#xe606;</span>
+                多模态
+            </span>
+            <span class="sidebar-tag-name" data-tags="投资">
+                <span class="iconfont-archer">&#xe606;</span>
+                投资
+            </span>
+            <span class="sidebar-tag-name" data-tags="周期">
+                <span class="iconfont-archer">&#xe606;</span>
+                周期
+            </span>
+            <span class="sidebar-tag-name" data-tags="估值">
+                <span class="iconfont-archer">&#xe606;</span>
+                估值
+            </span>
+            <span class="sidebar-tag-name" data-tags="行业分析">
+                <span class="iconfont-archer">&#xe606;</span>
+                行业分析
+            </span>
+            <span class="sidebar-tag-name" data-tags="申万行业">
+                <span class="iconfont-archer">&#xe606;</span>
+                申万行业
+            </span>
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+        <span class="sidebar-category-name" data-categories="视觉大模型">
+            <span class="iconfont-archer">&#xe60a;</span>
+            视觉大模型
+        </span>
+        <span class="sidebar-category-name" data-categories="投资">
+            <span class="iconfont-archer">&#xe60a;</span>
+            投资
+        </span>
+        <span class="sidebar-category-name" data-categories="语言大模型">
+            <span class="iconfont-archer">&#xe60a;</span>
+            语言大模型
+        </span>
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://dmrookie.github.io",
+        root: siteMetaRoot,
+        author: "荷月归"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+        <!-- main func -->
+        <script src="/scripts/main.js"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js" onload="window.Fancybox.bind('[data-fancybox]')" defer></script>
+        <!-- algolia -->
+        <!-- busuanzi -->
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        <!-- async load share.js -->
+            <script src="/scripts/share.js" async></script>
+        <!-- mermaid -->
+    </body>
+</html>
