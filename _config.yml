@@ -126,8 +126,16 @@ jsonContent:
     categories: true
     tags: true
 
-# KaTeX数学公式配置
-math:
-  engine: katex
-  config:
-    throwOnError: false
+# Markdown 渲染器配置（hexo-renderer-markdown-it）
+# typographer: false 可避免把 ' 转成智能引号 ‘ 而破坏 LaTeX
+# 通过 @renbaoshuo/markdown-it-katex 在构建时服务端渲染数学公式
+markdown:
+  preset: 'default'
+  render:
+    html: true
+    xhtmlOut: false
+    breaks: false
+    linkify: true
+    typographer: false
+  plugins:
+    - '@renbaoshuo/markdown-it-katex'
