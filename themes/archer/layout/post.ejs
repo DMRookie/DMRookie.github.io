@@ -80,4 +80,8 @@
     <%_ if (page.mathjax === true) { _%>
         <%- partial('_partial/math/mathjax') %>
     <%_ } _%>
+    <!-- KaTeX -->
+    <%_ if (theme.math.katex && theme.math.katex.enable === true) { _%>
+        <%- partial('_partial/math/katex') %>
+    <%_ } _%>
 </main>
