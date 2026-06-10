@@ -125,3 +125,9 @@ jsonContent:
     excerpt: false
     categories: true
     tags: true
+
+# KaTeX数学公式配置
+math:
+  engine: katex
+  config:
+    throwOnError: false
