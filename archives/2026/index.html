@@ -403,16 +403,12 @@
                     <span class="abstract-title-text">基础简介3.优化算法</span>
                 </a>
                 <div class="abstract-content">
-                    神经网络的训练本质上是一个优化问题：我们希望找到一组参数，使得损失函数尽可能小。上一篇文章介绍了梯度下降的基本思想：沿着梯度方向更新参数。但实际训练中，简单的梯度下降往往会遇到各种问题。本文将用一个统一的框架，带你理解各种优化算法是如何解决这些问题的。
-从下山 analogy 开始
-让我们延续上一篇的类比。想象你在山上，想尽快下到谷底。
-梯度下降的策略是：每走一步，看看哪个方向最陡，就往那个方向走。
-但实际下山时，你会遇到几个问题：
-
-步子太大：可能会越过谷底，甚至越走越高
-步子太小：下山太慢，天黑了还没下完
-忽左忽右：如果谷底在一条窄沟里，你可能在两边反复横跳
-陷入局部最优：可能下到一...
+                    神经网络的训练本质上是一个优化问题：我们希望找到一组参数，使得损失函数尽可能小。上一篇文章介绍了梯度下降的基本思想：沿着梯度方向更新参数。本文将从最简单的SGD开始，逐步介绍各种优化算法，并延伸到2024-2025年大模型训练中最新、最常用的优化器。
+优化算法的统一框架
+在开始之前，先介绍一个统一框架来理解所有优化算法。无论算法多么复杂，它们的核心都可以归结为三个组件：
+θt=θt−1−η⋅mtst+ϵ\theta_t = \theta_{t-1} - \frac{\eta \cdot m_t}{\sqrt{s_t} + \epsilon}
+θt​=θt−1​−st​​+ϵη⋅mt​​
+...
                 </div>
                 <!-- read more -->
                 <div class="abstract-post-meta">
@@ -742,13 +738,13 @@
             <span class="iconfont-archer">&#xe60a;</span>
             视觉大模型
         </span>
-        <span class="sidebar-category-name" data-categories="投资理财">
-            <span class="iconfont-archer">&#xe60a;</span>
-            投资理财
-        </span>
         <span class="sidebar-category-name" data-categories="语言大模型">
             <span class="iconfont-archer">&#xe60a;</span>
             语言大模型
+        </span>
+        <span class="sidebar-category-name" data-categories="投资理财">
+            <span class="iconfont-archer">&#xe60a;</span>
+            投资理财
         </span>
         <span class="sidebar-category-name" data-categories="AI应用">
             <span class="iconfont-archer">&#xe60a;</span>
