@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="荷月归">
-<meta property="og:url" content="https://dmrookie.github.io/tags/%E8%A1%8C%E4%B8%9A%E5%88%86%E6%9E%90/">
+<meta property="og:url" content="https://dmrookie.github.io/page/2/">
 <meta property="og:site_name" content="荷月归">
 <meta property="og:locale">
 <meta property="article:author" content="荷月归">
@@ -208,8 +208,9 @@
             document.write('<script src="/lib/jquery.min.js" />')
         }
     </script>
+        <body class="home-body">
         <!-- header -->
-        <header class="header header-mobile">
+        <header class="header header-mobile index-header">
     <!-- top read progress line -->
     <div class="header-element">
         <div class="read-progress"></div>
@@ -243,7 +244,7 @@
 </header>
 
         <!-- fixed footer -->
-        <footer class="footer-fixed">
+        <footer class="footer-fixed index-footer-fixed">
     <!-- donate button -->
 
     <!-- back to top button -->
@@ -254,18 +255,24 @@
 
         <!-- wrapper -->
         <div class="wrapper">
-            <div class="site-intro" style="">
+            <div class="site-intro" style="    height:50vh;
+">
     <!-- 主页  -->
+    <!-- 文章页  -->
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/index-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+                dmrookie's Studio.
+            <!-- 文章页  -->
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
+                    it's better to burn out than to fade away
+            <!-- 文章页  -->
         </p>
         <!-- 文章页 meta -->
     </div>
@@ -396,48 +403,240 @@
 
             <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" alt="loading">
             <div class="container container-unloaded">
-                    <main class="main index-page">
-                
-            <article class="index-post">
-                <a class="abstract-title" href="/2026/06/07/%E7%94%B3%E4%B8%87%E4%B8%80%E7%BA%A7%E8%A1%8C%E4%B8%9A%E6%9C%88%E5%BA%A6%E8%A1%A8%E7%8E%B0%E5%88%86%E6%9E%90/">
-                    <span class="abstract-title-text">申万一级行业指数月度表现分析</span>
-                </a>
-                <div class="abstract-content">
                     
-基于申万一级行业指数（2021 版）月度 K 线数据，覆盖 31 个一级行业、78 个月、累计 2,295 条月度记录，系统刻画 2020 — 2026 年间 A 股行业轮动结构与风险收益特征。本页仅作个人学习笔记，数据与分析仅供学术研究参考。
+    <style>
+        .cate-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: 1fr;
+            align-items: stretch;
+            gap: 1.25rem;
+            max-width: 800px;
+            margin: 1rem auto 2rem;
+            padding: 0 .5rem;
+        }
+        /* 首页头像缩小并居中，降低 profile 整体高度，使其与右侧分类更协调 */
+        .home-body .profile-avatar { width: 150px; margin: 0 auto; }
+        /* 隐藏首页 footer 中与 profile 重复的联系方式 */
+        .home-body .footer .social { display: none; }
+        .cate-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            padding: 1.4rem 1.5rem 1.25rem;
+            background: #ffffff;
+            border: 1px solid #ebebea;
+            border-radius: 14px;
+            box-shadow: 0 1px 2px rgba(15, 15, 15, 0.03);
+            transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        }
+        .cate-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(15, 15, 15, 0.10);
+            border-color: #d8d8d6;
+        }
 
-本页为一个独立的交互式页面，包含数据概览、累计排名、交互式趋势图、年度TOP、胜率分析、波动率分析、近12月表现与投资启示。下方为内嵌预览，建议点击「全屏查看」获得最佳体验。
+        .cate-head {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        .cate-icon {
+            flex: none;
+            width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.45rem; border-radius: 11px;
+            margin-right: .8rem;
+            transition: transform .22s ease;
+        }
+        .cate-card:hover .cate-icon { transform: scale(1.08) rotate(-4deg); }
+        .cate-card:nth-child(1) .cate-icon { background: #eef3ff; }
+        .cate-card:nth-child(2) .cate-icon { background: #fdeef6; }
+        .cate-card:nth-child(3) .cate-icon { background: #eefaf3; }
+        .cate-card:nth-child(4) .cate-icon { background: #fff5e9; }
 
-  🔗 全屏查看交互式分析报告
+        .cate-name { font-size: 1.12rem; font-weight: 650; color: #37352f; }
+        .cate-count {
+            margin-left: auto;
+            font-size: .72rem; color: #9b9a97;
+            background: #f1f1ef; border-radius: 20px;
+            padding: .12rem .55rem;
+        }
+        .cate-desc { margin: .85rem 0 .25rem; font-size: .82rem; line-height: 1.5; color: #9b9a97; }
 
+        .cate-posts { list-style: none; margin: .5rem 0 0; padding: 0; }
+        .cate-posts li { border-top: 1px solid #f0f0ef; }
+        .cate-posts a {
+            display: flex; align-items: baseline; gap: .6rem;
+            padding: .55rem .15rem;
+            text-decoration: none; color: #37352f;
+            border-radius: 6px;
+            transition: background .15s ease, color .15s ease;
+        }
+        .cate-posts a:hover { background: #f5f5f4; color: #2383e2; }
+        .cp-title {
+            flex: 1; min-width: 0;
+            font-size: .88rem;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .cp-title::before { content: '·'; color: #c9c9c5; margin-right: .45rem; }
+        .cp-date { flex: none; font-size: .72rem; color: #b6b5b2; font-variant-numeric: tabular-nums; }
 
+        .cate-more {
+            margin-top: .7rem; align-self: flex-start;
+            font-size: .78rem; color: #9b9a97; text-decoration: none;
+            transition: color .2s ease, transform .2s ease;
+        }
+        .cate-more:hover { color: #2383e2; transform: translateX(3px); }
+        .cate-empty { margin: .9rem 0 .2rem; font-size: .82rem; color: #b6b5b2; }
 
+        /* ===== 暗色模式（body.is-dark 由下方脚本依据 dark.css 是否加载来同步）===== */
+        body.is-dark .cate-card { background: #2b2b2b; border-color: #3a3a3a; box-shadow: none; }
+        body.is-dark .cate-card:hover { border-color: #4d4d4d; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45); }
+        body.is-dark .cate-name { color: #eceae6; }
+        body.is-dark .cate-count { background: #3a3a3a; color: #9b9a97; }
+        body.is-dark .cate-desc { color: #8a8986; }
+        body.is-dark .cate-posts li { border-top-color: #3a3a3a; }
+        body.is-dark .cate-posts a { color: #d4d2cd; }
+        body.is-dark .cate-posts a:hover { background: #363636; color: #5aa3ec; }
+        body.is-dark .cp-date { color: #6f6e6b; }
+        body.is-dark .cate-card:nth-child(1) .cate-icon { background: #2b3550; }
+        body.is-dark .cate-card:nth-child(2) .cate-icon { background: #46293c; }
+        body.is-dark .cate-card:nth-child(3) .cate-icon { background: #243d31; }
+        body.is-dark .cate-card:nth-child(4) .cate-icon { background: #4a3a23; }
 
-数据来源与说明
+        @media (max-width: 600px) {
+            .cate-grid { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 1rem; margin: 1.5rem auto 2rem; }
+        }
+    </style>
 
-数据来源：申万宏源研究 · 申万行业分类标准（2021）、腾讯自选股、东方财富网
-时间范围：2020 年 ...
+    <main class="main index-page home-cate-page">
+        <section class="cate-grid">
+                <div class="cate-card">
+                    <a class="cate-head" href="/categories/%E8%AF%AD%E8%A8%80%E5%A4%A7%E6%A8%A1%E5%9E%8B/">
+                        <span class="cate-icon">📁</span>
+                        <span class="cate-name">语言大模型</span>
+                        <span class="cate-count">5 篇</span>
+                    </a>
+                    <p class="cate-desc">大语言模型的概念原理、训练与工程化实践</p>
+                        <ul class="cate-posts">
+                                <li>
+                                    <a href="/2026/06/22/%E5%9F%BA%E7%A1%80%E7%AE%80%E4%BB%8B-%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" title="基础简介3.优化算法">
+                                        <span class="cp-title">基础简介3.优化算法</span>
+                                        <span class="cp-date">2026/06/22</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/2026/06/17/%E5%9F%BA%E7%A1%80%E7%AE%80%E4%BB%8B-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%A2%AF%E5%BA%A6%E6%9B%B4%E6%96%B0/" title="基础简介1.模型的定义及更新">
+                                        <span class="cp-title">基础简介1.模型的定义及更新</span>
+                                        <span class="cp-date">2026/06/17</span>
+                                    </a>
+                                </li>
+                        </ul>
+                            <a class="cate-more" href="/categories/%E8%AF%AD%E8%A8%80%E5%A4%A7%E6%A8%A1%E5%9E%8B/">查看全部 5 篇 →</a>
                 </div>
-                <!-- read more -->
-                <div class="abstract-post-meta">
-                    <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/06/22">
-                        <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/06/07</span>
-                    </div>
-                    <!-- tags -->
-                        <div class="abstract-tags" >
-        <a class="post-tag" href="javascript:void(0);" data-tags="投资">投资</a>
-        <a class="post-tag" href="javascript:void(0);" data-tags="行业分析">行业分析</a>
-        <a class="post-tag" href="javascript:void(0);" data-tags="申万行业">申万行业</a>
-</div>
-
+                <div class="cate-card">
+                    <a class="cate-head" href="/categories/%E8%A7%86%E8%A7%89%E5%A4%A7%E6%A8%A1%E5%9E%8B/">
+                        <span class="cate-icon">📁</span>
+                        <span class="cate-name">视觉大模型</span>
+                        <span class="cate-count">3 篇</span>
+                    </a>
+                    <p class="cate-desc">多模态与视觉理解方向的前沿探索与综述</p>
+                        <ul class="cate-posts">
+                                <li>
+                                    <a href="/2026/06/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E9%A2%86%E5%9F%9F%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/" title="计算机视觉领域对比学习综述">
+                                        <span class="cp-title">计算机视觉领域对比学习综述</span>
+                                        <span class="cp-date">2026/06/10</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/2026/03/10/%E8%A7%86%E8%A7%89Token%22%E5%A4%B1%E5%A3%B0%22%EF%BC%9A%E6%8F%AD%E7%A7%98%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BD%95%22%E7%9D%81%E7%9C%BC%E8%AF%B4%E7%9E%8E%E8%AF%9D%22/" title="视觉Token&#34;失声&#34;：揭秘多模态大模型为何&#34;睁眼说瞎话&#34;">
+                                        <span class="cp-title">视觉Token&#34;失声&#34;：揭秘多模态大模型为何&#34;睁眼说瞎话&#34;</span>
+                                        <span class="cp-date">2026/03/10</span>
+                                    </a>
+                                </li>
+                        </ul>
+                            <a class="cate-more" href="/categories/%E8%A7%86%E8%A7%89%E5%A4%A7%E6%A8%A1%E5%9E%8B/">查看全部 3 篇 →</a>
                 </div>
-            </article>
-            <div class="index-post-divider"></div>
-        <!-- paginator  -->
+                <div class="cate-card">
+                    <a class="cate-head" href="/categories/AI%E5%BA%94%E7%94%A8/">
+                        <span class="cate-icon">📁</span>
+                        <span class="cate-name">AI应用</span>
+                        <span class="cate-count">1 篇</span>
+                    </a>
+                    <p class="cate-desc">AI 技术在真实业务场景中的落地实践</p>
+                        <ul class="cate-posts">
+                                <li>
+                                    <a href="/2025/03/24/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/" title="大模型的应用实践">
+                                        <span class="cp-title">大模型的应用实践</span>
+                                        <span class="cp-date">2025/03/24</span>
+                                    </a>
+                                </li>
+                        </ul>
+                </div>
+                <div class="cate-card">
+                    <a class="cate-head" href="/categories/%E6%8A%95%E8%B5%84%E7%90%86%E8%B4%A2/">
+                        <span class="cate-icon">📁</span>
+                        <span class="cate-name">投资理财</span>
+                        <span class="cate-count">2 篇</span>
+                    </a>
+                    <p class="cate-desc">周期、估值与人性，A 股投研学习笔记</p>
+                        <ul class="cate-posts">
+                                <li>
+                                    <a href="/2026/06/07/%E7%94%B3%E4%B8%87%E4%B8%80%E7%BA%A7%E8%A1%8C%E4%B8%9A%E6%9C%88%E5%BA%A6%E8%A1%A8%E7%8E%B0%E5%88%86%E6%9E%90/" title="申万一级行业指数月度表现分析">
+                                        <span class="cp-title">申万一级行业指数月度表现分析</span>
+                                        <span class="cp-date">2026/06/07</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/2026/05/27/%E5%91%A8%E6%9C%9F%E4%BC%B0%E5%80%BC%E4%B8%8E%E4%BA%BA%E6%80%A7-A%E8%82%A120%E5%B9%B4%E4%BA%A4%E4%BA%92%E6%97%B6%E9%97%B4%E8%BD%B4/" title="周期、估值与人性 · A股20年交互时间轴">
+                                        <span class="cp-title">周期、估值与人性 · A股20年交互时间轴</span>
+                                        <span class="cp-date">2026/05/27</span>
+                                    </a>
+                                </li>
+                        </ul>
+                </div>
+        </section>
     </main>
 
+    <script>
+        (function () {
+            // dark.css 由主题在暗色模式下动态注入到 <head>，据此同步卡片暗色样式
+            function syncDark() {
+                if (!document.body) return;
+                var dark = !!document.getElementById('stylesheet-theme-dark');
+                document.body.classList.toggle('is-dark', dark);
+            }
+            syncDark();
+            document.addEventListener('DOMContentLoaded', syncDark);
+            new MutationObserver(syncDark).observe(document.documentElement, { childList: true, subtree: true });
+        })();
+    </script>
+
                 <!-- profile -->
+                    <div class="profile">
+    <img class="profile-avatar" alt="avatar" src="/avatar/Misaka.jpg" >
+    <div class="profile-name">荷 月 归</div>
+        <div class="profile-signature">
+            十倍苦心 突出一人
+        </div>
+        <div class="profile-social">
+                            <a href="mailto:sifaxie@tencent.com" class="iconfont-archer email" title="email" ></a>
+                <a href="//github.com/DMRookie" class="iconfont-archer github" target="_blank" title="github"></a>
+                <span class="iconfont-archer wechat" title="wechat">
+                    <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+                <a href="//www.zhihu.com/people/xie-si-fa" class="iconfont-archer zhihu" target="_blank" title="zhihu"></a>
+
+        </div>
+        <div class="profile-link-item">
+            <a href="/about" class="about-me">
+                ABOUT ME
+            </a>
+        </div>
+</div>
+
             </div>
             <footer class="footer footer-unloaded">
     <!-- social  -->
