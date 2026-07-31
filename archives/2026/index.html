@@ -399,6 +399,74 @@
                     <main class="main index-page">
                 
             <article class="index-post">
+                <a class="abstract-title" href="/2026/08/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E4%BA%8E%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%96%B9%E6%B3%95/">
+                    <span class="abstract-title-text">强化学习4.Model-based 方法</span>
+                </a>
+                <div class="abstract-content">
+                    前两篇讲的 value-based 和 policy gradient 都属于 model-free：它们从不试图理解环境本身，只是在大量试错中总结&quot;什么状态下做什么好&quot;。代价是样本效率极低——DQN 打 Atari 需要上亿帧交互（相当于人类连续玩 40 天），PPO 学会一个简单的机器人步态也要百万级交互。
+而人类学开车不需要撞一万次。原因很清楚：我们脑子里有一个世界模型。看到前方有个坑，不用真的开过去才知道会颠，可以先在想象里推演一遍。
+这就是 Model-based RL 的全部动机：
+
+与其在真实世界里反复试错，不如先学出环境的动力学 T^,R^\hat{T...
+                </div>
+                <!-- read more -->
+                <div class="abstract-post-meta">
+                    <!-- date -->
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
+                        <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/08/05</span>
+                    </div>
+                    <!-- tags -->
+                </div>
+            </article>
+            <div class="index-post-divider"></div>
+                
+            <article class="index-post">
+                <a class="abstract-title" href="/2026/08/03/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6/">
+                    <span class="abstract-title-text">强化学习3.Policy gradient 方法</span>
+                </a>
+                <div class="abstract-content">
+                    上一篇Value-based 方法结束在一堵墙前面：DQN 家族的所有操作都依赖 arg⁡max⁡aQ(s,a)\arg\max_a Q(s,a)argmaxa​Q(s,a)，而当动作是机械臂的 7 个连续关节力矩时，这个 arg⁡max⁡\arg\maxargmax 变成了一个每一步都要重解的非凸优化问题。
+这一篇讲的路线，思路极其直接：
+
+既然我们最终要的就是策略，为什么不直接把策略参数化成 πθ(a∣s)\pi_\theta(a \mid s)πθ​(a∣s)，然后对&quot;期望回报&quot;求梯度、做梯度上升？
+
+这就是 Policy gradient（策略梯度） 方法。它...
+                </div>
+                <!-- read more -->
+                <div class="abstract-post-meta">
+                    <!-- date -->
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
+                        <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/08/03</span>
+                    </div>
+                    <!-- tags -->
+                </div>
+            </article>
+            <div class="index-post-divider"></div>
+                
+            <article class="index-post">
+                <a class="abstract-title" href="/2026/07/31/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E4%BB%B7%E5%80%BC%E6%96%B9%E6%B3%95/">
+                    <span class="abstract-title-text">强化学习2.Value-based 方法</span>
+                </a>
+                <div class="abstract-content">
+                    上一篇强化学习基础的结尾留了一个悬念：那个 20 行的表格 Q-learning 在 4 格走廊上完美收敛，但如果把 Q 表格换成神经网络，&quot;一切都开始不收敛了&quot;。
+这篇文章就来讲这条路线：Value-based 方法。它的核心信念极其简洁——
+
+如果我能准确知道&quot;在每个状态下、每个动作的长期价值&quot;，那最优策略就是免费的副产品：π∗(s)=arg⁡max⁡aQ∗(s,a)\pi^*(s) = \arg\max_a Q^*(s,a)π∗(s)=argmaxa​Q∗(s,a)。
+
+问题在于，这个 QQQ 表格在 Atari 里有大约 1010010^{...
+                </div>
+                <!-- read more -->
+                <div class="abstract-post-meta">
+                    <!-- date -->
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
+                        <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/07/31</span>
+                    </div>
+                    <!-- tags -->
+                </div>
+            </article>
+            <div class="index-post-divider"></div>
+                
+            <article class="index-post">
                 <a class="abstract-title" href="/2026/07/30/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E4%BB%8B%E7%BB%8D/">
                     <span class="abstract-title-text">强化学习1.基础概念与数学框架</span>
                 </a>
@@ -411,7 +479,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/07/30</span>
                     </div>
                     <!-- tags -->
@@ -432,7 +500,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/06/22</span>
                     </div>
                     <!-- tags -->
@@ -456,7 +524,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/06/17</span>
                     </div>
                     <!-- tags -->
@@ -476,7 +544,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/06/16</span>
                     </div>
                     <!-- tags -->
@@ -498,7 +566,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/06/10</span>
                     </div>
                     <!-- tags -->
@@ -529,7 +597,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/06/07</span>
                     </div>
                     <!-- tags -->
@@ -566,7 +634,7 @@
                 <!-- read more -->
                 <div class="abstract-post-meta">
                     <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
+                    <div class="abstract-date" title="Last updated: 2026/07/31">
                         <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/05/27</span>
                     </div>
                     <!-- tags -->
@@ -579,31 +647,10 @@
                 </div>
             </article>
             <div class="index-post-divider"></div>
-                
-            <article class="index-post">
-                <a class="abstract-title" href="/2026/03/10/%E8%A7%86%E8%A7%89Token%22%E5%A4%B1%E5%A3%B0%22%EF%BC%9A%E6%8F%AD%E7%A7%98%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BD%95%22%E7%9D%81%E7%9C%BC%E8%AF%B4%E7%9E%8E%E8%AF%9D%22/">
-                    <span class="abstract-title-text">视觉Token&#34;失声&#34;：揭秘多模态大模型为何&#34;睁眼说瞎话&#34;</span>
-                </a>
-                <div class="abstract-content">
-                    1. 摘要
-多模态大语言模型（Multimodal Large Language Models, MLLM）近年来取得了突破性进展，然而其在精细视觉理解任务上的表现仍存在显著瓶颈。本文系统性地梳理了2024-2025年，arXiv上关于MLLM视觉Token监督不足问题的最新研究。研究表明，当前主流MLLM采用的&quot;仅文本监督&quot;训练范式导致视觉路径处于欠监督状态，进而引发视觉注意力退化、表征学习不充分及视觉遗忘等一系列问题[1][2]。本文将现有解决方案归纳为三大类别：训练时方法（辅助损失函数、强化学习）、推理时方法（动态干预、注意力调制）及架构改进方法（特征重采样、模...
-                </div>
-                <!-- read more -->
-                <div class="abstract-post-meta">
-                    <!-- date -->
-                    <div class="abstract-date" title="Last updated: 2026/07/30">
-                        <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2026/03/10</span>
-                    </div>
-                    <!-- tags -->
-                        <div class="abstract-tags" >
-        <a class="post-tag" href="javascript:void(0);" data-tags="大模型">大模型</a>
-        <a class="post-tag" href="javascript:void(0);" data-tags="多模态">多模态</a>
-</div>
-
-                </div>
-            </article>
-            <div class="index-post-divider"></div>
         <!-- paginator  -->
+            <nav class="page-nav">
+                <span class="page-number current">1</span><a class="page-number" href="/archives/2026/page/2/">2</a><a class="extend next" rel="next" href="/archives/2026/page/2/">NEXT &gt;</a>
+            </nav>
     </main>
 
                 <!-- profile -->
@@ -654,15 +701,30 @@
         
         
         
+        
+        
+        
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 12
+        Total : 15
         </div>
         <!-- search  -->
     </div>
     <div class="post-archive">
             <div class="archive-year"> 2026 </div>
             <ul class="year-list">
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span>
+            <a class="archive-post-title" href="/2026/08/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E4%BA%8E%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%96%B9%E6%B3%95/">强化学习4.Model-based 方法</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span>
+            <a class="archive-post-title" href="/2026/08/03/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6/">强化学习3.Policy gradient 方法</a>
+        </li>
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/31</span>
+            <a class="archive-post-title" href="/2026/07/31/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E4%BB%B7%E5%80%BC%E6%96%B9%E6%B3%95/">强化学习2.Value-based 方法</a>
+        </li>
         <li class="archive-post-item">
             <span class="archive-post-date">07/30</span>
             <a class="archive-post-title" href="/2026/07/30/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E4%BB%8B%E7%BB%8D/">强化学习1.基础概念与数学框架</a>
