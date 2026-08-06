@@ -20,19 +20,19 @@
     <%_ } _%>
     <!-- paginator -->
     <ul class="post-paginator">
-        <li class="next">
-            <%_ if (page.prev){ _%>
-                <div class="nextSlogan">Next Post</div>
-                <a href="<%- url_for(page.prev.path) %>" title="<%- page.prev.title %>">
-                    <div class="nextTitle"><%- page.prev.title || '[Untitled Post]' %></div>
-                </a>
-            <%_ } _%>
-        </li>
         <li class="previous">
             <%_ if (page.next){ _%>
                 <div class="prevSlogan">Previous Post</div>
                 <a href="<%- url_for(page.next.path) %>" title="<%- page.next.title %>">
                     <div class="prevTitle"><%- page.next.title || '[Untitled Post]' %></div>
+                </a>
+            <%_ } _%>
+        </li>
+        <li class="next">
+            <%_ if (page.prev){ _%>
+                <div class="nextSlogan">Next Post</div>
+                <a href="<%- url_for(page.prev.path) %>" title="<%- page.prev.title %>">
+                    <div class="nextTitle"><%- page.prev.title || '[Untitled Post]' %></div>
                 </a>
             <%_ } _%>
         </li>
