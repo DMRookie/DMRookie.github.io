@@ -218,21 +218,21 @@
   }
 
   .nextSlogan {
-    &::before {
-      content: '< ';
-      font-size: 1.7rem;
-    }
-  }
-
-  .prevSlogan {
     &::after {
       content: ' >';
       font-size: 1.7rem;
     }
   }
 
-  .prevTitle,
   .prevSlogan {
+    &::before {
+      content: '< ';
+      font-size: 1.7rem;
+    }
+  }
+
+  .nextTitle,
+  .nextSlogan {
     text-align: right;
   }
 }
